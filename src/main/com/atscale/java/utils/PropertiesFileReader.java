@@ -1,0 +1,122 @@
+package com.atscale.java.utils;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.io.InputStream;
+import java.util.Properties;
+import java.util.List;
+import java.util.Arrays;
+
+@SuppressWarnings("unused")
+public class PropertiesFileReader {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesFileReader.class);
+    private final Properties properties = new Properties();
+    private static final String PROPERTIES_FILE = "systems.properties";
+    private static final PropertiesFileReader instance = new PropertiesFileReader();
+
+    private PropertiesFileReader() {
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream(PropertiesFileReader.PROPERTIES_FILE)) {
+            if (input == null) {
+                throw new RuntimeException("Properties file not found: " + PropertiesFileReader.PROPERTIES_FILE);
+            }
+            properties.load(input);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to load properties file: " + PropertiesFileReader.PROPERTIES_FILE, e);
+        }
+    }
+
+    public static List<String> getAtScaleModels(){
+        String property = instance.properties.getProperty("atscale.models");
+        if (property == null || property.isEmpty()) {
+            throw new RuntimeException("atscale.models is not set in properties file: " + PROPERTIES_FILE);
+        }
+        String[] models = property.split("\\s*,\\s*"); // Splits on commas, trims spaces
+        LOGGER.info("AtScale models loaded: {}", Arrays.toString(models));
+        return Arrays.asList(models);
+    }
+
+    public static String getAtScalePostgresURL() {
+        String property = instance.properties.getProperty("atscale.postgres.jdbc.url");
+        if (property == null || property.isEmpty()) {
+            throw new RuntimeException("atscale.postgres.jdbc.url is not set in properties file: " + PROPERTIES_FILE);
+        }
+        return property;
+    }
+
+    public static String getAtScalePostgresUser() {
+        String property = instance.properties.getProperty("atscale.postgres.jdbc.username");
+        if (property == null || property.isEmpty()) {
+            throw new RuntimeException("atscale.postgres.jdbc.username is not set in properties file: " + PROPERTIES_FILE);
+        }
+        return property;
+    }
+
+    public static String getAtScalePostgresPassword() {
+        String property = instance.properties.getProperty("atscale.postgres.jdbc.password");
+        if (property == null || property.isEmpty()) {
+            throw new RuntimeException("atscale.postgres.jdbc.password is not set in properties file: " + PROPERTIES_FILE);
+        }
+        return property;
+    }
+
+    public static String getAtScaleJdbcConnection(String model) {
+        String key = String.format("atscale.%s.jdbc.url", model);
+        return getProperty(key);
+    }
+
+    public static String getAtScaleJdbcUserName(String model) {
+        String key = String.format("atscale.%s.jdbc.username", model);
+        return getProperty(key);
+    }
+
+    public static String getAtScaleJdbcPassword(String model) {
+        String key = String.format("atscale.%s.jdbc.password", model);
+        return getProperty(key);
+    }
+
+    public static int getAtScaleJdbcMaxPoolSize(String model) {
+        String key = String.format("atscale.%s.jdbc.maxPoolSize", model);
+        return Integer.parseInt(getProperty(key, "10"));
+    }
+
+    public static String getAtScaleXmlaConnection(String model) {
+        String key = String.format("atscale.%s.xmla.url", model);
+        return getProperty(key);
+    }
+
+    public static String getAtScaleXmlaCubeName(String model) {
+        String key = String.format("atscale.%s.xmla.cube", model);
+        return getProperty(key);
+    }
+
+    public static String getAtScaleXmlaCatalogName(String model) {
+        String key = String.format("atscale.%s.xmla.catalog", model);
+        return getProperty(key);
+    }
+
+    public static boolean getLogSqlQueryRows(String model) {
+        String key = String.format("atscale.%s.jdbc.log.resultset.rows", model);
+        return Boolean.parseBoolean(getProperty(key, "false"));
+    }
+
+    public static boolean getLogXmlaResponseBody(String model) {
+        String key = String.format("atscale.%s.xmla.log.responsebody", model);
+        return Boolean.parseBoolean(getProperty(key, "false"));
+    }
+
+    private static String getProperty(String key) {
+        String property = instance.properties.getProperty(key);
+        if (property == null || property.isEmpty()) {
+            throw new RuntimeException("Property " + key + " is not set in properties file: " + PROPERTIES_FILE);
+        }
+        return property;
+    }
+
+    @SuppressWarnings("all")
+    private static String getProperty(String key, String defaultValue) {
+        if(! instance.properties.containsKey(key)) {
+            LOGGER.warn("Using default value for property {}: {}", key, defaultValue);
+        }
+        return instance.properties.getProperty(key, defaultValue);
+    }
+}

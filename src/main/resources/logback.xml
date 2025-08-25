@@ -1,0 +1,61 @@
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoders are assigned the type
+             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} -%kvp- %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="ASYNC_APP_LOG" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="APP_LOG" />
+        <queueSize>5000</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+    </appender>
+    <appender name="APP_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>app_logs/application.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/application-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize> <!-- Maximum size of each log file -->
+            <maxHistory>30</maxHistory> <!-- Retain logs for 30 days -->
+            <totalSizeCap>1GB</totalSizeCap> <!-- Total size cap for all logs -->
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="ASYNC_SQL" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="SQL" />
+        <queueSize>10000</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+    </appender>
+    <appender name="SQL" class="ch.qos.logback.core.FileAppender">
+        <file>run_logs/sql_log.${gatling_run_id:-init}.txt</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="ASYNC_XMLA" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="XMLA" />
+        <queueSize>10000</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+    </appender>
+    <appender name="XMLA" class="ch.qos.logback.core.FileAppender">
+        <file>run_logs/xmla_log.${gatling_run_id:-init}.txt</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="ASYNC_APP_LOG" />
+    </root>
+    <logger name="io.gatling" level="error"/>
+    <!-- Logger for Gatling SQL statements used in AtScaleDynamicQueryBuilderScenario-->
+    <logger name="SqlLogger" level="INFO" additivity="false">
+        <appender-ref ref="ASYNC_SQL"/>
+    </logger>
+    <logger name="XmlaLogger" level="INFO" additivity="false">
+        <appender-ref ref="ASYNC_XMLA"/>
+    </logger>
+</configuration>
