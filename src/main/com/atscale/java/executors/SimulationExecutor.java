@@ -32,10 +32,11 @@ public abstract class SimulationExecutor<T> {
         // that means we have the capability to run multiple simulations in parallel and passing
         // params via -D system properties is safe and isolated per process
 
+        List<Thread> taskThreads = new java.util.ArrayList<>();
         List<MavenTaskDto> tasks = getSimulationTasks();
 
         for(MavenTaskDto task: tasks) {
-            new Thread(() -> {
+            Thread taskThread = new Thread(() -> {
                 LOGGER.info("Running task: {}", task.getTaskName());
                 LOGGER.info("Maven Command: {}", task.getMavenCommand());
                 LOGGER.info("Simulation Class: {}", task.getSimulationClass());
@@ -63,14 +64,19 @@ public abstract class SimulationExecutor<T> {
                 } catch (IOException | InterruptedException e) {
                     throw new RuntimeException("Failed to run task: " + task.getTaskName(), e);
                 }
-            }).start();
+        }
+        );
+            taskThread.start();
+            taskThreads.add(taskThread);
         }
 
-        // Wait for some time to let simulations end and for the log files to be closed
-        try {
-            Thread.sleep(20000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); // Restore interrupted status
+        // Have the current thread wait for all task threads to complete
+        for(Thread taskThread : taskThreads) {
+            try {
+                taskThread.join();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt(); // Restore interrupted status
+            }
         }
 
         // Because of the way logback initializes early it produces some empty log files
