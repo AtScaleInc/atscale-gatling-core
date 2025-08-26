@@ -86,8 +86,11 @@ public class QueryHistoryFileUtil {
         }
 
         for(QueryHistoryDto query: queries) {
-            if(! queryLanguage.equalsIgnoreCase(query.getQueryLanguage()) && query.getQueryName() == null) {
+            if(! queryLanguage.equalsIgnoreCase(query.getQueryLanguage())) {
                 throw new IllegalArgumentException(String.format("User provided query returned results that do not match the expected query language: %s" , queryLanguage));
+            }
+            if(query.getQueryName() == null) {
+                throw new IllegalArgumentException("Query name is required but not found.");
             }
             if(query.getCubeName() == null || !query.getCubeName().equalsIgnoreCase(model)) {
                 throw new IllegalArgumentException(String.format("User provided query returned results that do not match the expected model: %s", model));

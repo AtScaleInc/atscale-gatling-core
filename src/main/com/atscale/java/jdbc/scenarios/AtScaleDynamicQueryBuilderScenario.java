@@ -31,9 +31,6 @@ public class AtScaleDynamicQueryBuilderScenario {
     public ScenarioBuilder buildScenario(String model, String gatlingRunId) {
         NamedQueryActionBuilder[] namedBuilders = AtScaleDynamicJdbcActions.createBuildersJdbcQueries(model);
         boolean logRows = PropertiesFileReader.getLogSqlQueryRows(model);
-        if (namedBuilders.length == 0) {
-            final Logger SESSION_LOGGER = LoggerFactory.getLogger("SqlLogger");
-        }
 
         List<ChainBuilder> chains = Arrays.stream(namedBuilders)
                 .map(namedBuilder ->
