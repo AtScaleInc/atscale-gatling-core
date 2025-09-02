@@ -20,12 +20,12 @@ public abstract class SimulationExecutor<T> {
             Process process = processBuilder.start();
             process.waitFor(); // Wait for the process to complete
             if (process.exitValue() != 0) {
-                LOGGER.error("Maven clean install failed with exit code: {}", process.exitValue());
-                throw new RuntimeException("Maven clean failed");
+                LOGGER.error("Maven clean compile failed with exit code: {}", process.exitValue());
+                throw new RuntimeException("Maven clean compile failed");
             }
             LOGGER.info("Maven clean completed successfully.");
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException("Failed to run maven clean", e);
+            throw new RuntimeException("Failed to run maven clean compile", e);
         }
 
         // Get the Gatling simulation tasks and run each simulation in a separate JVM Process
