@@ -29,32 +29,9 @@ public class SoapUtil {
             // clear the lastDataUpdate content to avoid MD5 differences
             NodeList lastDataUpdateList = doc.getElementsByTagNameNS(
                     "http://schemas.microsoft.com/analysisservices/2003/engine", "LastDataUpdate");
-            if (lastDataUpdateList.getLength() != 0) { // Nothing to clear
-                lastDataUpdateList.item(0).setTextContent(""); // Clear content
+            if (lastDataUpdateList.getLength() != 0) {
+                lastDataUpdateList.item(0).setTextContent(""); // Exists clear the content
             }
-
-            NodeList bodyList = doc.getElementsByTagNameNS("*", "Body");
-            if (bodyList.getLength() == 0) return null;
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            StringWriter writer = new StringWriter();
-            transformer.transform(new DOMSource(bodyList.item(0)), new StreamResult(writer));
-            return writer.toString();
-        } catch (SAXException | IOException | ParserConfigurationException | TransformerException e) {
-            LOGGER.error("Failed to extract SOAP body from {}",xml, e);
-        }
-        return "FAILED_TO_EXTRACT_SOAP_BODY";
-    }
-
-    public static String extractBody(String xml) {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        try {
-            Document doc = factory.newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
-            // clear the lastDataUpdate content to avoid MD5 differences
-            NodeList lastDataUpdateList = doc.getElementsByTagNameNS(
-                    "http://schemas.microsoft.com/analysisservices/2003/engine", "LastDataUpdate");
-            if (lastDataUpdateList.getLength() == 0) return xml; // Nothing to clear
-            lastDataUpdateList.item(0).setTextContent(""); // Clear content
 
             NodeList bodyList = doc.getElementsByTagNameNS("*", "Body");
             if (bodyList.getLength() == 0) return null;
