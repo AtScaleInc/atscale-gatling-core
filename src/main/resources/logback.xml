@@ -14,7 +14,7 @@
     <appender name="APP_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>app_logs/application.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>logs/application-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>app_logs/application-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxFileSize>10MB</maxFileSize> <!-- Maximum size of each log file -->
             <maxHistory>30</maxHistory> <!-- Retain logs for 30 days -->
             <totalSizeCap>1GB</totalSizeCap> <!-- Total size cap for all logs -->
