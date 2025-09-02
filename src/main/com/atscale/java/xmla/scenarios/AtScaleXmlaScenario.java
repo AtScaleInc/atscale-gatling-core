@@ -2,6 +2,7 @@ package com.atscale.java.xmla.scenarios;
 
 import com.atscale.java.utils.HashUtil;
 import com.atscale.java.utils.PropertiesFileReader;
+import com.atscale.java.utils.SoapUtil;
 import com.atscale.java.xmla.cases.AtScaleDynamicXmlaActions;
 import com.atscale.java.xmla.cases.NamedHttpRequestActionBuilder;
 import io.gatling.javaapi.core.ChainBuilder;
@@ -16,6 +17,7 @@ import static io.gatling.javaapi.core.CoreDsl.exec;
 import static io.gatling.javaapi.core.CoreDsl.scenario;
 
 public class AtScaleXmlaScenario {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AtScaleXmlaScenario.class);
     private static final Logger SESSION_LOGGER = LoggerFactory.getLogger("XmlaLogger");
 
     public AtScaleXmlaScenario() {
@@ -45,12 +47,14 @@ public class AtScaleXmlaScenario {
                                     long start = session.getLong("queryStart");
                                     long duration = end - start;
                                     int responseSize = response == null? 0: response.length();
+                                    String body = SoapUtil.extractSoapBody(response);
+                                    LOGGER.debug("Extracted Response Body: {}", body);
                                     if(logResponseBody) {
-                                        SESSION_LOGGER.info("xmlaLog gatlingRunId={} gatlingSessionId={} model='{}' cube='{}' catalog='{}' queryName='{}' start={} end={} duration={} responseSize={} responsehash={} response={}",
-                                                gatlingRunId, session.userId(), model, cube, catalog, namedBuilder.queryName, start, end, duration, responseSize, HashUtil.TO_MD5(response == null ? "" : response), response);
+                                        SESSION_LOGGER.info("xmlaLog gatlingRunId={} gatlingSessionId={} model='{}' cube='{}' catalog='{}' queryName='{}' start={} end={} duration={} responseSize={} queryId={} responsehash={} response={}",
+                                                gatlingRunId, session.userId(), model, cube, catalog, namedBuilder.queryName, start, end, duration, responseSize, SoapUtil.extractQueryId(response), HashUtil.TO_MD5(body), response);
                                     } else {
                                         SESSION_LOGGER.info("xmlaLog gatlingRunId={} gatlingSessionId={} model='{}' cube='{}' catalog='{}' queryName='{}' start={} end={} duration={} responseSize={} responsehash={}",
-                                                gatlingRunId, session.userId(), model, cube, catalog, namedBuilder.queryName, start, end, duration, responseSize, HashUtil.TO_MD5(response == null ? "" : response));
+                                                gatlingRunId, session.userId(), model, cube, catalog, namedBuilder.queryName, start, end, duration, responseSize, HashUtil.TO_MD5(response == null ? "" : SoapUtil.extractSoapBody(response)));
                                     }
                                     return session;
                                 }))
