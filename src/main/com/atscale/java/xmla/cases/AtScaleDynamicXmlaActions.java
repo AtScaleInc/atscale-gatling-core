@@ -71,10 +71,10 @@ public class AtScaleDynamicXmlaActions {
                                 <PropertyList>
                                     <Cube>%s</Cube>
                                     <Catalog>%s</Catalog>
-                                    <UseAggregates>false</UseAggregates>
+                                    <UseAggregates>true</UseAggregates>
                                     <GenerateAggregates>false</GenerateAggregates>
                                     <UseQueryCache>false</UseQueryCache>
-                                    <UseAggregateCache>false</UseAggregateCache>
+                                    <UseAggregateCache>true</UseAggregateCache>
                                 </PropertyList>
                             </Properties>
                         </Execute>
