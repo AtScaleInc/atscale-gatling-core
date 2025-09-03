@@ -15,7 +15,7 @@ It's possible to run and extend this project.  However, we believe there is an e
 
 Prerequisites should you choose to run this project:
 
-Add a properties file named system.properties to the src/main/resources directory modeled like the example_system.properties file in the same directory.  
+Add a properties file named systems.properties to the src/main/resources directory modeled like the example_systems.properties file in the same directory.  
 
 This file should contain the following properties:
 1. A list of models
