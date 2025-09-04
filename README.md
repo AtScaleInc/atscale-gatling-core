@@ -48,11 +48,11 @@ atscale.model1.xmla.catalog=catalog_name_for_model1
 
 Run this command to extract queries from the Atscale database into a files:
 ```shell
- ./mvnw clean install exec:java -Dexec.mainClass="com.atscale.java.executors.QueryExtractExecutor"
+ ./mvnw clean compile exec:java -Dexec.mainClass="com.atscale.java.executors.QueryExtractExecutor"
 ```
 There is also a maven goal defined in the pom.xml file.  The same command can be run using:
 ```shell
- ./mvnw clean install exec:java@query-extract
+ ./mvnw clean compile exec:java@query-extract
 ```
 where query-extract is the id of the execution to be run.
 
@@ -64,14 +64,14 @@ Once we have extracted the queries we can run Gatling Scenario Simulations to ex
 
 The easiest way to run Gatling Simulations is to create an Executor under src/main/com/atscale/java/executors.  The project includes open and closed step executors.  These classes run Gatling Simulations using open steps or closed steps.  Simulations can be run using one of the following commands:
 ```shell
- ./mvnw clean install exec:java@open-step-simulation-executor 
+ ./mvnw clean compile exec:java@open-step-simulation-executor 
 ````
 ```shell
- ./mvnw clean install exec:java@closed-step-simulation-executor 
+ ./mvnw clean compile exec:java@closed-step-simulation-executor 
 ````
 or
 ```shell
- ./mvnw clean install exec:java -Dexec.mainClass="com.atscale.java.executors.OpenStepSimulationExecutor"
+ ./mvnw clean compile exec:java -Dexec.mainClass="com.atscale.java.executors.OpenStepSimulationExecutor"
 ```
 
 Examples include ClosedStepSimulationExecutor and OpenStepSimulationExecutor.  These executors run Gatling simulations that use closed steps and open steps respectively.  The executors can be found under src/main/com/atscale/java/executors.  These are examples only.  They will have to be tailored to the models and data in your environment.
@@ -79,11 +79,11 @@ Examples include ClosedStepSimulationExecutor and OpenStepSimulationExecutor.  T
 Can clean, build and run an individual test as follows
 Java:
 ```shell
- ./mvnw clean install & ./mvnw gatling:test -Dgatling.simulationClass=com.atscale.java.jdbc.simulations.AtScaleOpenInjectionStepSimulation  -Dgatling.runDescription="Internet Sales Model Test" -Datscale.model="internet_sales"
+ ./mvnw clean compile & ./mvnw gatling:test -Dgatling.simulationClass=com.atscale.java.jdbc.simulations.AtScaleOpenInjectionStepSimulation  -Dgatling.runDescription="Internet Sales Model Test" -Datscale.model="internet_sales"
 ```
 Scala:
 ```shell
- ./mvnw clean install & ./mvnw gatling:test -Dgatling.simulationClass=com.atscale.scala.jdbc.simulations.JdbcSingleUserSimulation  -Dgatling.runDescription="Internet Sales Model Tests" -Datscale.model="internet_sales"
+ ./mvnw clean compile & ./mvnw gatling:test -Dgatling.simulationClass=com.atscale.scala.jdbc.simulations.JdbcSingleUserSimulation  -Dgatling.runDescription="Internet Sales Model Tests" -Datscale.model="internet_sales"
 ```
 
 

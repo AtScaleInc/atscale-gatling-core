@@ -10,7 +10,8 @@ import java.util.ArrayList;
 public class AtScalePostgresDao {
     public enum QueryLanguage {
         SQL("pgsql"),
-        XMLA("analysis");
+        XMLA("analysis"),
+        INSTALLER_SQL("sql");
 
         private final String value;
 

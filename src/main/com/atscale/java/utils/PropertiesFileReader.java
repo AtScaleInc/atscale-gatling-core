@@ -60,47 +60,47 @@ public class PropertiesFileReader {
     }
 
     public static String getAtScaleJdbcConnection(String model) {
-        String key = String.format("atscale.%s.jdbc.url", model);
+        String key = String.format("atscale.%s.jdbc.url", clean(model));
         return getProperty(key);
     }
 
     public static String getAtScaleJdbcUserName(String model) {
-        String key = String.format("atscale.%s.jdbc.username", model);
+        String key = String.format("atscale.%s.jdbc.username", clean(model));
         return getProperty(key);
     }
 
     public static String getAtScaleJdbcPassword(String model) {
-        String key = String.format("atscale.%s.jdbc.password", model);
+        String key = String.format("atscale.%s.jdbc.password", clean(model));
         return getProperty(key);
     }
 
     public static int getAtScaleJdbcMaxPoolSize(String model) {
-        String key = String.format("atscale.%s.jdbc.maxPoolSize", model);
+        String key = String.format("atscale.%s.jdbc.maxPoolSize", clean(model));
         return Integer.parseInt(getProperty(key, "10"));
     }
 
     public static String getAtScaleXmlaConnection(String model) {
-        String key = String.format("atscale.%s.xmla.url", model);
+        String key = String.format("atscale.%s.xmla.url", clean(model));
         return getProperty(key);
     }
 
     public static String getAtScaleXmlaCubeName(String model) {
-        String key = String.format("atscale.%s.xmla.cube", model);
+        String key = String.format("atscale.%s.xmla.cube", clean(model));
         return getProperty(key);
     }
 
     public static String getAtScaleXmlaCatalogName(String model) {
-        String key = String.format("atscale.%s.xmla.catalog", model);
+        String key = String.format("atscale.%s.xmla.catalog", clean(model));
         return getProperty(key);
     }
 
     public static boolean getLogSqlQueryRows(String model) {
-        String key = String.format("atscale.%s.jdbc.log.resultset.rows", model);
+        String key = String.format("atscale.%s.jdbc.log.resultset.rows", clean(model));
         return Boolean.parseBoolean(getProperty(key, "false"));
     }
 
     public static boolean getLogXmlaResponseBody(String model) {
-        String key = String.format("atscale.%s.xmla.log.responsebody", model);
+        String key = String.format("atscale.%s.xmla.log.responsebody", clean(model));
         return Boolean.parseBoolean(getProperty(key, "false"));
     }
 
@@ -118,5 +118,10 @@ public class PropertiesFileReader {
             LOGGER.warn("Using default value for property {}: {}", key, defaultValue);
         }
         return instance.properties.getProperty(key, defaultValue);
+    }
+
+    private static String clean(String input) {
+        String val = StringUtil.stripQuotes(input);
+        return val.replace(" ", "_");
     }
 }
