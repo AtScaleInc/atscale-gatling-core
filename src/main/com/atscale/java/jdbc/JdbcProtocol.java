@@ -33,13 +33,15 @@ public class JdbcProtocol {
 
     private static String getJdbcUrl(String model) {
         String url = PropertiesFileReader.getAtScaleJdbcConnection(model);
-        // Split the URL to encode only the database name
-        int idx = url.indexOf('/', "jdbc:hive2://".length());
-        if (idx > 0 && idx + 1 < url.length()) {
-            String base = url.substring(0, idx + 1);
-            String dbName = url.substring(idx + 1);
-            dbName = URLEncoder.encode(dbName, StandardCharsets.UTF_8).replace("+", "%20");
-            url = base + dbName;
+        // Split the URL to encode only the database name for Hive
+        if(url.toLowerCase().contains("hive")) {
+            int idx = url.indexOf('/', "jdbc:hive2://".length());
+            if (idx > 0 && idx + 1 < url.length()) {
+                String base = url.substring(0, idx + 1);
+                String dbName = url.substring(idx + 1);
+                dbName = URLEncoder.encode(dbName, StandardCharsets.UTF_8).replace("+", "%20");
+                url = base + dbName;
+            }
         }
         return url;
     }
