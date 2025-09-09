@@ -276,6 +276,11 @@
       <artifactId>commons-lang3</artifactId>
       <version>3.18.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-text</artifactId>
+      <version>1.14.0</version>
+    </dependency>
     <!-- Support JDBC for AtScale Installer Version requires Hive JDBC Uber Jar downloaded to /lib.
     It is sourced from https://github.com/timveil/hive-jdbc-uber-jar/releases -->
     <dependency>

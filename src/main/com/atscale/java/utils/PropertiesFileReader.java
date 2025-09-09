@@ -35,6 +35,10 @@ public class PropertiesFileReader {
         return Arrays.asList(models);
     }
 
+    public static String getAtScaleHeapSize() {
+        return getProperty("atscale.gatling.heapsize", "4G");
+    }
+
     public static String getAtScalePostgresURL() {
         String property = instance.properties.getProperty("atscale.postgres.jdbc.url");
         if (property == null || property.isEmpty()) {
@@ -102,6 +106,30 @@ public class PropertiesFileReader {
     public static boolean getLogXmlaResponseBody(String model) {
         String key = String.format("atscale.%s.xmla.log.responsebody", clean(model));
         return Boolean.parseBoolean(getProperty(key, "false"));
+    }
+
+    public static boolean isInstallerVersion(String model) {
+       return ! isContainerVersion(model);
+    }
+
+    public static boolean isContainerVersion(String model) {
+       String xmlaConnection = getAtScaleXmlaConnection(model);
+       return xmlaConnection.toLowerCase().contains("/engine/xmla");
+    }
+
+    public static String getAtScaleXmlaAuthConnection(String model) {
+        String key = String.format("atscale.%s.xmla.auth.url", clean(model));
+        return getProperty(key);
+    }
+
+    public static String getAtScaleXmlaAuthUserName(String model) {
+        String key = String.format("atscale.%s.xmla.auth.username", clean(model));
+        return getProperty(key);
+    }
+
+    public static String getAtScaleXmlaAuthPassword(String model) {
+        String key = String.format("atscale.%s.xmla.auth.password", clean(model));
+        return getProperty(key);
     }
 
     private static String getProperty(String key) {

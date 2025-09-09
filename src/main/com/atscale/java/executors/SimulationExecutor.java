@@ -1,5 +1,6 @@
 package com.atscale.java.executors;
 
+import com.atscale.java.utils.PropertiesFileReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
@@ -11,6 +12,7 @@ public abstract class SimulationExecutor<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(SimulationExecutor.class);
 
     protected void execute() {
+        String heapSize = PropertiesFileReader.getAtScaleHeapSize();
         // Clean up using Maven clean and then install
         // This assumes that the Maven wrapper script (mvnw) is present in the project root directory
         String projectRoot = System.getProperty("user.dir");
@@ -49,6 +51,8 @@ public abstract class SimulationExecutor<T> {
                             task.getSimulationClass(),
                             task.getRunDescription()
                     );
+                    LOGGER.info("Running process with heap size: {}", String.format("-Xmx%s", heapSize));
+                    processBuilder.environment().put("JAVA_OPTS", String.format("-Xmx%s", heapSize));
                     for(String key : task.getGatlingProperties().keySet()) {
                         String value = task.getGatlingProperties().get(key);
                         processBuilder.command().add(String.format("-D%s=%s", key, value));

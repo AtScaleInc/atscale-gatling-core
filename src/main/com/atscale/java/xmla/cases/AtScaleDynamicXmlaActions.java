@@ -60,6 +60,7 @@ public class AtScaleDynamicXmlaActions {
     }
 
     private String injectXmlaQuery(String queryBody, String cube, String catalog) {
+        queryBody = org.apache.commons.text.StringEscapeUtils.escapeXml11(queryBody);
         return String.format("""
                 <Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
                     <Body>
