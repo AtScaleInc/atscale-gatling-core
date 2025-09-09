@@ -15,7 +15,7 @@ public class OpenStepSimulationExecutor extends SimulationExecutor<OpenStep> {
 
         OpenStepSimulationExecutor executor = new OpenStepSimulationExecutor();
         executor.execute();
-        LOGGER.info("SimulationExecutor completed.  Simulations may still be running on separate threads.");
+        LOGGER.info("SimulationExecutor completed.");
     }
 
     protected List<MavenTaskDto> getSimulationTasks() {

@@ -19,24 +19,29 @@ public class XmlaProtocol {
 
     public static HttpProtocolBuilder forXmla(String model) {
         String url = PropertiesFileReader.getAtScaleXmlaConnection(model);
+        Integer maxConnections = PropertiesFileReader.getAtScaleXmlaMaxConnectionsPerHost();
 
         if (PropertiesFileReader.isContainerVersion(model)) {
             LOGGER.info("Configured for container version.  Auth token is part of the URL.");
+            LOGGER.info("Configured for max connections per host: {}", maxConnections);
             return http.baseUrl(url)
                     .contentTypeHeader("text/xml; charset=UTF-8")
-                    .acceptHeader("text/xml");
+                    .acceptHeader("text/xml")
+                    .maxConnectionsPerHost(maxConnections);
         } else {
             LOGGER.info("Configured for installer version.  Will obtain bearer auth token.");
+            LOGGER.info("Configured for max connections per host: {}", maxConnections);
             String authUrl = PropertiesFileReader.getAtScaleXmlaAuthConnection(model);
             String tokenUserName = PropertiesFileReader.getAtScaleXmlaAuthUserName(model);
             String tokenPassword = PropertiesFileReader.getAtScaleXmlaAuthPassword(model);
             String bearerToken = getBearerToken(authUrl, tokenUserName, tokenPassword);
-            LOGGER.info("Obtained bearer token for model {}: {}", model, bearerToken.substring(0, 6));
+            LOGGER.info("Obtained bearer token for model {}: {}*****************", model, bearerToken.substring(0, 15));
 
             return http.baseUrl(url)
                     .contentTypeHeader("text/xml; charset=UTF-8")
                     .acceptHeader("text/xml")
-                    .authorizationHeader(bearerToken);
+                    .authorizationHeader(bearerToken)
+                    .maxConnectionsPerHost(maxConnections);
         }
     }
 

@@ -39,6 +39,14 @@ public class PropertiesFileReader {
         return getProperty("atscale.gatling.heapsize", "4G");
     }
 
+    public static Long getAtScaleThrottleMs() {
+        return Long.parseLong(getProperty("atscale.gatling.throttle.ms", "5"));
+    }
+
+    public static Integer getAtScaleXmlaMaxConnectionsPerHost() {
+        return Integer.parseInt(getProperty("atscale.xmla.maxConnectionsPerHost", "20"));
+    }
+
     public static String getAtScalePostgresURL() {
         String property = instance.properties.getProperty("atscale.postgres.jdbc.url");
         if (property == null || property.isEmpty()) {

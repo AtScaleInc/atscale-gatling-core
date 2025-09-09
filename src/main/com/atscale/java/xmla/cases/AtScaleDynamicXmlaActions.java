@@ -5,6 +5,7 @@ import com.atscale.java.utils.QueryHistoryFileUtil;
 import io.gatling.javaapi.http.HttpRequestActionBuilder;
 import static io.gatling.javaapi.core.CoreDsl.*;
 import static io.gatling.javaapi.http.HttpDsl.*;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,6 +54,7 @@ public class AtScaleDynamicXmlaActions {
         return http(queryName)
                 .post("")
                 .body(StringBody(body))
+                .requestTimeout(java.time.Duration.ofSeconds(120))
                 .check(
                         status().is(200),
                         bodyString().saveAs("responseBody")

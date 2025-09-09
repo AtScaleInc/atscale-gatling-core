@@ -16,7 +16,7 @@ public class ClosedStepSimulationExecutor extends SimulationExecutor<ClosedStep>
 
         ClosedStepSimulationExecutor executor = new ClosedStepSimulationExecutor();
         executor.execute();
-        LOGGER.info("SimulationExecutor completed.  Simulations may still be running on separate threads.");
+        LOGGER.info("SimulationExecutor completed.");
     }
 
     protected List<MavenTaskDto> getSimulationTasks() {

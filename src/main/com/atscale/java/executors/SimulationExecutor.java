@@ -52,7 +52,7 @@ public abstract class SimulationExecutor<T> {
                             task.getRunDescription()
                     );
                     LOGGER.info("Running process with heap size: {}", String.format("-Xmx%s", heapSize));
-                    processBuilder.environment().put("JAVA_OPTS", String.format("-Xmx%s", heapSize));
+                    processBuilder.environment().put("MAVEN_OPTS", String.format("-Xmx%s", heapSize));
                     for(String key : task.getGatlingProperties().keySet()) {
                         String value = task.getGatlingProperties().get(key);
                         processBuilder.command().add(String.format("-D%s=%s", key, value));
