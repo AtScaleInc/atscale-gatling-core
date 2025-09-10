@@ -35,7 +35,7 @@ public class XmlaProtocol {
             String tokenUserName = PropertiesFileReader.getAtScaleXmlaAuthUserName(model);
             String tokenPassword = PropertiesFileReader.getAtScaleXmlaAuthPassword(model);
             String bearerToken = getBearerToken(authUrl, tokenUserName, tokenPassword);
-            LOGGER.info("Obtained bearer token for model {}: {}*****************", model, bearerToken.substring(0, 15));
+            LOGGER.info("Obtained bearer token for user {} and model {}: {}*****************", tokenUserName, model, bearerToken.substring(0, 15));
 
             return http.baseUrl(url)
                     .contentTypeHeader("text/xml; charset=UTF-8")
@@ -44,7 +44,6 @@ public class XmlaProtocol {
                     .maxConnectionsPerHost(maxConnections);
         }
     }
-
 
     public static String getBearerToken(String urlString, String username, String password) {
         LOGGER.info("Getting bearer token from URL: {}", urlString);
@@ -70,7 +69,7 @@ public class XmlaProtocol {
                 return String.format("Bearer %s", response.toString().trim()); // assuming the token is the whole response body
             }
         } catch (IOException e) {
-            LOGGER.error("Error while getting bearer token from {}: {}", urlString, e.getMessage());
+            LOGGER.error("Error while getting bearer token for {} from {}: {}", username, urlString, e.getMessage());
             throw new RuntimeException("Error while getting bearer token: " + e.getMessage(), e);
         }
     }

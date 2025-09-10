@@ -36,7 +36,7 @@ public class AtScaleOpenInjectionStepSimulation extends Simulation{
 
         String url = PropertiesFileReader.getAtScaleJdbcConnection(model);
         if(StringUtils.isNotEmpty(url) && url.toLowerCase().contains("hive")) {
-            //for AtScale Installer Legacy Support - ensure Hive JDBC Driver is loaded
+            //for AtScale Installer Support - ensure Hive JDBC Driver is loaded
             try {
                 Class<?> c = Class.forName("org.apache.hive.jdbc.HiveDriver");
                 LOGGER.info("Hive JDBC Driver found: {}", c.getName());
