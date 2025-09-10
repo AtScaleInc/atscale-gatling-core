@@ -1,6 +1,7 @@
 package com.atscale.java.xmla.cases;
 
 import com.atscale.java.dao.QueryHistoryDto;
+import com.atscale.java.utils.PropertiesFileReader;
 import com.atscale.java.utils.QueryHistoryFileUtil;
 import io.gatling.javaapi.http.HttpRequestActionBuilder;
 import static io.gatling.javaapi.core.CoreDsl.*;
@@ -74,16 +75,19 @@ public class AtScaleDynamicXmlaActions {
                                 <PropertyList>
                                     <Cube>%s</Cube>
                                     <Catalog>%s</Catalog>
-                                    <UseAggregates>true</UseAggregates>
-                                    <GenerateAggregates>false</GenerateAggregates>
-                                    <UseQueryCache>false</UseQueryCache>
-                                    <UseAggregateCache>true</UseAggregateCache>
+                                    <UseAggregates>%s</UseAggregates>
+                                    <GenerateAggregates>%s</GenerateAggregates>
+                                    <UseQueryCache>%s</UseQueryCache>
+                                    <UseAggregateCache>%s</UseAggregateCache>
                                 </PropertyList>
                             </Properties>
                         </Execute>
                     </Body>
                 </Envelope>
-                """, queryBody, cube, catalog);
+                """, queryBody, cube, catalog, PropertiesFileReader.getXmlaUseAggregates(),
+                PropertiesFileReader.getXmlaGenerateAggregates(),
+                PropertiesFileReader.getXmlaUseQueryCache(),
+                PropertiesFileReader.getXmlaUseAggregateCache());
     }
 }
 
