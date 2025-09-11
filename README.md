@@ -1,6 +1,6 @@
 # atscale-gatling-core
 
-Overview
+### Overview
 
 Runs Gatling Tests. Project uses Maven to manage compilation, and testing.
 
@@ -13,7 +13,24 @@ Gatling generates HTML formatted reports, which can be found under: target/gatli
 
 It's possible to run and extend this project.  However, we believe there is an easier path.   Our intent for this project is to build a jar that gets uploaded to Maven Central.  Then to use that jar in a far simpler project.  Refer to the https://github.com/AtScaleInc/atscale-gatling project for a much easier way to run Gatling tests against AtScale.
 
+
+### Quick Start
 Prerequisites should you choose to run this project:
+1. Java 21 (temurin-21)
+2. Run a shell command to install the Hive JDBC driver found in the /lib directory to the maven repository.
+3. Configure systems.properties file
+
+
+Install Hive Driver
+Run this command
+```shell
+./mvnw install:install-file \
+  -Dfile=./lib/hive-jdbc-uber-2.6.3.0-235.jar \
+  -DgroupId=veil.hdp.hive \
+  -DartifactId=hive-jdbc-uber \
+  -Dversion=2.6.3.0-235 \
+  -Dpackaging=jar
+```
 
 Add a properties file named systems.properties to the src/main/resources directory modeled like the example_systems.properties file in the same directory.  
 
@@ -46,20 +63,39 @@ atscale.model1.xmla.cube=cube_name_for_model1
 atscale.model1.xmla.catalog=catalog_name_for_model1
 ```  
 
-Run this command to extract queries from the Atscale database into a files:
+The list of models is comma separated. Copy and paste the model names directly from the AtScale UI. In Java, properties may have spaces, so model names with spaces are supported. However, property keys cannot have spaces. Therefore, in the property keys we replace spaces with underscores. For example, if your model name is Sales Model, then the property key would be atscale.Sales_Model.jdbc.url, etc.
+
+## Extract Queries
+Run one of the following commands to extract queries from the AtScale database into a files:
+
+### AtScale Container Product (Kubernetes)
+
 ```shell
  ./mvnw clean compile exec:java -Dexec.mainClass="com.atscale.java.executors.QueryExtractExecutor"
 ```
 There is also a maven goal defined in the pom.xml file.  The same command can be run using:
 ```shell
- ./mvnw clean compile exec:java@query-extract
+./mvnw clean compile exec:java@query-extract
 ```
-where query-extract is the id of the execution to be run.
+
+### AtScale Installer Product
+```shell
+ ./mvnw clean compile exec:java -Dexec.mainClass="com.atscale.java.executors.InstallerVerQueryExtractExecutor"
+```
+There is also a maven goal defined in the pom.xml file.  The same command can be run using:
+
+```shell
+./mvnw clean compile exec:java@installer-query-extract
+```
+where query-extract, or install-query-extract is the id of the execution to be run.
 
 For details refer to the pom.xml file and look for:  <artifactId>exec-maven-plugin</artifactId>
 
 If run successfully, there will be two files created in the directory /queries for each model defined in the atscale.models property
 
+
+
+## Run Simulations
 Once we have extracted the queries we can run Gatling Scenario Simulations to execute the queries against the Atscale Engine.
 
 The easiest way to run Gatling Simulations is to create an Executor under src/main/com/atscale/java/executors.  The project includes open and closed step executors.  These classes run Gatling Simulations using open steps or closed steps.  Simulations can be run using one of the following commands:

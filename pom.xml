@@ -110,6 +110,15 @@
             </configuration>
           </execution>
           <execution>
+            <id>installer-query-extract</id>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>com.atscale.java.executors.InstallerVerQueryExtractExecutor</mainClass>
+            </configuration>
+          </execution>
+          <execution>
             <id>open-step-simulation-executor</id>
             <goals>
               <goal>java</goal>
