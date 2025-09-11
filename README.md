@@ -65,6 +65,25 @@ atscale.model1.xmla.catalog=catalog_name_for_model1
 
 The list of models is comma separated. Copy and paste the model names directly from the AtScale UI. In Java, properties may have spaces, so model names with spaces are supported. However, property keys cannot have spaces. Therefore, in the property keys we replace spaces with underscores. For example, if your model name is Sales Model, then the property key would be atscale.Sales_Model.jdbc.url, etc.
 
+##### Optional Properties
+The following properties are optional.  If not provided, default values will be used.
+```
+atscale.gatling.heapsize=16G
+atscale.gatling.throttle.ms=100
+atscale.xmla.maxConnectionsPerHost=10
+atscale.xmla.useAggregates=true
+atscale.xmla.generateAggregates=false
+atscale.xmla.useQueryCache=false
+atscale.xmla.useAggregateCache=true
+```
+Default values can be found in the com.atscale.java.utils.PropertyUtils class.
+
+atscale.gatling.throttle.ms -- Introduces a pause between queries to avoid overwhelming the AtScale Engine.  The value is in milliseconds.
+
+atscale.xmla.maxConnectionsPerHost -- The maximum number of connections to the AtScale XMLA endpoint.  This value should be tuned based on the expected user load.
+
+
+
 ## Extract Queries
 Run one of the following commands to extract queries from the AtScale database into a files:
 
