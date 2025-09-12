@@ -24,6 +24,8 @@ public class AtScaleOpenInjectionStepSimulation extends Simulation{
         String model = System.getProperties().getProperty("atscale.model");
         String steps = System.getProperties().getProperty("atscale.gatling.injection.steps");
         String runId = System.getProperties().getProperty("gatling_run_id");
+        String runLogFileName = System.getProperties().getProperty("gatling_run_logFileName");
+        String loggingAsAppend = System.getProperties().getProperty("gatling_run_logAppend");
 
         if (model == null || model.isEmpty()) {
             LOGGER.error("AtScale model is not specified. Please set the 'atscale.model' system property.");
@@ -33,6 +35,8 @@ public class AtScaleOpenInjectionStepSimulation extends Simulation{
         LOGGER.info("Simulation class {} Gatling run ID: {}", this.getClass().getName(), runId);
         LOGGER.info("Using model: {}", model);
         LOGGER.info("Using injection steps: {}", steps);
+        LOGGER.info("Using log file name: {}", runLogFileName);
+        LOGGER.info("Logging as append: {}", loggingAsAppend);
 
         String url = PropertiesFileReader.getAtScaleJdbcConnection(model);
         if(StringUtils.isNotEmpty(url) && url.toLowerCase().contains("hive")) {

@@ -22,6 +22,9 @@ public class AtScaleXmlaClosedInjectionStepSimulation extends Simulation {
     public AtScaleXmlaClosedInjectionStepSimulation() {
         String model = System.getProperties().getProperty("atscale.model");
         String runId = System.getProperties().getProperty("gatling_run_id");
+        String runLogFileName = System.getProperties().getProperty("gatling_run_logFileName");
+        String loggingAsAppend = System.getProperties().getProperty("gatling_run_logAppend");
+
         String cube = PropertiesFileReader.getAtScaleXmlaCubeName(model);
         String catalog = PropertiesFileReader.getAtScaleXmlaCatalogName(model);
         String steps = System.getProperties().getProperty("atscale.gatling.injection.steps");
@@ -33,6 +36,8 @@ public class AtScaleXmlaClosedInjectionStepSimulation extends Simulation {
         LOGGER.info("Simulation class {} Gatling run ID: {}", this.getClass().getName(), runId);
         LOGGER.info("Using model: {}", model);
         LOGGER.info("Using injection steps: {}", steps);
+        LOGGER.info("Using log file name: {}", runLogFileName);
+        LOGGER.info("Logging as append: {}", loggingAsAppend);
 
         List<ClosedStep> ClosedSteps = InjectionStepJsonUtil.closedInjectionStepsFromJson(steps);
         List<ClosedInjectionStep> injectionSteps = new ArrayList<>();
