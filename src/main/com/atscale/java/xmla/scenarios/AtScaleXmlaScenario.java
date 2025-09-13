@@ -10,6 +10,7 @@ import io.gatling.javaapi.core.ScenarioBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -32,6 +33,7 @@ public class AtScaleXmlaScenario {
      */
     public ScenarioBuilder buildScenario(String model, String cube, String catalog, String gatlingRunId) {
         boolean logResponseBody = PropertiesFileReader.getLogXmlaResponseBody(model);
+        Long throttleBy = PropertiesFileReader.getAtScaleThrottleMs();
         AtScaleDynamicXmlaActions xmlaActions = new AtScaleDynamicXmlaActions();
         NamedHttpRequestActionBuilder[] builders = xmlaActions.createPayloadsXmlaQueries(model, cube, catalog);
 
@@ -57,7 +59,8 @@ public class AtScaleXmlaScenario {
                                                 gatlingRunId, session.userId(), model, cube, catalog, namedBuilder.queryName, start, end, duration, responseSize, HashUtil.TO_MD5(body));
                                     }
                                     return session;
-                                }))
+                                }).pause(Duration.ofMillis(throttleBy))
+                )
                 .collect(Collectors.toList());
 
         return scenario("AtScale XMLA Scenario").exec(chains).pause(10);

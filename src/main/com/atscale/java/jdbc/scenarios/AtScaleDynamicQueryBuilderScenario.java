@@ -31,6 +31,7 @@ public class AtScaleDynamicQueryBuilderScenario {
     public ScenarioBuilder buildScenario(String model, String gatlingRunId) {
         NamedQueryActionBuilder[] namedBuilders = AtScaleDynamicJdbcActions.createBuildersJdbcQueries(model);
         boolean logRows = PropertiesFileReader.getLogSqlQueryRows(model);
+        Long throttleBy = PropertiesFileReader.getAtScaleThrottleMs();
 
         List<ChainBuilder> chains = Arrays.stream(namedBuilders)
                 .map(namedBuilder ->
@@ -53,7 +54,8 @@ public class AtScaleDynamicQueryBuilderScenario {
                                         }
                                     }
                                     return session;
-                                }))
+                                }).pause(throttleBy)
+                )
                 .collect(Collectors.toList());
 
         // pause the scenario executions at 10 milliseconds apart

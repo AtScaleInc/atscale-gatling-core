@@ -4,9 +4,11 @@ import com.atscale.java.jdbc.scenarios.AtScaleDynamicQueryBuilderScenario;
 import com.atscale.java.injectionsteps.ClosedStep;
 import com.atscale.java.jdbc.JdbcProtocol;
 import com.atscale.java.utils.InjectionStepJsonUtil;
+import com.atscale.java.utils.PropertiesFileReader;
 import io.gatling.javaapi.core.ClosedInjectionStep;
 import io.gatling.javaapi.core.ScenarioBuilder;
 import io.gatling.javaapi.core.Simulation;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.time.Duration;
@@ -31,6 +33,17 @@ public class AtScaleClosedInjectionStepSimulation extends Simulation{
         LOGGER.info("Simulation class {} Gatling run ID: {}", this.getClass().getName(), runId);
         LOGGER.info("Using model: {}", model);
         LOGGER.info("Using injection steps: {}", steps);
+
+        String url = PropertiesFileReader.getAtScaleJdbcConnection(model);
+        if(StringUtils.isNotEmpty(url) && url.toLowerCase().contains("hive")) {
+            //for AtScale Installer Support - ensure Hive JDBC Driver is loaded
+            try {
+                Class<?> c = Class.forName("org.apache.hive.jdbc.HiveDriver");
+                LOGGER.info("Hive JDBC Driver found: {}", c.getName());
+            } catch (ClassNotFoundException e) {
+                LOGGER.error("Hive JDBC Driver not found in classpath.", e);
+            }
+        }
 
         List<ClosedStep> closedSteps = InjectionStepJsonUtil.closedInjectionStepsFromJson(steps);
         List<ClosedInjectionStep> injectionSteps = new ArrayList<>();

@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.atscale.gatling</groupId>
   <artifactId>atscale-gatling-core</artifactId>
-  <version>1.01</version>
+  <version>1.1</version>
   <packaging>jar</packaging>
 
   <name>atscale_gatling</name>
@@ -107,6 +107,15 @@
             </goals>
             <configuration>
               <mainClass>com.atscale.java.executors.QueryExtractExecutor</mainClass>
+            </configuration>
+          </execution>
+          <execution>
+            <id>installer-query-extract</id>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>com.atscale.java.executors.InstallerVerQueryExtractExecutor</mainClass>
             </configuration>
           </execution>
           <execution>
@@ -275,6 +284,19 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>3.18.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-text</artifactId>
+      <version>1.14.0</version>
+    </dependency>
+    <!-- Support JDBC for AtScale Installer Version requires Hive JDBC Uber Jar downloaded to /lib.
+    It is sourced from https://github.com/timveil/hive-jdbc-uber-jar/releases
+    Install this from /lib by running the ConfigurationExecutor -->
+    <dependency>
+      <groupId>veil.hdp.hive</groupId>
+      <artifactId>hive-jdbc-uber</artifactId>
+      <version>2.6.3.0-235</version>
     </dependency>
   </dependencies>
 </project>

@@ -10,7 +10,8 @@ import java.util.ArrayList;
 public class AtScalePostgresDao {
     public enum QueryLanguage {
         SQL("pgsql"),
-        XMLA("analysis");
+        XMLA("analysis"),
+        INSTALLER_SQL("sql");
 
         private final String value;
 
@@ -28,50 +29,47 @@ public class AtScalePostgresDao {
     private static final AtScalePostgresDao INSTANCE = new AtScalePostgresDao();
     private static final String query = """
             SELECT
-                q.service,
-                q.query_language,
-                q.query_text as inbound_text,
-                s.subquery_text as outbound_text,
-                p.cube_name,
-                p.project_id,
-                case when s.subquery_text like '%as_agg_%' then true else false end as used_agg,
-                COUNT(*)                             AS num_times,
-                AVG(r.finished - p.planning_started) AS elasped_time_in_seconds,
-                AVG(r.result_size)                   AS avg_result_size
-            FROM
-                atscale.engine.queries q
-            INNER JOIN
-                atscale.engine.query_results r
-            ON
-                q.query_id=r.query_id
-            INNER JOIN
-                atscale.engine.queries_planned p
-            ON
-                q.query_id=p.query_id
-            INNER JOIN
-                atscale.engine.subqueries s
-            ON
-                q.query_id=s.query_id
-            WHERE
-                q.query_language = ?
-            AND p.planning_started > current_timestamp - interval '60 day'
-            and p.cube_name = ?
-            AND q.service = 'user-query'
-            AND r.succeeded = true
-            AND LENGTH(q.query_text) > 100
-            AND q.query_text NOT LIKE '/* Virtual query to get the members of a level */%'
-            GROUP BY
-                1,
-                2,
-                3,
-                4,
-                5,
-                6,
-                7
-            ORDER BY
-                8 DESC,
-                9 DESC,
-                10 DESC
+                        q.service,
+                        q.query_language,
+                        q.query_text as inbound_text,
+                        MAX(s.subquery_text) as outbound_text,
+                        p.cube_name,
+                        p.project_id,
+                        case when MAX(s.subquery_text) like '%as_agg_%' then true else false end as used_agg,
+                        COUNT(*)                             AS num_times,
+                        AVG(r.finished - p.planning_started) AS elasped_time_in_seconds,
+                        AVG(r.result_size)                   AS avg_result_size
+                    FROM
+                        atscale.engine.queries q
+                    INNER JOIN
+                        atscale.engine.query_results r
+                    ON
+                        q.query_id=r.query_id
+                    INNER JOIN
+                        atscale.engine.queries_planned p
+                    ON
+                        q.query_id=p.query_id
+                    INNER JOIN
+                        atscale.engine.subqueries s
+                    ON
+                        q.query_id=s.query_id
+                    WHERE
+                        q.query_language = ?
+                    AND p.planning_started > current_timestamp - interval '60 day'
+                    and p.cube_name = ?
+                    AND q.service = 'user-query'
+                    AND r.succeeded = true
+                    AND LENGTH(q.query_text) > 100
+                    AND q.query_text NOT LIKE '/* Virtual query to get the members of a level */%'
+                    AND q.query_text NOT LIKE '-- statement does not return rows%'
+                    GROUP BY
+                        1,
+                        2,
+                        3,
+                        5,
+                        6
+                    HAVING COUNT(*) >= 1
+                    ORDER BY 3
     """;
 
     private AtScalePostgresDao() {

@@ -4,57 +4,84 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
+import javax.xml.stream.*;
 
 public class SoapUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(SoapUtil.class);
 
     public static String extractSoapBody(String xml) {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
+        XMLInputFactory factory = XMLInputFactory.newInstance();
+        StringWriter writer = new StringWriter();
+        boolean inBody = false;
+        int depth = 0;
         try {
-            Document doc = factory.newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
-            // clear the lastDataUpdate content to avoid MD5 differences
-            NodeList lastDataUpdateList = doc.getElementsByTagNameNS(
-                    "http://schemas.microsoft.com/analysisservices/2003/engine", "LastDataUpdate");
-            if (lastDataUpdateList.getLength() != 0) {
-                lastDataUpdateList.item(0).setTextContent(""); // Exists clear the content
-            }
+            XMLStreamReader reader = factory.createXMLStreamReader(new StringReader(xml));
+            XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+            XMLStreamWriter xmlWriter = outputFactory.createXMLStreamWriter(writer);
 
-            NodeList bodyList = doc.getElementsByTagNameNS("*", "Body");
-            if (bodyList.getLength() == 0) return null;
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            StringWriter writer = new StringWriter();
-            transformer.transform(new DOMSource(bodyList.item(0)), new StreamResult(writer));
-            return writer.toString();
-        } catch (SAXException | IOException | ParserConfigurationException | TransformerException e) {
-            LOGGER.error("Failed to extract SOAP body from {}",xml, e);
+            while (reader.hasNext()) {
+                int event = reader.next();
+                if (event == XMLStreamConstants.START_ELEMENT && "Body".equals(reader.getLocalName())) {
+                    inBody = true;
+                    depth = 1;
+                    xmlWriter.writeStartElement(reader.getPrefix(), reader.getLocalName(), reader.getNamespaceURI());
+                    for (int i = 0; i < reader.getNamespaceCount(); i++) {
+                        xmlWriter.writeNamespace(reader.getNamespacePrefix(i), reader.getNamespaceURI(i));
+                    }
+                    for (int i = 0; i < reader.getAttributeCount(); i++) {
+                        xmlWriter.writeAttribute(reader.getAttributeLocalName(i), reader.getAttributeValue(i));
+                    }
+                    continue;
+                }
+                if (inBody) {
+                    switch (event) {
+                        case XMLStreamConstants.START_ELEMENT:
+                            depth++;
+                            xmlWriter.writeStartElement(reader.getPrefix(), reader.getLocalName(), reader.getNamespaceURI());
+                            for (int i = 0; i < reader.getNamespaceCount(); i++) {
+                                xmlWriter.writeNamespace(reader.getNamespacePrefix(i), reader.getNamespaceURI(i));
+                            }
+                            for (int i = 0; i < reader.getAttributeCount(); i++) {
+                                xmlWriter.writeAttribute(reader.getAttributeLocalName(i), reader.getAttributeValue(i));
+                            }
+                            break;
+                        case XMLStreamConstants.CHARACTERS:
+                            xmlWriter.writeCharacters(reader.getText());
+                            break;
+                        case XMLStreamConstants.END_ELEMENT:
+                            xmlWriter.writeEndElement();
+                            depth--;
+                            if (depth == 0) {
+                                xmlWriter.flush();
+                                return writer.toString();
+                            }
+                            break;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.error("Failed to extract SOAP body from {}", xml, e);
+            return "FAILED_TO_EXTRACT_SOAP_BODY";
         }
-        return "FAILED_TO_EXTRACT_SOAP_BODY";
+        return null;
     }
 
-    public static String extractQueryId(String xml)  {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
+    public static String extractQueryId(String xml) {
+        XMLInputFactory factory = XMLInputFactory.newInstance();
         try {
-            Document doc = factory.newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
-            NodeList queryIdList = doc.getElementsByTagNameNS("http://xsd.atscale.com/soap_v1", "queryId");
-            if (queryIdList.getLength() == 0) return null;
-            return queryIdList.item(0).getTextContent();
-        } catch (SAXException | IOException | ParserConfigurationException e) {
-            LOGGER.error("Failed to extract QueryId from {}",xml, e);
+            XMLStreamReader reader = factory.createXMLStreamReader(new StringReader(xml));
+            while (reader.hasNext()) {
+                int event = reader.next();
+                if (event == XMLStreamConstants.START_ELEMENT
+                        && "queryId".equals(reader.getLocalName())
+                        && "http://xsd.atscale.com/soap_v1".equals(reader.getNamespaceURI())) {
+                    return reader.getElementText();
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.error("Failed to extract QueryId from {}", xml, e);
         }
         return "FAILED_TO_EXTRACT_QUERY_ID";
     }

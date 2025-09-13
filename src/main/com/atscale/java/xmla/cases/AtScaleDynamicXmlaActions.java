@@ -1,10 +1,12 @@
 package com.atscale.java.xmla.cases;
 
 import com.atscale.java.dao.QueryHistoryDto;
+import com.atscale.java.utils.PropertiesFileReader;
 import com.atscale.java.utils.QueryHistoryFileUtil;
 import io.gatling.javaapi.http.HttpRequestActionBuilder;
 import static io.gatling.javaapi.core.CoreDsl.*;
 import static io.gatling.javaapi.http.HttpDsl.*;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,6 +55,7 @@ public class AtScaleDynamicXmlaActions {
         return http(queryName)
                 .post("")
                 .body(StringBody(body))
+                .requestTimeout(java.time.Duration.ofSeconds(120))
                 .check(
                         status().is(200),
                         bodyString().saveAs("responseBody")
@@ -60,6 +63,7 @@ public class AtScaleDynamicXmlaActions {
     }
 
     private String injectXmlaQuery(String queryBody, String cube, String catalog) {
+        queryBody = org.apache.commons.text.StringEscapeUtils.escapeXml11(queryBody);
         return String.format("""
                 <Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
                     <Body>
@@ -71,16 +75,19 @@ public class AtScaleDynamicXmlaActions {
                                 <PropertyList>
                                     <Cube>%s</Cube>
                                     <Catalog>%s</Catalog>
-                                    <UseAggregates>true</UseAggregates>
-                                    <GenerateAggregates>false</GenerateAggregates>
-                                    <UseQueryCache>false</UseQueryCache>
-                                    <UseAggregateCache>true</UseAggregateCache>
+                                    <UseAggregates>%s</UseAggregates>
+                                    <GenerateAggregates>%s</GenerateAggregates>
+                                    <UseQueryCache>%s</UseQueryCache>
+                                    <UseAggregateCache>%s</UseAggregateCache>
                                 </PropertyList>
                             </Properties>
                         </Execute>
                     </Body>
                 </Envelope>
-                """, queryBody, cube, catalog);
+                """, queryBody, cube, catalog, PropertiesFileReader.getXmlaUseAggregates(),
+                PropertiesFileReader.getXmlaGenerateAggregates(),
+                PropertiesFileReader.getXmlaUseQueryCache(),
+                PropertiesFileReader.getXmlaUseAggregateCache());
     }
 }
 
