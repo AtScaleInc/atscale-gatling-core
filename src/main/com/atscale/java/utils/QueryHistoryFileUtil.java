@@ -122,13 +122,11 @@ public class QueryHistoryFileUtil {
 
     public static String getXmlaFilePath(String model) {
         model = StringUtil.stripQuotes(model);
-        System.out.println("Method: getXmlaFilePath for Model: " + model);
         return String.format("queries/%s_xmla_queries.json", model);
     }
 
     public static String getJdbcFilePath(String model) {
         model = StringUtil.stripQuotes(model);
-        System.out.println("Method: getJdbcFilePath for Model: " + model);
         return String.format("queries/%s_jdbc_queries.json", model);
     }
 
