@@ -37,7 +37,7 @@ public abstract class SimulationExecutor<T> {
         List<Thread> taskThreads = new java.util.ArrayList<>();
         List<MavenTaskDto> tasks = getSimulationTasks();
 
-        for(MavenTaskDto task: tasks) {
+        for (MavenTaskDto task : tasks) {
             Thread taskThread = new Thread(() -> {
                 LOGGER.info("Running task: {}", task.getTaskName());
                 LOGGER.info("Maven Command: {}", task.getMavenCommand());
@@ -53,7 +53,7 @@ public abstract class SimulationExecutor<T> {
                     );
                     LOGGER.info("Running process with heap size: {}", String.format("-Xmx%s", heapSize));
                     processBuilder.environment().put("MAVEN_OPTS", String.format("-Xmx%s", heapSize));
-                    for(String key : task.getGatlingProperties().keySet()) {
+                    for (String key : task.getGatlingProperties().keySet()) {
                         String value = task.getGatlingProperties().get(key);
                         processBuilder.command().add(String.format("-D%s=%s", key, value));
                     }
@@ -68,14 +68,14 @@ public abstract class SimulationExecutor<T> {
                 } catch (IOException | InterruptedException e) {
                     throw new RuntimeException("Failed to run task: " + task.getTaskName(), e);
                 }
-        }
-        );
+            }
+            );
             taskThread.start();
             taskThreads.add(taskThread);
         }
 
         // Have the current thread wait for all task threads to complete
-        for(Thread taskThread : taskThreads) {
+        for (Thread taskThread : taskThreads) {
             try {
                 taskThread.join();
             } catch (InterruptedException e) {

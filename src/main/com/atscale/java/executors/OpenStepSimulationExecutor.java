@@ -22,37 +22,42 @@ public class OpenStepSimulationExecutor extends SimulationExecutor<OpenStep> {
         List<MavenTaskDto> tasks = new ArrayList<>();
 
         List<OpenStep> t1InjectionSteps = new ArrayList<>();
-        t1InjectionSteps.add(new AtOnceUsersOpenInjectionStep(2));
+        t1InjectionSteps.add(new AtOnceUsersOpenInjectionStep(1));
         //t1InjectionSteps.add(new NothingForOpenInjectionStep(1));
         //t1InjectionSteps.add(new RampUsersOpenInjectionStep(15, 3));
 
         List<OpenStep> t2InjectionSteps = new ArrayList<>();
-        t2InjectionSteps.add(new AtOnceUsersOpenInjectionStep(2));
+        t2InjectionSteps.add(new AtOnceUsersOpenInjectionStep(1));
 
         List<OpenStep> t3InjectionSteps = new ArrayList<>();
-        t3InjectionSteps.add(new AtOnceUsersOpenInjectionStep(2));
+        t3InjectionSteps.add(new AtOnceUsersOpenInjectionStep(1));
         //t3InjectionSteps.add(new RampUsersPerSecOpenInjectionStep(10, 35, 2));
 
 
-        MavenTaskDto task1 = new MavenTaskDto("Internet Sales XMLA Ramped User Simulation");
+        MavenTaskDto task1 = new MavenTaskDto("Internet Sales XMLA Simulation");
         tasks.add(task1);
         task1.setMavenCommand("gatling:test");
+        task1.setRunLogFileName("internet_sales_xmla.log");
+        task1.setLoggingAsAppend(true);
         task1.setSimulationClass("com.atscale.java.xmla.simulations.AtScaleXmlaOpenInjectionStepSimulation");
         task1.setRunDescription("Internet Sales XMLA Model Tests");
         task1.addGatlingProperty("atscale.model", "internet_sales");
         task1.addGatlingProperty("atscale.gatling.injection.steps", injectionStepsAsJson(t1InjectionSteps));
 
-        MavenTaskDto task2 = new MavenTaskDto("Internet Sales JDBC 10 User Simulation");
+        MavenTaskDto task2 = new MavenTaskDto("Internet Sales JDBC Simulation");
         tasks.add(task2);
         task2.setMavenCommand("gatling:test");
+        task2.setRunLogFileName("internet_sales.log");
+        task2.setLoggingAsAppend(true);
         task2.setSimulationClass("com.atscale.java.jdbc.simulations.AtScaleOpenInjectionStepSimulation");
         task2.setRunDescription("Internet Sales JDBC Model Tests");
         task2.addGatlingProperty("atscale.model", "internet_sales");
         task2.addGatlingProperty("atscale.gatling.injection.steps", injectionStepsAsJson(t2InjectionSteps));
 
-        MavenTaskDto task3 = new MavenTaskDto("TPC-DS JDBC 10 Initial Users Ramping to 35 Simulation");
+        MavenTaskDto task3 = new MavenTaskDto("TPC-DS JDBC Simulation");
         tasks.add(task3);
         task3.setMavenCommand("gatling:test");
+        task3.setRunLogFileName("tpcds_benchmark.log");
         task3.setSimulationClass("com.atscale.java.jdbc.simulations.AtScaleOpenInjectionStepSimulation");
         task3.setRunDescription("TPCDS JDBC Model Tests");
         task3.addGatlingProperty("atscale.model", "tpcds_benchmark_model");

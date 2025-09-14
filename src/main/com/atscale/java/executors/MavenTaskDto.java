@@ -16,7 +16,10 @@ public class MavenTaskDto {
     public MavenTaskDto(String taskName) {
         gatlingProperties = new HashMap<>();
         this.taskName = taskName;
-        generateRunId();
+        String runId = generateRunId();
+        setRunId(runId);
+        setRunLogFileName(String.format("gatling-%s.log", runId));  //default value
+        setLoggingAsAppend(false);
     }
 
     public String getTaskName() {
@@ -60,11 +63,35 @@ public class MavenTaskDto {
         gatlingProperties.put(key, value);
     }
 
-    private void generateRunId() {
+    private String generateRunId() {
         // Generate a timestamp-based run ID combined with a random alphanumeric string
         // This value is picked up in the logback.xml file where it is used to create a unique log file name
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         String random = org.apache.commons.lang3.RandomStringUtils.secure().nextAlphanumeric(10);
-        addGatlingProperty("gatling_run_id", String.format("%s-%s", timestamp, random));
+        return String.format("%s-%s", timestamp, random);
+    }
+
+    private void setRunId(String runId) {
+        addGatlingProperty("gatling_run_id", runId);
+    }
+
+    public void setRunLogFileName(String fileName) {
+        addGatlingProperty("gatling_run_logFileName", fileName);
+    }
+
+    public void setLoggingAsAppend(boolean append) {
+        if(append) {
+            setLoggingToAppend();
+        } else {
+            setLoggingToOverwrite();
+        }
+    }
+
+    private void setLoggingToAppend() {
+        addGatlingProperty("gatling_run_logAppend", "true");
+    }
+
+    private void setLoggingToOverwrite() {
+        addGatlingProperty("gatling_run_logAppend", "false");
     }
 }

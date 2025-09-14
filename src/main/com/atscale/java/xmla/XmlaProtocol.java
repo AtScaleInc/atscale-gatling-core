@@ -35,7 +35,7 @@ public class XmlaProtocol {
             String tokenUserName = PropertiesFileReader.getAtScaleXmlaAuthUserName(model);
             String tokenPassword = PropertiesFileReader.getAtScaleXmlaAuthPassword(model);
             String bearerToken = getBearerToken(authUrl, tokenUserName, tokenPassword);
-            LOGGER.info("Obtained bearer token for user {} and model {}: {}*****************", tokenUserName, model, bearerToken.substring(0, 15));
+            LOGGER.info("Obtained bearer token for user {} and model {}.", tokenUserName, model);
 
             return http.baseUrl(url)
                     .contentTypeHeader("text/xml; charset=UTF-8")

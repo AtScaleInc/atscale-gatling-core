@@ -21,9 +21,11 @@ public class AtScaleXmlaOpenInjectionStepSimulation extends Simulation {
     public AtScaleXmlaOpenInjectionStepSimulation() {
         String model = System.getProperties().getProperty("atscale.model");
         String runId = System.getProperties().getProperty("gatling_run_id");
+        String runLogFileName = System.getProperties().getProperty("gatling_run_logFileName");
+        String loggingAsAppend = System.getProperties().getProperty("gatling_run_logAppend");
+
         String cube = PropertiesFileReader.getAtScaleXmlaCubeName(model);
         String catalog = PropertiesFileReader.getAtScaleXmlaCatalogName(model);
-
         String steps = System.getProperties().getProperty("atscale.gatling.injection.steps");
         if (model == null || model.isEmpty()) {
             LOGGER.error("AtScale model is not specified. Please set the 'atscale.model' system property.");
@@ -33,6 +35,8 @@ public class AtScaleXmlaOpenInjectionStepSimulation extends Simulation {
         LOGGER.info("Simulation class {} Gatling run ID: {}", this.getClass().getName(), runId);
         LOGGER.info("Using model: {}", model);
         LOGGER.info("Using injection steps: {}", steps);
+        LOGGER.info("Using log file name: {}", runLogFileName);
+        LOGGER.info("Logging as append: {}", loggingAsAppend);
 
         List<OpenStep> openSteps = InjectionStepJsonUtil.openInjectionStepsFromJson(steps);
         List<io.gatling.javaapi.core.OpenInjectionStep> injectionSteps = new ArrayList<>();
