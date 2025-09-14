@@ -34,7 +34,7 @@ public class OpenStepSimulationExecutor extends SimulationExecutor<OpenStep> {
         //t3InjectionSteps.add(new RampUsersPerSecOpenInjectionStep(10, 35, 2));
 
 
-        MavenTaskDto task1 = new MavenTaskDto("Internet Sales XMLA Ramped User Simulation");
+        MavenTaskDto task1 = new MavenTaskDto("Internet Sales XMLA Simulation");
         tasks.add(task1);
         task1.setMavenCommand("gatling:test");
         task1.setRunLogFileName("internet_sales_xmla.log");
@@ -44,7 +44,7 @@ public class OpenStepSimulationExecutor extends SimulationExecutor<OpenStep> {
         task1.addGatlingProperty("atscale.model", "internet_sales");
         task1.addGatlingProperty("atscale.gatling.injection.steps", injectionStepsAsJson(t1InjectionSteps));
 
-        MavenTaskDto task2 = new MavenTaskDto("Internet Sales JDBC 10 User Simulation");
+        MavenTaskDto task2 = new MavenTaskDto("Internet Sales JDBC Simulation");
         tasks.add(task2);
         task2.setMavenCommand("gatling:test");
         task2.setRunLogFileName("internet_sales.log");
@@ -54,13 +54,13 @@ public class OpenStepSimulationExecutor extends SimulationExecutor<OpenStep> {
         task2.addGatlingProperty("atscale.model", "internet_sales");
         task2.addGatlingProperty("atscale.gatling.injection.steps", injectionStepsAsJson(t2InjectionSteps));
 
-        MavenTaskDto task3 = new MavenTaskDto("TPC-DS JDBC 10 Initial Users Ramping to 35 Simulation");
+        MavenTaskDto task3 = new MavenTaskDto("TPC-DS JDBC Simulation");
         tasks.add(task3);
         task3.setMavenCommand("gatling:test");
         task3.setRunLogFileName("tpcds_benchmark.log");
         task3.setSimulationClass("com.atscale.java.jdbc.simulations.AtScaleOpenInjectionStepSimulation");
         task3.setRunDescription("TPCDS JDBC Model Tests");
-        task3.addGatlingProperty("atscale.model", "internet_sales");
+        task3.addGatlingProperty("atscale.model", "tpcds_benchmark_model");
         task3.addGatlingProperty("atscale.gatling.injection.steps", injectionStepsAsJson(t3InjectionSteps));
         return tasks;
     }

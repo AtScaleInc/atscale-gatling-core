@@ -50,17 +50,6 @@ public class AtScaleClosedInjectionStepSimulation extends Simulation{
             }
         }
 
-        String url = PropertiesFileReader.getAtScaleJdbcConnection(model);
-        if(StringUtils.isNotEmpty(url) && url.toLowerCase().contains("hive")) {
-            //for AtScale Installer Support - ensure Hive JDBC Driver is loaded
-            try {
-                Class<?> c = Class.forName("org.apache.hive.jdbc.HiveDriver");
-                LOGGER.info("Hive JDBC Driver found: {}", c.getName());
-            } catch (ClassNotFoundException e) {
-                LOGGER.error("Hive JDBC Driver not found in classpath.", e);
-            }
-        }
-
         List<ClosedStep> closedSteps = InjectionStepJsonUtil.closedInjectionStepsFromJson(steps);
         List<ClosedInjectionStep> injectionSteps = new ArrayList<>();
         for (ClosedStep step : closedSteps) {
