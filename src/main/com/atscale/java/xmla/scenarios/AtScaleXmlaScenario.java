@@ -49,15 +49,14 @@ public class AtScaleXmlaScenario {
                                     long start = session.getLong("queryStart");
                                     long duration = end - start;
                                     int responseSize = response == null? 0: response.length();
-                                    String body = SoapUtil.extractSoapBody(response) == null ? "" : SoapUtil.extractSoapBody(response);
-                                    LOGGER.debug("Extracted Response Body: {}", body);
                                     if(logResponseBody) {
-                                        SESSION_LOGGER.info("xmlaLog gatlingRunId={} gatlingSessionId={} model='{}' cube='{}' catalog='{}' queryName='{}' start={} end={} duration={} responseSize={} queryId={} responsehash={} response={}",
-                                                gatlingRunId, session.userId(), model, cube, catalog, namedBuilder.queryName, start, end, duration, responseSize, SoapUtil.extractQueryId(response), HashUtil.TO_MD5(body), response);
+                                        SESSION_LOGGER.info("xmlaLog gatlingRunId={} gatlingSessionId={} model='{}' cube='{}' catalog='{}' queryName='{}' start={} end={} duration={} responseSize={} response={}",
+                                                gatlingRunId, session.userId(), model, cube, catalog, namedBuilder.queryName, start, end, duration, responseSize, response);
                                     } else {
-                                        SESSION_LOGGER.info("xmlaLog gatlingRunId={} gatlingSessionId={} model='{}' cube='{}' catalog='{}' queryName='{}' start={} end={} duration={} responseSize={} responsehash={}",
-                                                gatlingRunId, session.userId(), model, cube, catalog, namedBuilder.queryName, start, end, duration, responseSize, HashUtil.TO_MD5(body));
+                                        SESSION_LOGGER.info("xmlaLog gatlingRunId={} gatlingSessionId={} model='{}' cube='{}' catalog='{}' queryName='{}' start={} end={} duration={} responseSize={}",
+                                                gatlingRunId, session.userId(), model, cube, catalog, namedBuilder.queryName, start, end, duration, responseSize);
                                     }
+
                                     return session;
                                 }).pause(Duration.ofMillis(throttleBy))
                 )

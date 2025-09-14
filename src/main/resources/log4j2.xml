@@ -21,21 +21,21 @@
                 </Delete>
             </DefaultRolloverStrategy>
         </RollingFile>
-        <Async name="ASYNC_APP_LOG" bufferSize="5000">
+        <Async name="ASYNC_APP_LOG" bufferSize="50">
             <AppenderRef ref="APP_LOG"/>
             <Blocking>false</Blocking>
         </Async>
         <File name="SQL" fileName="run_logs/${simulation_logFileName}" append="${simulation_logAppend}">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m %X%n"/>
         </File>
-        <Async name="ASYNC_SQL" bufferSize="10000">
+        <Async name="ASYNC_SQL" bufferSize="50">
             <AppenderRef ref="SQL"/>
             <Blocking>false</Blocking>
         </Async>
         <File name="XMLA" fileName="run_logs/${simulation_logFileName}" append="${simulation_logAppend}">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m %X%n"/>
         </File>
-        <Async name="ASYNC_XMLA" bufferSize="10000">
+        <Async name="ASYNC_XMLA" bufferSize="50">
             <AppenderRef ref="XMLA"/>
             <Blocking>false</Blocking>
         </Async>
