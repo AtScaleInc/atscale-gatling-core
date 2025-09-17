@@ -16,9 +16,10 @@ public abstract class SimulationExecutor<T> {
         // Clean up using Maven clean and then install
         // This assumes that the Maven wrapper script (mvnw) is present in the project root directory
         String projectRoot = System.getProperty("user.dir");
+        String mavenScript = getMavenWrapperScript(projectRoot);
 
         try {
-            ProcessBuilder processBuilder = new ProcessBuilder(String.format("%s/mvnw", projectRoot), "clean", "compile");
+            ProcessBuilder processBuilder = new ProcessBuilder(mavenScript, "clean", "compile");
             Process process = processBuilder.start();
             process.waitFor(); // Wait for the process to complete
             if (process.exitValue() != 0) {
@@ -46,7 +47,7 @@ public abstract class SimulationExecutor<T> {
 
                 try {
                     ProcessBuilder processBuilder = new ProcessBuilder(
-                            String.format("%s/mvnw", projectRoot),
+                            mavenScript,
                             task.getMavenCommand(),
                             task.getSimulationClass(),
                             task.getRunDescription()
@@ -100,6 +101,11 @@ public abstract class SimulationExecutor<T> {
                 }
             }
         }
+    }
+
+    private String getMavenWrapperScript(String projectRoot) {
+        String osName = System.getProperty("os.name").toLowerCase();
+        return osName.contains("win") ? projectRoot + "/mvnw.cmd" : projectRoot + "/mvnw";
     }
 
     protected abstract List<MavenTaskDto> getSimulationTasks();
