@@ -22,15 +22,16 @@ Prerequisites should you choose to run this project:
 
 
 Install Hive Driver
-Run this command
+
+MacOS or Linux Run this command
 ```shell
-./mvnw install:install-file \
-  -Dfile=./lib/hive-jdbc-uber-2.6.3.0-235.jar \
-  -DgroupId=veil.hdp.hive \
-  -DartifactId=hive-jdbc-uber \
-  -Dversion=2.6.3.0-235 \
-  -Dpackaging=jar
+./mvnw -X install:install-file -Dfile=./lib/hive-jdbc-uber-2.6.3.0-235.jar -DpomFile=./lib/hive-jdbc-uber-2.6.3.0-235.pom
 ```
+Windows Run this command
+```shell
+.\mvnw.cmd -X install:install-file -Dfile=".\lib\hive-jdbc-uber-2.6.3.0-235.jar"  -DpomFile=".\lib\hive-jdbc-uber-2.6.3.0-235.pom"
+```
+
 
 Add a properties file named systems.properties to the src/main/resources directory modeled like the example_systems.properties file in the same directory.  
 
