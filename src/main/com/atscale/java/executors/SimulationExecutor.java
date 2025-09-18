@@ -4,6 +4,7 @@ import com.atscale.java.utils.PropertiesFileReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.List;
 import java.io.File;
 
@@ -15,8 +16,9 @@ public abstract class SimulationExecutor<T> {
         String heapSize = PropertiesFileReader.getAtScaleHeapSize();
         // Clean up using Maven clean and then install
         // This assumes that the Maven wrapper script (mvnw) is present in the project root directory
-        String projectRoot = System.getProperty("user.dir");
-        String mavenScript = getMavenWrapperScript(projectRoot);
+        //String projectRoot = System.getProperty("user.dir");
+        String projectRoot = getApplicationDirectory();
+        String mavenScript = getMavenWrapperScript();
 
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(mavenScript, "clean", "compile");
@@ -86,7 +88,8 @@ public abstract class SimulationExecutor<T> {
 
         // Because of the way logback initializes early it produces some empty log files
         // Delete all zero-byte files in the run_logs directory
-        File runLogsDir = new File(projectRoot, "run_logs");
+        String runLogPath = Paths.get(getApplicationDirectory(), "run_logs").toString();
+        File runLogsDir = new File(runLogPath);
         if (runLogsDir.exists() && runLogsDir.isDirectory()) {
             File[] files = runLogsDir.listFiles();
             if (files != null) {
@@ -103,9 +106,25 @@ public abstract class SimulationExecutor<T> {
         }
     }
 
-    private String getMavenWrapperScript(String projectRoot) {
+    private String getApplicationDirectory() {
+        try {
+            String path = Paths.get(System.getProperty("user.dir")).toString();
+             File file = new File(path);
+            if (! file.isDirectory()){
+                throw new RuntimeException("Resolved to path, but is not a valid directory: " + path);
+            }
+            return path;
+            // If running from a JAR, get parent directory; if from classes, go up to project root
+            //return file.isFile() ? file.getParent() : file.getParentFile().getParentFile().getParent();
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to determine application directory", e);
+        }
+    }
+
+    private String getMavenWrapperScript() {
         String osName = System.getProperty("os.name").toLowerCase();
-        return osName.contains("win") ? projectRoot + "/mvnw.cmd" : projectRoot + "/mvnw";
+        String appDir = getApplicationDirectory();
+        return osName.contains("win") ?  "./mvnw.cmd" : "./mvnw";
     }
 
     protected abstract List<MavenTaskDto> getSimulationTasks();

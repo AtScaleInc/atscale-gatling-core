@@ -35,7 +35,8 @@ public class QueryHistoryFileUtil {
     }
 
     private void createQueryDirectory() {
-        java.io.File directory = new java.io.File("queries");
+        String path = Paths.get(System.getProperty("user.dir"),"queries").toString();
+        java.io.File directory = new java.io.File(path);
         if (!directory.exists()) {
             if (directory.mkdir()) {
                 LOGGER.info("Directory created: {}", directory.getAbsolutePath());
@@ -122,12 +123,12 @@ public class QueryHistoryFileUtil {
 
     public static String getXmlaFilePath(String model) {
         model = StringUtil.stripQuotes(model);
-        return String.format("queries/%s_xmla_queries.json", model);
+        return Paths.get(System.getProperty("user.dir"), "queries", model + "_xmla_queries.json").toString();
     }
 
     public static String getJdbcFilePath(String model) {
         model = StringUtil.stripQuotes(model);
-        return String.format("queries/%s_jdbc_queries.json", model);
+        return Paths.get(System.getProperty("user.dir"), "queries", model + "_jdbc_queries.json").toString();
     }
 
 
