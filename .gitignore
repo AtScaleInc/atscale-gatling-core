@@ -43,3 +43,5 @@ build/
 /queries/
 /run_logs/
 /logs/
+src/main/resources/container_systems.properties
+src/main/resources/systems.properties
