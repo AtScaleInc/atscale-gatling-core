@@ -1,5 +1,6 @@
 package com.atscale.java.xmla.simulations;
 
+import com.atscale.java.executors.MavenTaskDto;
 import com.atscale.java.injectionsteps.OpenStep;
 import com.atscale.java.utils.InjectionStepJsonUtil;
 import com.atscale.java.utils.PropertiesFileReader;
@@ -19,24 +20,35 @@ public class AtScaleXmlaOpenInjectionStepSimulation extends Simulation {
     private static final Logger LOGGER = LoggerFactory.getLogger(AtScaleXmlaOpenInjectionStepSimulation.class);
 
     public AtScaleXmlaOpenInjectionStepSimulation() {
-        String model = System.getProperties().getProperty("atscale.model");
-        String runId = System.getProperties().getProperty("gatling_run_id");
-        String runLogFileName = System.getProperties().getProperty("gatling_run_logFileName");
-        String loggingAsAppend = System.getProperties().getProperty("gatling_run_logAppend");
+        String model = System.getProperties().getProperty(MavenTaskDto.ATSCALE_MODEL);
+        String runDescription = System.getProperties().getProperty(MavenTaskDto.GATLING_RUN_DESCRIPTION);
+        String steps = System.getProperties().getProperty(MavenTaskDto.GATLING_INJECTIION_STEPS);
+        String runId = System.getProperties().getProperty(MavenTaskDto.ATSCALE_RUN_ID);
+        String runLogFileName = System.getProperties().getProperty(MavenTaskDto.ATSCALE_LOG_FILE_NAME);
+        String loggingAsAppend = System.getProperties().getProperty(MavenTaskDto.ATSCALE_LOG_APPEND);
 
+        model = MavenTaskDto.decode(model);
+        runDescription = MavenTaskDto.decode(runDescription);
+        steps = MavenTaskDto.decode(steps);
+        runId = MavenTaskDto.decode(runId);
+
+        LOGGER.info("Simulation class {} Gatling run ID: {}", this.getClass().getName(), runId);
+        LOGGER.info("Using model: {}", model);
+        LOGGER.info("Using run description: {}", runDescription);
+        LOGGER.info("Using injection steps: {}", steps);
+        LOGGER.info("Using run id: {}", runId);
+        LOGGER.info("Using log file name: {}", runLogFileName);
+        LOGGER.info("Logging as append: {}", loggingAsAppend);
+        
         String cube = PropertiesFileReader.getAtScaleXmlaCubeName(model);
         String catalog = PropertiesFileReader.getAtScaleXmlaCatalogName(model);
-        String steps = System.getProperties().getProperty("atscale.gatling.injection.steps");
+        
+
         if (model == null || model.isEmpty()) {
             LOGGER.error("AtScale model is not specified. Please set the 'atscale.model' system property.");
             throw new IllegalArgumentException("AtScale model is required.");
         }
 
-        LOGGER.info("Simulation class {} Gatling run ID: {}", this.getClass().getName(), runId);
-        LOGGER.info("Using model: {}", model);
-        LOGGER.info("Using injection steps: {}", steps);
-        LOGGER.info("Using log file name: {}", runLogFileName);
-        LOGGER.info("Logging as append: {}", loggingAsAppend);
 
         List<OpenStep> openSteps = InjectionStepJsonUtil.openInjectionStepsFromJson(steps);
         List<io.gatling.javaapi.core.OpenInjectionStep> injectionSteps = new ArrayList<>();

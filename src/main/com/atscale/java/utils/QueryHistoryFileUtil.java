@@ -51,13 +51,22 @@ public class QueryHistoryFileUtil {
 
     public void cacheQueries(String model){
         createQueryDirectory();
-        cacheJdbcQueries(model);
-        cacheXmlaQueries(model);
+        try {
+            cacheJdbcQueries(model);
+        } catch (Exception e) {
+            LOGGER.error("Error caching JDBC queries for model {}: {}", model, e.getMessage());
+        }
+        try {
+            cacheXmlaQueries(model);
+        } catch (Exception e) {
+            LOGGER.error("Error caching XMLA queries for model {}: {}", model, e.getMessage()); 
+        }
     }
 
     public void cacheJdbcQueries(String model, String jdbcQuery, String... jdbcParams) {
         createQueryDirectory();
         String filePath = getJdbcFilePath(model);
+        LOGGER.info("Caching JDBC queries for model {} to file: {}", model, filePath);  
         try {
             List<QueryHistoryDto> queryHistoryList = AtScalePostgresDao.getInstance()
                     .getQueryHistory(jdbcQuery, jdbcParams);
@@ -71,6 +80,7 @@ public class QueryHistoryFileUtil {
     public void cacheXmlaQueries(String model, String xmlaQuery, String... xmlaParams) {
         createQueryDirectory();
         String filePath = getXmlaFilePath(model);
+        LOGGER.info("Caching XMLSA queries for model {} to file: {}", model, filePath);  
         try {
             List<QueryHistoryDto> queryHistoryList = AtScalePostgresDao.getInstance()
                     .getQueryHistory(xmlaQuery, xmlaParams);
@@ -130,6 +140,4 @@ public class QueryHistoryFileUtil {
         model = StringUtil.stripQuotes(model);
         return Paths.get(System.getProperty("user.dir"), "queries", model + "_jdbc_queries.json").toString();
     }
-
-
 }

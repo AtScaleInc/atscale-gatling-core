@@ -1,8 +1,6 @@
 package com.atscale.java.xmla.scenarios;
 
-import com.atscale.java.utils.HashUtil;
 import com.atscale.java.utils.PropertiesFileReader;
-import com.atscale.java.utils.SoapUtil;
 import com.atscale.java.xmla.cases.AtScaleDynamicXmlaActions;
 import com.atscale.java.xmla.cases.NamedHttpRequestActionBuilder;
 import io.gatling.javaapi.core.ChainBuilder;

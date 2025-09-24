@@ -147,6 +147,25 @@
           <useModulePath>false</useModulePath>
         </configuration>
       </plugin>
+      <!-- Plugin to move the dependencies to the target directory -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.1.2</version>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/dependency</outputDirectory>
+              <includeScope>runtime</includeScope>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <!-- Plugin to sign the artifacts there is a settings.xml file configured to support this capability located at ~/.m2/settings.xml-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -317,6 +336,12 @@
       <groupId>veil.hdp.hive</groupId>
       <artifactId>hive-jdbc-uber</artifactId>
       <version>2.6.3.0-235</version>
+    </dependency>
+  
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.17</version>
     </dependency>
   </dependencies>
 </project>
