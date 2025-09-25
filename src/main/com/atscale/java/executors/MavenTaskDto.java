@@ -109,7 +109,7 @@ public class MavenTaskDto<T> {
         return String.format("%s-%s", timestamp, random);
     }
 
-    private void setRunId(String runId) {
+    public void setRunId(String runId) {
        // addGatlingProperty("gatling_run_id", runId);
        this.runId = runId;
     }

@@ -46,11 +46,11 @@ public class AtScaleDynamicQueryBuilderScenario {
                                     long start = session.getLong("queryStart");
                                     long duration = end - start;
                                     int rowCount = resultSet.size();
-                                    SESSION_LOGGER.info("sqlLog gatlingRunId={} gatlingSessionId={} model='{}' queryName='{}' start={} end={} duration={} rows={}", gatlingRunId, session.userId(), model, namedBuilder.queryName, start, end, duration, rowCount);
+                                    SESSION_LOGGER.info("sqlLog gatlingRunId='{}' gatlingSessionId={} model='{}' queryName='{}' start={} end={} duration={} rows={}", gatlingRunId, session.userId(), model, namedBuilder.queryName, start, end, duration, rowCount);
                                     if(logRows) {
                                         int rownum = 0;
                                         for (Object row : resultSet) {
-                                            SESSION_LOGGER.info("sqlLog gatlingRunId={} gatlingSessionId={} model='{}' queryName='{}' rownumber={} row={} rowhash={}", gatlingRunId, session.userId(), model, namedBuilder.queryName, rownum++, row, HashUtil.TO_MD5(row.toString()));
+                                            SESSION_LOGGER.info("sqlLog gatlingRunId='{}' gatlingSessionId={} model='{}' queryName='{}' rownumber={} row={} rowhash={}", gatlingRunId, session.userId(), model, namedBuilder.queryName, rownum++, row, HashUtil.TO_MD5(row.toString()));
                                         }
                                     }
                                     return session;

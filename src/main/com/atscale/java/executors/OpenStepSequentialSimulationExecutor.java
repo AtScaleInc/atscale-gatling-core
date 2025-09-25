@@ -1,20 +1,22 @@
 package com.atscale.java.executors;
 
-import com.atscale.java.injectionsteps.*;
+import com.atscale.java.injectionsteps.AtOnceUsersOpenInjectionStep;
+import com.atscale.java.injectionsteps.OpenStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class OpenStepSimulationExecutor extends SimulationExecutor<OpenStep> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OpenStepSimulationExecutor.class);
+public class OpenStepSequentialSimulationExecutor extends SequentialSimulationExecutor<OpenStep> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OpenStepSequentialSimulationExecutor.class);
 
     public static void main(String[] args) {
-        LOGGER.info("SimulationExecutor started.");
+        LOGGER.info("SequentialSimulationExecutor started.");
 
-        OpenStepSimulationExecutor executor = new OpenStepSimulationExecutor();
+        OpenStepSequentialSimulationExecutor executor = new OpenStepSequentialSimulationExecutor();
         executor.execute();
-        LOGGER.info("SimulationExecutor completed.");
+        LOGGER.info("SequentialSimulationExecutor completed.");
     }
 
     protected List<MavenTaskDto<OpenStep>> getSimulationTasks() {
@@ -35,7 +37,7 @@ public class OpenStepSimulationExecutor extends SimulationExecutor<OpenStep> {
 
 
         // Three example tasks for the Container Version. Uncomment tasks.add as needed.
-        MavenTaskDto<OpenStep> task1 = new MavenTaskDto<OpenStep>("Internet Sales XMLA Simulation");
+        MavenTaskDto<OpenStep> task1 = new MavenTaskDto<>("Internet Sales XMLA Simulation");
         tasks.add(task1);
         task1.setMavenCommand("gatling:test");
         task1.setRunLogFileName("internet_sales_xmla.log");
@@ -45,7 +47,7 @@ public class OpenStepSimulationExecutor extends SimulationExecutor<OpenStep> {
         task1.setModel( "internet_sales");
         task1.setInjectionSteps(t1InjectionSteps);
 
-        MavenTaskDto<OpenStep> task2 = new MavenTaskDto<OpenStep>("Internet Sales JDBC Simulation");
+        MavenTaskDto<OpenStep> task2 = new MavenTaskDto<>("Internet Sales JDBC Simulation");
         tasks.add(task2);
         task2.setMavenCommand("gatling:test");
         task2.setRunLogFileName("internet_sales_jdbc.log");
@@ -55,7 +57,7 @@ public class OpenStepSimulationExecutor extends SimulationExecutor<OpenStep> {
         task2.setModel("internet_sales");
         task2.setInjectionSteps(t2InjectionSteps);
 
-        MavenTaskDto<OpenStep> task3 = new MavenTaskDto<OpenStep>("TPC-DS JDBC Simulation");
+        MavenTaskDto<OpenStep> task3 = new MavenTaskDto<>("TPC-DS JDBC Simulation");
         tasks.add(task3);
         task3.setMavenCommand("gatling:test");
         task3.setRunLogFileName("tpcds_benchmark_jdbc.log");
@@ -65,7 +67,7 @@ public class OpenStepSimulationExecutor extends SimulationExecutor<OpenStep> {
         task3.setInjectionSteps(t3InjectionSteps);
         
         // Two example tasks for the Installer Version. Exclude by removing tasks.add as needed.
-        MavenTaskDto<OpenStep> task4 = new MavenTaskDto<OpenStep>("Installer TPC-DS JDBC Simulation");
+        MavenTaskDto<OpenStep> task4 = new MavenTaskDto<>("Installer TPC-DS JDBC Simulation");
         //tasks.add(task4);
         task4.setMavenCommand("gatling:test");
         task4.setRunLogFileName("tpcds_benchmark_hive.log");
@@ -76,7 +78,7 @@ public class OpenStepSimulationExecutor extends SimulationExecutor<OpenStep> {
         task4.setInjectionSteps(atOnceInjectionSteps);
           
 
-        MavenTaskDto<OpenStep> task5 = new MavenTaskDto<OpenStep>("Installer TPC-DS XMLA Simulation");
+        MavenTaskDto<OpenStep> task5 = new MavenTaskDto<>("Installer TPC-DS XMLA Simulation");
         //tasks.add(task5);
         task5.setMavenCommand("gatling:test");
         task5.setRunLogFileName("tpcds_benchmark_xmla.log");

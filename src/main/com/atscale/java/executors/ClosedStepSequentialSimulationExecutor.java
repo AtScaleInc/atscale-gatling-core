@@ -1,22 +1,23 @@
 package com.atscale.java.executors;
 
-import com.atscale.java.injectionsteps.IncrementConcurrentUsersClosedInjectionStep;
-import com.atscale.java.injectionsteps.ConstantConcurrentUsersClosedInjectionStep;
 import com.atscale.java.injectionsteps.ClosedStep;
+import com.atscale.java.injectionsteps.ConstantConcurrentUsersClosedInjectionStep;
+import com.atscale.java.injectionsteps.IncrementConcurrentUsersClosedInjectionStep;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClosedStepSimulationExecutor extends SimulationExecutor<ClosedStep> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClosedStepSimulationExecutor.class);
+public class ClosedStepSequentialSimulationExecutor extends SequentialSimulationExecutor<ClosedStep> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClosedStepSequentialSimulationExecutor.class);
 
     public static void main(String[] args) {
-        LOGGER.info("SimulationExecutor started.");
+        LOGGER.info("SequentialSimulationExecutor started.");
 
-        ClosedStepSimulationExecutor executor = new ClosedStepSimulationExecutor();
+        ClosedStepSequentialSimulationExecutor executor = new ClosedStepSequentialSimulationExecutor();
         executor.execute();
-        LOGGER.info("SimulationExecutor completed.");
+        LOGGER.info("SequentialSimulationExecutor completed.");
     }
 
     @Override
@@ -35,30 +36,32 @@ public class ClosedStepSimulationExecutor extends SimulationExecutor<ClosedStep>
         List<ClosedStep> constantUsersInjectionSteps = new ArrayList<>();
         constantUsersInjectionSteps.add(new ConstantConcurrentUsersClosedInjectionStep(1,1));
 
-        MavenTaskDto<ClosedStep> task1 = new MavenTaskDto<ClosedStep> ("Internet Sales XMLA Stepped User Simulation");
+        MavenTaskDto<ClosedStep> task1 = new MavenTaskDto<> ("Internet Sales XMLA Stepped User Simulation");
         tasks.add(task1);
         task1.setMavenCommand("gatling:test");
-        task1.setRunLogFileName("internet_sales_xmla.log");
+        task1.setRunId("Helter Skelter");
+        task1.setRunLogFileName("a.log");
         task1.setLoggingAsAppend(true);
         task1.setSimulationClass("com.atscale.java.xmla.simulations.AtScaleXmlaClosedInjectionStepSimulation");
         task1.setRunDescription("Internet Sales XMLA Model Tests");
         task1.setModel( "internet_sales");
         task1.setInjectionSteps(t1InjectionSteps);
 
-        MavenTaskDto<ClosedStep> task2 = new MavenTaskDto<ClosedStep>("Internet Sales JDBC User Simulation");
+        MavenTaskDto<ClosedStep> task2 = new MavenTaskDto<>("Internet Sales JDBC User Simulation");
         tasks.add(task2);
         task2.setMavenCommand("gatling:test");
-        task2.setRunLogFileName("internet_sales_jdbc.log");
+        task2.setRunId("Gimme Shelter");
+        task2.setRunLogFileName("b.log");
         task2.setLoggingAsAppend(false);
         task2.setSimulationClass("com.atscale.java.jdbc.simulations.AtScaleClosedInjectionStepSimulation");
         task2.setRunDescription("Internet Sales JDBC Model Tests");
         task2.setModel( "internet_sales");
         task2.setInjectionSteps(t2InjectionSteps);
 
-        MavenTaskDto<ClosedStep> task3 = new MavenTaskDto<ClosedStep>("TPC-DS JDBC Stepped User Simulation");
+        MavenTaskDto<ClosedStep> task3 = new MavenTaskDto<>("TPC-DS JDBC Stepped User Simulation");
         tasks.add(task3);
         task3.setMavenCommand("gatling:test");
-        task3.setRunLogFileName("tpcds_jdbc.log");
+        task3.setRunLogFileName("c.log");
         task3.setLoggingAsAppend(true);
         task3.setSimulationClass("com.atscale.java.jdbc.simulations.AtScaleClosedInjectionStepSimulation");
         task3.setRunDescription("TPCDS JDBC Model Tests");
@@ -66,7 +69,7 @@ public class ClosedStepSimulationExecutor extends SimulationExecutor<ClosedStep>
         task3.setInjectionSteps(t3InjectionSteps);
 
          // Two example tasks for the Installer Version. Exclude by removing tasks.add as needed.
-        MavenTaskDto<ClosedStep> task4 = new MavenTaskDto<ClosedStep>("Installer TPC-DS JDBC Simulation");
+        MavenTaskDto<ClosedStep> task4 = new MavenTaskDto<>("Installer TPC-DS JDBC Simulation");
         //tasks.add(task4);
         task4.setMavenCommand("gatling:test");
         task4.setRunLogFileName("tpcds_benchmark_hive.log");
@@ -77,7 +80,7 @@ public class ClosedStepSimulationExecutor extends SimulationExecutor<ClosedStep>
         task4.setInjectionSteps(constantUsersInjectionSteps);
           
 
-        MavenTaskDto<ClosedStep> task5 = new MavenTaskDto<ClosedStep>("Installer TPC-DS XMLA Simulation");
+        MavenTaskDto<ClosedStep> task5 = new MavenTaskDto<>("Installer TPC-DS XMLA Simulation");
         //tasks.add(task5);
         task5.setMavenCommand("gatling:test");
         task5.setRunLogFileName("tpcds_benchmark_xmla.log");
@@ -89,6 +92,4 @@ public class ClosedStepSimulationExecutor extends SimulationExecutor<ClosedStep>
 
         return tasks;
     }
-
-   
 }

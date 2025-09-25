@@ -48,10 +48,10 @@ public class AtScaleXmlaScenario {
                                     long duration = end - start;
                                     int responseSize = response == null? 0: response.length();
                                     if(logResponseBody) {
-                                        SESSION_LOGGER.info("xmlaLog gatlingRunId={} gatlingSessionId={} model='{}' cube='{}' catalog='{}' queryName='{}' start={} end={} duration={} responseSize={} response={}",
+                                        SESSION_LOGGER.info("xmlaLog gatlingRunId='{}' gatlingSessionId={} model='{}' cube='{}' catalog='{}' queryName='{}' start={} end={} duration={} responseSize={} response={}",
                                                 gatlingRunId, session.userId(), model, cube, catalog, namedBuilder.queryName, start, end, duration, responseSize, response);
                                     } else {
-                                        SESSION_LOGGER.info("xmlaLog gatlingRunId={} gatlingSessionId={} model='{}' cube='{}' catalog='{}' queryName='{}' start={} end={} duration={} responseSize={}",
+                                        SESSION_LOGGER.info("xmlaLog gatlingRunId='{}' gatlingSessionId={} model='{}' cube='{}' catalog='{}' queryName='{}' start={} end={} duration={} responseSize={}",
                                                 gatlingRunId, session.userId(), model, cube, catalog, namedBuilder.queryName, start, end, duration, responseSize);
                                     }
 

@@ -5,13 +5,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.time.Duration;
 import java.util.List;
 import java.io.File;
 
 @SuppressWarnings("unused")
-public abstract class SimulationExecutor<T> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SimulationExecutor.class);
+public abstract class ConcurrentSimulationExecutor<T> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConcurrentSimulationExecutor.class);
 
     protected void execute() {
         String heapSize = PropertiesFileReader.getAtScaleHeapSize();

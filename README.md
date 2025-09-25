@@ -127,7 +127,7 @@ The easiest way to run Gatling Simulations is to create an Executor under src/ma
 ````
 or
 ```shell
- ./mvnw clean compile exec:java -Dexec.mainClass="com.atscale.java.executors.OpenStepSimulationExecutor"
+ ./mvnw clean compile exec:java -Dexec.mainClass="com.atscale.java.executors.OpenStepConcurrentSimulationExecutor"
 ```
 
 Examples include ClosedStepSimulationExecutor and OpenStepSimulationExecutor.  These executors run Gatling simulations that use closed steps and open steps respectively.  The executors can be found under src/main/com/atscale/java/executors.  These are examples only.  They will have to be tailored to the models and data in your environment.
