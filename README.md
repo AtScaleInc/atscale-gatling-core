@@ -119,27 +119,29 @@ If run successfully, there will be two files created in the directory /queries f
 Once we have extracted the queries we can run Gatling Scenario Simulations to execute the queries against the Atscale Engine.
 
 The easiest way to run Gatling Simulations is to create an Executor under src/main/com/atscale/java/executors.  The project includes open and closed step executors.  These classes run Gatling Simulations using open steps or closed steps.  Simulations can be run using one of the following commands:
+
+### Concurrent Simulations
 ```shell
- ./mvnw clean compile exec:java@open-step-simulation-executor 
+ ./mvnw clean compile exec:java@open-step-concurrent-simulation-executor 
 ````
 ```shell
- ./mvnw clean compile exec:java@closed-step-simulation-executor 
+ ./mvnw clean compile exec:java@closed-step-concurrent-simulation-executor 
 ````
 or
 ```shell
  ./mvnw clean compile exec:java -Dexec.mainClass="com.atscale.java.executors.OpenStepConcurrentSimulationExecutor"
 ```
 
-Examples include ClosedStepSimulationExecutor and OpenStepSimulationExecutor.  These executors run Gatling simulations that use closed steps and open steps respectively.  The executors can be found under src/main/com/atscale/java/executors.  These are examples only.  They will have to be tailored to the models and data in your environment.
-
-Can clean, build and run an individual test as follows
-Java:
+### Sequential Simulations
 ```shell
- ./mvnw clean compile & ./mvnw gatling:test -Dgatling.simulationClass=com.atscale.java.jdbc.simulations.AtScaleOpenInjectionStepSimulation  -Dgatling.runDescription="Internet Sales Model Test" -Datscale.model="internet_sales"
-```
-Scala:
+ ./mvnw clean compile exec:java@open-step-sequential-simulation-executor 
+````
 ```shell
- ./mvnw clean compile & ./mvnw gatling:test -Dgatling.simulationClass=com.atscale.scala.jdbc.simulations.JdbcSingleUserSimulation  -Dgatling.runDescription="Internet Sales Model Tests" -Datscale.model="internet_sales"
+ ./mvnw clean compile exec:java@closed-step-sequential-simulation-executor 
+````
+or
+```shell
+ ./mvnw clean compile exec:java -Dexec.mainClass="com.atscale.java.executors.OpenStepSequentialSimulationExecutor"
 ```
 
 

@@ -34,6 +34,7 @@ public class InstallerVerQueryExtractExecutor {
                 LOGGER.error("Error caching XMLA queries for model {}: {}", model, e.getMessage()); 
             }
         }
+        org.apache.logging.log4j.LogManager.shutdown();
         LOGGER.info("QueryExtractExecutor finished.");
     }
 

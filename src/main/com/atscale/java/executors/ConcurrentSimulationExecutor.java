@@ -101,7 +101,9 @@ public abstract class ConcurrentSimulationExecutor<T> {
             }
         }
 
-        // Because of the way logback initializes early it produces some empty log files
+        org.apache.logging.log4j.LogManager.shutdown();
+
+        // Because of the way logging initializes early it produces some empty log files
         // Delete all zero-byte files in the run_logs directory
         String runLogPath = Paths.get(getApplicationDirectory(), "run_logs").toString();
         LOGGER.info("Run Log Path: {}",  runLogPath);

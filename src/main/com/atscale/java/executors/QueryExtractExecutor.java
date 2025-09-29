@@ -25,6 +25,8 @@ public class QueryExtractExecutor {
             queryHistoryFileUtil.cacheQueries(model);
         }
 
+        org.apache.logging.log4j.LogManager.shutdown();
+
         LOGGER.info("QueryExtractExecutor finished.");
     }
 }

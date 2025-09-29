@@ -35,6 +35,8 @@ public class CustomQueryExtractExecutor {
             }
         }
 
+        org.apache.logging.log4j.LogManager.shutdown();
+
         LOGGER.info("QueryExtractExecutor finished.");
     }
 
