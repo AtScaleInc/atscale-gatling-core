@@ -80,7 +80,7 @@ public class QueryHistoryFileUtil {
     public void cacheXmlaQueries(String model, String xmlaQuery, String... xmlaParams) {
         createQueryDirectory();
         String filePath = getXmlaFilePath(model);
-        LOGGER.info("Caching XMLSA queries for model {} to file: {}", model, filePath);  
+        LOGGER.info("Caching XMLA queries for model {} to file: {}", model, filePath);  
         try {
             List<QueryHistoryDto> queryHistoryList = AtScalePostgresDao.getInstance()
                     .getQueryHistory(xmlaQuery, xmlaParams);
