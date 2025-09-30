@@ -110,7 +110,6 @@ public class MavenTaskDto<T> {
     }
 
     public void setRunId(String runId) {
-       // addGatlingProperty("gatling_run_id", runId);
        this.runId = runId;
     }
 
