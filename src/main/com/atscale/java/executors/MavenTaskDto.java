@@ -135,12 +135,10 @@ public class MavenTaskDto<T> {
     }
 
     private void setLoggingToAppend() {
-        //addGatlingProperty("gatling_run_logAppend", "true");
         this.runLogAppend = true;
     }
 
     private void setLoggingToOverwrite() {
-        //addGatlingProperty("gatling_run_logAppend", "false");
         this.runLogAppend = false;
     }
 
