@@ -56,8 +56,7 @@ public class AtScaleDynamicQueryBuilderScenario {
                                         }
                                     }
                                     return session;
-                                }).pause(Duration.ofMillis(throttleBy))
-                ).collect(Collectors.toList());
+                                }).pause(Duration.ofMillis(throttleBy))).collect(Collectors.toList());
 
         // pause the scenario executions at 10 milliseconds apart
         return scenario("AtScale Dynamic Query Builder Scenario").exec(chains).pause(10);
