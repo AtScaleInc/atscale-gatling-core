@@ -119,8 +119,6 @@ public abstract class SequentialSimulationExecutor<T> {
                 throw new RuntimeException("Resolved to path, but is not a valid directory: " + path);
             }
             return path;
-            // If running from a JAR, get parent directory; if from classes, go up to project root
-            //return file.isFile() ? file.getParent() : file.getParentFile().getParentFile().getParent();
         } catch (Exception e) {
             throw new RuntimeException("Unable to determine application directory", e);
         }
