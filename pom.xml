@@ -101,7 +101,6 @@
         <artifactId>exec-maven-plugin</artifactId>
         <version>3.3.0</version>
         <configuration>
-          <classpathScope>compile</classpathScope>
           <classpathScope>runtime</classpathScope>
         </configuration>
         <executions>
