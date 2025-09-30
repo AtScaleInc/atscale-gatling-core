@@ -32,9 +32,9 @@ public class MavenTaskDto<T> {
 
     public MavenTaskDto(String taskName) {
         this.taskName = taskName;
-        String runId = generateRunId();
-        setRunId(runId);
-        setRunLogFileName(String.format("gatling-%s.log", runId));  //default value
+        String rid = generateRunId();
+        setRunId(rid);
+        setRunLogFileName(String.format("gatling-%s.log", rid));  //default value
         setLoggingAsAppend(false);
     }
 
