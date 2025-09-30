@@ -8,6 +8,8 @@ import io.gatling.javaapi.core.ScenarioBuilder;
 import io.gatling.javaapi.core.ChainBuilder;
 import scala.collection.immutable.Map;
 import static io.gatling.javaapi.core.CoreDsl.exec;
+
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,9 +56,8 @@ public class AtScaleDynamicQueryBuilderScenario {
                                         }
                                     }
                                     return session;
-                                }).pause(throttleBy)
-                )
-                .collect(Collectors.toList());
+                                }).pause(Duration.ofMillis(throttleBy))
+                ).collect(Collectors.toList());
 
         // pause the scenario executions at 10 milliseconds apart
         return scenario("AtScale Dynamic Query Builder Scenario").exec(chains).pause(10);

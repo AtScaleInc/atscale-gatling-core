@@ -57,8 +57,7 @@ public class AtScaleXmlaScenario {
 
                                     return session;
                                 }).pause(Duration.ofMillis(throttleBy))
-                )
-                .collect(Collectors.toList());
+                ).collect(Collectors.toList());
 
         return scenario("AtScale XMLA Scenario").exec(chains).pause(10);
     }
