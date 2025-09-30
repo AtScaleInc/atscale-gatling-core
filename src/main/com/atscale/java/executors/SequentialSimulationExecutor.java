@@ -47,7 +47,7 @@ public abstract class SequentialSimulationExecutor<T> {
                 String runId = String.format("-D%s=%s", MavenTaskDto.ATSCALE_RUN_ID, task.getRunId());
                 String logFileName = String.format("-D%s=%s", MavenTaskDto.ATSCALE_LOG_FILE_NAME, task.getRunLogFileName());
                 String logAppend = String.format("-D%s=%s", MavenTaskDto.GATLING_RUN_LOGAPPEND, task.isRunLogAppend());
-                String injectionSteps = String.format("-D%s=%s", MavenTaskDto.GATLING_INJECTIION_STEPS, task.getInjectionSteps());
+                String injectionSteps = String.format("-D%s=%s", MavenTaskDto.GATLING_INJECTION_STEPS, task.getInjectionSteps());
 
 
                 LOGGER.debug("SimEx Using simulation class: {}", simClass);

@@ -3,7 +3,7 @@ package com.atscale.java.executors;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.ArrayList;
+
 import com.atscale.java.utils.InjectionStepJsonUtil;
 import com.atscale.java.injectionsteps.*;
 
@@ -14,7 +14,7 @@ public class MavenTaskDto<T> {
     public static final String GATLING_RUN_ID = "gatling_run_id";
     public static final String GATLING_RUN_LOGFILENAME = "gatling_run_logFileName";
     public static final String GATLING_RUN_LOGAPPEND = "gatling_run_logAppend";
-    public static final String GATLING_INJECTIION_STEPS = "atscale.gatling.injection.steps";
+    public static final String GATLING_INJECTION_STEPS = "atscale.gatling.injection.steps";
     public static final String ATSCALE_MODEL = "atscale.model";
     public static final String ATSCALE_RUN_ID = "atscale.run.id";
     public static final String ATSCALE_LOG_FILE_NAME = "gatling_run_logFileName";
