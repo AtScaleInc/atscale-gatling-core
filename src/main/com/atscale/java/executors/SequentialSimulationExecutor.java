@@ -114,7 +114,7 @@ public abstract class SequentialSimulationExecutor<T> {
     private String getApplicationDirectory() {
         try {
             String path = Paths.get(System.getProperty("user.dir")).toString();
-             File file = new File(path);
+            File file = new File(path);
             if (! file.isDirectory()){
                 throw new RuntimeException("Resolved to path, but is not a valid directory: " + path);
             }
