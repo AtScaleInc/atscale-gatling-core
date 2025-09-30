@@ -50,13 +50,6 @@ public class AtScaleOpenInjectionStepSimulation extends Simulation{
             throw new IllegalArgumentException("AtScale model is required.");
         }
 
-        LOGGER.info("Simulation class {} Gatling run ID: {}", this.getClass().getName(), runId);
-        LOGGER.info("Using model: {}", model);
-        LOGGER.info("Using run description: {}", runDescription);
-        LOGGER.info("Using injection steps: {}", steps);
-        LOGGER.info("Using run id: {}", runId);
-        LOGGER.info("Using log file name: {}", runLogFileName);
-        LOGGER.info("Logging as append: {}", loggingAsAppend);
 
         String url = PropertiesFileReader.getAtScaleJdbcConnection(model);
         if(StringUtils.isNotEmpty(url) && url.toLowerCase().contains("hive")) {
