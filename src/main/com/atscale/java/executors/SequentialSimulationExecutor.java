@@ -90,22 +90,21 @@ public abstract class SequentialSimulationExecutor<T> {
             }
         }  // End for each task
 
-        org.apache.logging.log4j.LogManager.shutdown();
 
         // Because of the way logging initializes early it produces some empty log files
         // Delete all zero-byte files in the run_logs directory
         String runLogPath = Paths.get(getApplicationDirectory(), "run_logs").toString();
         LOGGER.info("Run Log Path: {}",  runLogPath);
+
+        org.apache.logging.log4j.LogManager.shutdown();
+
         File runLogsDir = new File(runLogPath);
         if (runLogsDir.exists() && runLogsDir.isDirectory()) {
             File[] files = runLogsDir.listFiles();
             if (files != null) {
                 for (File file : files) {
                     if (file.isFile() && file.length() == 0) {
-                        LOGGER.info("Found zero-byte file: {}", file.getAbsolutePath());
-                        if (file.delete()) {
-                            LOGGER.info("Deleted zero-byte file: {}", file.getAbsolutePath());
-                        }
+                        file.delete();
                     }
                 }
             }
