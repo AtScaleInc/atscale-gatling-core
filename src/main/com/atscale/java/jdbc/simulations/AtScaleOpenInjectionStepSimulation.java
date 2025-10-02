@@ -26,20 +26,17 @@ public class AtScaleOpenInjectionStepSimulation extends Simulation{
 
     public AtScaleOpenInjectionStepSimulation(){
         String model = System.getProperties().getProperty(MavenTaskDto.ATSCALE_MODEL);
-        String runDescription = System.getProperties().getProperty(MavenTaskDto.GATLING_RUN_DESCRIPTION);
         String steps = System.getProperties().getProperty(MavenTaskDto.GATLING_INJECTION_STEPS);
         String runId = System.getProperties().getProperty(MavenTaskDto.ATSCALE_RUN_ID);
         String runLogFileName = System.getProperties().getProperty(MavenTaskDto.ATSCALE_LOG_FILE_NAME);
         String loggingAsAppend = System.getProperties().getProperty(MavenTaskDto.ATSCALE_LOG_APPEND);
 
         model = MavenTaskDto.decode(model);
-        runDescription = MavenTaskDto.decode(runDescription);
         steps = MavenTaskDto.decode(steps);
         runId = MavenTaskDto.decode(runId);
 
         LOGGER.info("Simulation class {} Gatling run ID: {}", this.getClass().getName(), runId);
         LOGGER.info("Using model: {}", model);
-        LOGGER.info("Using run description: {}", runDescription);
         LOGGER.info("Using injection steps: {}", steps);
         LOGGER.info("Using run id: {}", runId);
         LOGGER.info("Using log file name: {}", runLogFileName);

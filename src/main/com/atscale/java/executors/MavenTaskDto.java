@@ -9,8 +9,8 @@ import com.atscale.java.injectionsteps.*;
 
 @SuppressWarnings("unused")
 public class MavenTaskDto<T> {
-    public static final String GATLING_SIMULATION_CLASS = "gatling.simulationClass";
-    public static final String GATLING_RUN_DESCRIPTION = "gatling_run_description"; 
+    public static final String GATLING_SIMULATION_CLASS = "gatling.simulationClass"; //Do not change.  Gatling needs this property as defined to pick up the simulation class to run
+    public static final String GATLING_RUN_DESCRIPTION = "gatling.runDescription";  //Do not change.  Gatling needs this property as defined to render description on HTML report
     public static final String GATLING_RUN_ID = "gatling_run_id";
     public static final String GATLING_RUN_LOGFILENAME = "gatling_run_logFileName";
     public static final String GATLING_RUN_LOGAPPEND = "gatling_run_logAppend";
@@ -59,7 +59,7 @@ public class MavenTaskDto<T> {
     }
 
     public String getRunDescription() {
-        return encode(this.runDescription);
+        return this.runDescription;
     }
 
     public void setRunDescription(String runDescription) {

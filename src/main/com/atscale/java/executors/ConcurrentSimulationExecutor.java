@@ -13,7 +13,7 @@ public abstract class ConcurrentSimulationExecutor<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConcurrentSimulationExecutor.class);
 
     protected void execute() {
-        String heapSize = PropertiesFileReader.getAtScaleHeapSize();
+        try {
 
         // This assumes that the Maven wrapper script (mvnw) is present in the project root directory
         String projectRoot = getApplicationDirectory();
@@ -27,7 +27,7 @@ public abstract class ConcurrentSimulationExecutor<T> {
         List<MavenTaskDto<T>> tasks = getSimulationTasks();
 
         for (MavenTaskDto<T> task : tasks) {
-            Thread taskThread = new Thread(() -> {
+                Thread taskThread = new Thread(() -> {
                 String osName = System.getProperty("os.name").toLowerCase();
                 LOGGER.info("OS is {}", osName);
                 LOGGER.info("Running task: {}", task.getTaskName());
@@ -39,7 +39,6 @@ public abstract class ConcurrentSimulationExecutor<T> {
                     List<String> command = new java.util.ArrayList<>();
                     command.add(mavenScript);
 
-                    // Add -Dgatling.simulationClass and -Dgatling.runDescription (no extra quotes)
                     String simClass = String.format("-D%s=%s", MavenTaskDto.GATLING_SIMULATION_CLASS, task.getSimulationClass());
                     String runDesc = String.format("-D%s=%s", MavenTaskDto.GATLING_RUN_DESCRIPTION, task.getRunDescription());
                     String model = String.format("-D%s=%s", MavenTaskDto.ATSCALE_MODEL, task.getModel());
@@ -48,7 +47,6 @@ public abstract class ConcurrentSimulationExecutor<T> {
                     String logAppend = String.format("-D%s=%s", MavenTaskDto.GATLING_RUN_LOGAPPEND, task.isRunLogAppend());
                     String injectionSteps = String.format("-D%s=%s", MavenTaskDto.GATLING_INJECTION_STEPS, task.getInjectionSteps());
 
-                  
                     LOGGER.debug("SimEx Using simulation class: {}", simClass);
                     LOGGER.debug("SimEx Using run description: {}", runDesc);
                     LOGGER.debug("SimEx Using model: {}", model);
@@ -57,25 +55,22 @@ public abstract class ConcurrentSimulationExecutor<T> {
                     LOGGER.debug("SimEx Logging as append: {}", logAppend);
                     LOGGER.debug("SimEx Using injection steps: {}", injectionSteps);
 
-
                     command.add(simClass);
                     command.add(runDesc);
                     command.add(model);
                     command.add(runId);
-                    command.add(logFileName);   
+                    command.add(logFileName);
                     command.add(logAppend);
                     command.add(injectionSteps);
 
                     // Add the Maven goal (e.g., gatling:test)
                     command.add(task.getMavenCommand());
 
-                    LOGGER.info("Running process with heap size: {}", String.format("-Xmx%s", heapSize));
                     ProcessBuilder processBuilder = new ProcessBuilder(command);
                     // Set working directory to project root where mvnw(.cmd) exists
                     processBuilder.directory(new File(projectRoot));
-                    processBuilder.environment().put("MAVEN_OPTS", String.format("-Xmx%s", heapSize));
                     processBuilder.inheritIO(); // This will print output to console
-                    
+
                     LOGGER.info("Starting the test suite on a separate JVM.  Using command args: {}", command);
                     Process process = processBuilder.start();
                     process.waitFor(); // Wait for the process to complete
@@ -90,31 +85,32 @@ public abstract class ConcurrentSimulationExecutor<T> {
             });
             taskThread.start();
             taskThreads.add(taskThread);
-        }
-
-        // Have the current thread wait for all task threads to complete
-        for (Thread taskThread : taskThreads) {
-            try {
-                taskThread.join();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt(); // Restore interrupted status
             }
-        }
 
-        // Because of the way logging initializes early it produces some empty log files
-        // Delete all zero-byte files in the run_logs directory
-        String runLogPath = Paths.get(getApplicationDirectory(), "run_logs").toString();
-        LOGGER.info("Run Log Path: {}",  runLogPath);
+            // Have the current thread wait for all task threads to complete
+            for (Thread taskThread : taskThreads) {
+                try {
+                    taskThread.join();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt(); // Restore interrupted status
+                }
+            }
+        } finally {
+            // Because of the way logging initializes early it produces some empty log files
+            // Delete all zero-byte files in the run_logs directory
+            String runLogPath = Paths.get(getApplicationDirectory(), "run_logs").toString();
+            LOGGER.info("Run Log Path: {}",  runLogPath);
 
-        org.apache.logging.log4j.LogManager.shutdown();
+            org.apache.logging.log4j.LogManager.shutdown();
 
-        File runLogsDir = new File(runLogPath);
-        if (runLogsDir.exists() && runLogsDir.isDirectory()) {
-            File[] files = runLogsDir.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    if (file.isFile() && file.length() == 0) {
-                        file.delete();
+            File runLogsDir = new File(runLogPath);
+            if (runLogsDir.exists() && runLogsDir.isDirectory()) {
+                File[] files = runLogsDir.listFiles();
+                if (files != null) {
+                    for (File file : files) {
+                        if (file.isFile() && file.length() == 0) {
+                            file.delete();
+                        }
                     }
                 }
             }

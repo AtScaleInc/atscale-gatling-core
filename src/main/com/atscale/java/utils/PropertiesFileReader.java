@@ -35,10 +35,6 @@ public class PropertiesFileReader {
         return Arrays.asList(models);
     }
 
-    public static String getAtScaleHeapSize() {
-        return getProperty("atscale.gatling.heapsize", "4G");
-    }
-
     public static Long getAtScaleThrottleMs() {
         return Long.parseLong(getProperty("atscale.gatling.throttle.ms", "5"));
     }
