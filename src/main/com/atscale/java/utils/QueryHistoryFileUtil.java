@@ -74,6 +74,8 @@ public class QueryHistoryFileUtil {
             writeQueryHistoryToFile(queryHistoryList, filePath);
         } catch (IOException e) {
             throw new RuntimeException("Error caching queries to file: " + filePath, e);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn("Validation error {}", e.getMessage(), e);
         }
     }
 
@@ -88,6 +90,8 @@ public class QueryHistoryFileUtil {
             writeQueryHistoryToFile(queryHistoryList, filePath);
         } catch (IOException e) {
             throw new RuntimeException("Error caching queries to file: " + filePath, e);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn("Validation error {}", e.getMessage(), e);
         }
     }
 
