@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.atscale.java.utils.HashUtil;
+import org.apache.commons.lang3.StringUtils;
 
 @SuppressWarnings("unused")
 public class QueryHistoryDto {
@@ -49,7 +50,7 @@ public class QueryHistoryDto {
     }
 
     public String getInboundTextAsMd5Hash() {
-        return inboundTextAsMd5Hash;
+        return StringUtils.isEmpty(inboundTextAsMd5Hash)? HashUtil.TO_MD5(inboundText) : inboundTextAsMd5Hash;
     }
 
     public void setInboundText(String inboundText) {

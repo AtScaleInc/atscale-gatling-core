@@ -28,11 +28,14 @@ public class AtScaleDynamicJdbcActions {
 
             for (QueryHistoryDto query : history) {
                 String queryName = query.getQueryName();
+                String inboundTestAsMd5Hash = query.getInboundTextAsMd5Hash();
                 QueryActionBuilder builder = jdbc(queryName)
-                        .query(query.getInboundText())
-                        .check(simpleCheck(simpleCheckType.NonEmpty),
-                                allResults().saveAs("queryResultSet"));  // Save data to session variable don't change this session variable name
-                builders.add(new NamedQueryActionBuilder(builder, queryName));
+                    .query(query.getInboundText())
+                    .check(
+                        simpleCheck(simpleCheckType.NonEmpty),
+                        allResults().saveAs("queryResultSet")
+                    );
+                builders.add(new NamedQueryActionBuilder(builder, queryName, inboundTestAsMd5Hash));
             }
             return builders;
         } catch(FileNotFoundException e) {
