@@ -46,6 +46,9 @@ public abstract class ConcurrentSimulationExecutor<T> {
                     String logFileName = String.format("-D%s=%s", MavenTaskDto.ATSCALE_LOG_FILE_NAME, task.getRunLogFileName());
                     String logAppend = String.format("-D%s=%s", MavenTaskDto.GATLING_RUN_LOGAPPEND, task.isRunLogAppend());
                     String injectionSteps = String.format("-D%s=%s", MavenTaskDto.GATLING_INJECTION_STEPS, task.getInjectionSteps());
+                    String ingestFile = String.format("-D%s=%s", MavenTaskDto.ATSCALE_QUERY_INGESTION_FILE, task.getIngestionFileName());
+                    String ingestFileHasHeader = String.format("-D%s=%s", MavenTaskDto.ATSCALE_QUERY_INGESTION_FILE_HAS_HEADER, task.getIngestionFileHasHeader());
+
 
                     LOGGER.debug("SimEx Using simulation class: {}", simClass);
                     LOGGER.debug("SimEx Using run description: {}", runDesc);
@@ -54,6 +57,8 @@ public abstract class ConcurrentSimulationExecutor<T> {
                     LOGGER.debug("SimEx Using log file name: {}", logFileName);
                     LOGGER.debug("SimEx Logging as append: {}", logAppend);
                     LOGGER.debug("SimEx Using injection steps: {}", injectionSteps);
+                    LOGGER.debug("SimEx Using ingestion file: {}", ingestFile);
+                    LOGGER.debug("SimEx Ingestion file has header: {}", ingestFileHasHeader);
 
                     command.add(simClass);
                     command.add(runDesc);
@@ -62,6 +67,8 @@ public abstract class ConcurrentSimulationExecutor<T> {
                     command.add(logFileName);
                     command.add(logAppend);
                     command.add(injectionSteps);
+                    command.add(ingestFile);
+                    command.add(ingestFileHasHeader);
 
                     // Add the Maven goal (e.g., gatling:test)
                     command.add(task.getMavenCommand());

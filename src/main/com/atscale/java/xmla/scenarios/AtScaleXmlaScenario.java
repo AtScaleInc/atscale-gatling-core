@@ -5,6 +5,7 @@ import com.atscale.java.xmla.cases.AtScaleDynamicXmlaActions;
 import com.atscale.java.xmla.cases.NamedHttpRequestActionBuilder;
 import io.gatling.javaapi.core.ChainBuilder;
 import io.gatling.javaapi.core.ScenarioBuilder;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,11 +30,17 @@ public class AtScaleXmlaScenario {
      *
      * @return A ScenarioBuilder instance representing the dynamic query execution scenario.
      */
-    public ScenarioBuilder buildScenario(String model, String cube, String catalog, String gatlingRunId) {
+    public ScenarioBuilder buildScenario(String model, String cube, String catalog, String gatlingRunId, String ingestionFile, boolean ingestionFileHasHeader) {
+        NamedHttpRequestActionBuilder[] builders;
         boolean logResponseBody = PropertiesFileReader.getLogXmlaResponseBody(model);
         Long throttleBy = PropertiesFileReader.getAtScaleThrottleMs();
         AtScaleDynamicXmlaActions xmlaActions = new AtScaleDynamicXmlaActions();
-        NamedHttpRequestActionBuilder[] builders = xmlaActions.createPayloadsXmlaQueries(model, cube, catalog);
+
+        if(StringUtils.isNotEmpty(ingestionFile)) {
+            builders = xmlaActions.createPayloadsIngestedXmlaQueries(model, cube, catalog, ingestionFile, ingestionFileHasHeader);
+        } else {
+            builders = xmlaActions.createPayloadsXmlaQueries(model, cube, catalog);
+        }
 
         List<ChainBuilder> chains = Arrays.stream(builders)
                 .map(namedBuilder ->

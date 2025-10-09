@@ -26,10 +26,13 @@ public class AtScaleXmlaClosedInjectionStepSimulation extends Simulation {
         String runId = System.getProperties().getProperty(MavenTaskDto.ATSCALE_RUN_ID);
         String runLogFileName = System.getProperties().getProperty(MavenTaskDto.ATSCALE_LOG_FILE_NAME);
         String loggingAsAppend = System.getProperties().getProperty(MavenTaskDto.ATSCALE_LOG_APPEND);
+        String ingestionFile = System.getProperties().getProperty(MavenTaskDto.ATSCALE_QUERY_INGESTION_FILE, null);
+        String ingestionFileHasHeader = System.getProperties().getProperty(MavenTaskDto.ATSCALE_QUERY_INGESTION_FILE_HAS_HEADER);
 
         model = MavenTaskDto.decode(model);
         steps = MavenTaskDto.decode(steps);
         runId = MavenTaskDto.decode(runId);
+        ingestionFile = MavenTaskDto.decode(ingestionFile);
 
         LOGGER.info("Simulation class {} Gatling run ID: {}", this.getClass().getName(), runId);
         LOGGER.info("Using model: {}", model);
@@ -37,6 +40,8 @@ public class AtScaleXmlaClosedInjectionStepSimulation extends Simulation {
         LOGGER.info("Using run id: {}", runId);
         LOGGER.info("Using log file name: {}", runLogFileName);
         LOGGER.info("Logging as append: {}", loggingAsAppend);
+        LOGGER.info("Using ingestion file: {}", ingestionFile);
+        LOGGER.info("Using ingestion file has header: {}", ingestionFileHasHeader);
 
         String cube = PropertiesFileReader.getAtScaleXmlaCubeName(model);
         String catalog = PropertiesFileReader.getAtScaleXmlaCatalogName(model);
@@ -67,7 +72,7 @@ public class AtScaleXmlaClosedInjectionStepSimulation extends Simulation {
         }
 
         AtScaleXmlaScenario scn = new AtScaleXmlaScenario();
-        ScenarioBuilder sb = scn.buildScenario(model, cube, catalog, runId);
+        ScenarioBuilder sb = scn.buildScenario(model, cube, catalog, runId, ingestionFile, Boolean.parseBoolean(ingestionFileHasHeader));
         setUp(sb.injectClosed(injectionSteps).protocols(XmlaProtocol.forXmla(model)));
     }
 }

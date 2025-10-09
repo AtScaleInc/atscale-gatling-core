@@ -6,6 +6,7 @@ import com.atscale.java.utils.HashUtil;
 import com.atscale.java.utils.PropertiesFileReader;
 import io.gatling.javaapi.core.ScenarioBuilder;
 import io.gatling.javaapi.core.ChainBuilder;
+import org.apache.commons.lang.StringUtils;
 import scala.collection.immutable.Map;
 import static io.gatling.javaapi.core.CoreDsl.exec;
 
@@ -31,8 +32,16 @@ public class AtScaleDynamicQueryBuilderScenario {
      *
      * @return A ScenarioBuilder instance representing the dynamic query execution scenario.
      */
-    public ScenarioBuilder buildScenario(String model, String gatlingRunId) {
-        NamedQueryActionBuilder[] namedBuilders = AtScaleDynamicJdbcActions.createBuildersJdbcQueries(model);
+    public ScenarioBuilder buildScenario(String model, String gatlingRunId, String ingestionFilePath, boolean ingestionFileHasHeader) {
+        NamedQueryActionBuilder[] namedBuilders;
+        if(StringUtils.isNotEmpty(ingestionFilePath)) {
+            namedBuilders = AtScaleDynamicJdbcActions.createBuildersIngestedQueries(ingestionFilePath, ingestionFileHasHeader);
+            LOGGER.info("Created {} JDBC query builders from ingestion file: {}", namedBuilders.length, ingestionFilePath);
+        } else {
+            namedBuilders = AtScaleDynamicJdbcActions.createBuildersJdbcQueries(model);
+            LOGGER.info("Created {} JDBC query builders from model: {}", namedBuilders.length, model);
+        }
+
         boolean logRows = PropertiesFileReader.getLogSqlQueryRows(model);
         Long throttleBy = PropertiesFileReader.getAtScaleThrottleMs();
 

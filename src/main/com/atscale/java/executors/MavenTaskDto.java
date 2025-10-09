@@ -3,9 +3,12 @@ package com.atscale.java.executors;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-
+import java.util.Base64;
+import java.nio.file.Path;
+import com.atscale.java.utils.CsvLoaderUtil;
 import com.atscale.java.utils.InjectionStepJsonUtil;
 import com.atscale.java.injectionsteps.*;
+import org.apache.commons.lang3.StringUtils;
 
 @SuppressWarnings("unused")
 public class MavenTaskDto<T> {
@@ -18,7 +21,9 @@ public class MavenTaskDto<T> {
     public static final String ATSCALE_MODEL = "atscale.model";
     public static final String ATSCALE_RUN_ID = "atscale.run.id";
     public static final String ATSCALE_LOG_FILE_NAME = "gatling_run_logFileName";
-    public static final String ATSCALE_LOG_APPEND = "gatling_run_logAppend";   
+    public static final String ATSCALE_LOG_APPEND = "gatling_run_logAppend";
+    public static final String ATSCALE_QUERY_INGESTION_FILE = "query_ingestion_file";
+    public static final String ATSCALE_QUERY_INGESTION_FILE_HAS_HEADER = "query_ingestion_file_has_header";
 
     private final String taskName;
     private String mavenCommand;
@@ -29,6 +34,8 @@ public class MavenTaskDto<T> {
     private String logFileName;
     private boolean runLogAppend;
     private List <T> injectionSteps;
+    private String ingestionFileName;
+    private boolean ingestionFileHasHeader;
 
     public MavenTaskDto(String taskName) {
         this.taskName = taskName;
@@ -147,13 +154,36 @@ public class MavenTaskDto<T> {
         return String.valueOf(runLogAppend);
     }
 
+    public void setIngestionFileName(String ingestionFileName, boolean hasHeader) {
+        Path path = new CsvLoaderUtil(ingestionFileName, true).getFilePath();
+
+        this.ingestionFileName = ingestionFileName;
+        this.ingestionFileHasHeader = hasHeader;
+    }
+
+    public String getIngestionFileName() {
+        return encode(this.ingestionFileName);
+    }
+
+    public boolean getIngestionFileHasHeader() {
+        return this.ingestionFileHasHeader;
+    }
+
+
     public static String encode(String input) {
+        if(StringUtils.isEmpty(input)) {
+            return input;
+        }
         return java.util.Base64.getEncoder().encodeToString(input.getBytes());
     }
 
     public static String decode(String base64) {
-        byte[] decodedBytes = java.util.Base64.getDecoder().decode(base64);
-        return new String(decodedBytes);
+        if("null".equalsIgnoreCase(base64)) {
+            return null;
+        } else if(StringUtils.isEmpty(base64)) {
+            return base64;
+        } else {
+            return new String(Base64.getDecoder().decode(base64));
+        }
     }
-
 }

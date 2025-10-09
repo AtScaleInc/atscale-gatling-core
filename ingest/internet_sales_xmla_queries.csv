@@ -1,0 +1,10 @@
+sampler_name,sql_text
+0,"SELECT { [Measures].[Order Quantity] }  ON COLUMNS,  SUBSET( Hierarchize(  { Union( { [Product Dimension].[Product Dimension].[Product Name].Members} , {[Product Dimension].[Product Dimension].[All]}) }   )  , 0, 50000) DIMENSION PROPERTIES HIERARCHY_UNIQUE_NAME, PARENT_UNIQUE_NAME ON ROWS FROM [internet_sales]"
+1,"SELECT
+{ [Measures].[Order Quantity] }  ON COLUMNS,
+  SUBSET( Hierarchize(
+  { Union( { [Product Dimension].[Product Dimension].[Product Name].Members} ,
+  {[Product Dimension].[Product Dimension].[All]}) }
+  )  , 0, 50000)
+  DIMENSION PROPERTIES HIERARCHY_UNIQUE_NAME, PARENT_UNIQUE_NAME ON ROWS
+  FROM [internet_sales]"

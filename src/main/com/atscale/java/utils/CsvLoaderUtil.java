@@ -53,7 +53,7 @@ public class CsvLoaderUtil {
         return Paths.get(System.getProperty("user.dir"), "ingest");
     }
 
-    protected Path getFilePath() {
+    public Path getFilePath() {
         return Paths.get(System.getProperty("user.dir"), "ingest", this.fileName);
     }
 }

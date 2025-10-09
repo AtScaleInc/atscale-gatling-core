@@ -46,9 +46,11 @@ public class ClosedStepSequentialSimulationExecutor extends SequentialSimulation
         task1.setRunDescription("Internet Sales XMLA Model Tests");
         task1.setModel( "internet_sales");
         task1.setInjectionSteps(t1InjectionSteps);
+        //task1.setIngestionFileName("internet_sales_xmla_queries.csv", true);
+
 
         MavenTaskDto<ClosedStep> task2 = new MavenTaskDto<>("Internet Sales JDBC User Simulation");
-        tasks.add(task2);
+        //tasks.add(task2);
         task2.setMavenCommand("gatling:test");
         task2.setRunId("Gimme Shelter");
         task2.setRunLogFileName("b.log");
@@ -59,7 +61,7 @@ public class ClosedStepSequentialSimulationExecutor extends SequentialSimulation
         task2.setInjectionSteps(t2InjectionSteps);
 
         MavenTaskDto<ClosedStep> task3 = new MavenTaskDto<>("TPC-DS JDBC Stepped User Simulation");
-        tasks.add(task3);
+        //tasks.add(task3);
         task3.setMavenCommand("gatling:test");
         task3.setRunLogFileName("c.log");
         task3.setLoggingAsAppend(true);
