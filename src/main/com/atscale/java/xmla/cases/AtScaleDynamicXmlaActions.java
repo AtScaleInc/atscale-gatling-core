@@ -27,9 +27,9 @@ public class AtScaleDynamicXmlaActions {
         List<NamedHttpRequestActionBuilder> builders = new ArrayList<>();
         for (QueryHistoryDto query : history) {
                 String queryName = query.getQueryName();
-                String inbundTextAsMd5Hash = query.getInboundTextAsMd5Hash();
+                String inboundTextAsMd5Hash = query.getInboundTextAsMd5Hash();
                 String body = injectXmlaQuery(query.getInboundText(), cubeName, catalog);
-                builders.add(new NamedHttpRequestActionBuilder(httpRequest(queryName, body), queryName, inbundTextAsMd5Hash));
+                builders.add(new NamedHttpRequestActionBuilder(httpRequest(queryName, body), queryName, inboundTextAsMd5Hash));
                 LOGGER.debug("Created XMLA payload for query: {} hash: {} and body {}", queryName, query.getInboundTextAsMd5Hash(), body);
             }
             return builders;
