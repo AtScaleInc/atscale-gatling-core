@@ -62,7 +62,7 @@ public class AtScaleDynamicQueryBuilderScenario {
                             if (logRows) {
                                 int rownum = 0;
                                 for (Object row : resultSet) {
-                                    SESSION_LOGGER.info("sqlLog gatlingRunId='{}' status='{}' gatlingSessionId={} model='{}' queryName='{}' inboundTextAsMd5Hash='{}' rownumber={} row={} rowhash={}", status, gatlingRunId, session.userId(), model, namedBuilder.queryName, namedBuilder.inboundTextAsMd5Hash, rownum++, row, HashUtil.TO_MD5(row.toString()));
+                                    SESSION_LOGGER.info("sqlLog gatlingRunId='{}' status='{}' gatlingSessionId={} model='{}' queryName='{}' inboundTextAsMd5Hash='{}' rownumber={} row={} rowhash={}", gatlingRunId, status, session.userId(), model, namedBuilder.queryName, namedBuilder.inboundTextAsMd5Hash, rownum++, row, HashUtil.TO_MD5(row.toString()));
                                 }
                             }
                             return session;
