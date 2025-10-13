@@ -22,14 +22,14 @@ public class AtScaleDynamicJdbcActions {
 
         for (QueryHistoryDto query : history) {
             String queryName = query.getQueryName();
-            String inboundTestAsMd5Hash = query.getInboundTextAsMd5Hash();
+            String inboundTextAsMd5Hash = query.getInboundTextAsMd5Hash();
             QueryActionBuilder builder = jdbc(queryName)
                 .query(query.getInboundText())
                 .check(
                     simpleCheck(simpleCheckType.NonEmpty),
                     allResults().saveAs("queryResultSet")
                 );
-            builders.add(new NamedQueryActionBuilder(builder, queryName, inboundTestAsMd5Hash));
+            builders.add(new NamedQueryActionBuilder(builder, queryName, inboundTextAsMd5Hash));
         }
         return builders;
 
