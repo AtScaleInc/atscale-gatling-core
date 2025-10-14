@@ -69,13 +69,15 @@ The list of models is comma separated. Copy and paste the model names directly f
 ##### Optional Properties
 The following properties are optional.  If not provided, default values will be used.
 ```
-atscale.gatling.heapsize=16G
-atscale.gatling.throttle.ms=100
-atscale.xmla.maxConnectionsPerHost=10
+atscale.gatling.throttle.ms=5
+atscale.xmla.maxConnectionsPerHost=20
 atscale.xmla.useAggregates=true
 atscale.xmla.generateAggregates=false
 atscale.xmla.useQueryCache=false
 atscale.xmla.useAggregateCache=true
+atscale.jdbc.useAggregates=true
+atscale.jdbc.generateAggregates=false
+atscale.jdbc.useQueryCache=false
 ```
 Default values can be found in the com.atscale.java.utils.PropertyUtils class.
 

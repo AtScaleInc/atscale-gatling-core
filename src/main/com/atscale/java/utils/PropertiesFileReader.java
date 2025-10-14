@@ -43,6 +43,36 @@ public class PropertiesFileReader {
         return Integer.parseInt(getProperty("atscale.xmla.maxConnectionsPerHost", "20"));
     }
 
+    public static String getJdbcUseAggregates() {
+        String prop =  getProperty("atscale.jdbc.useAggregates", "true");
+        if (prop.equals("true") || prop.equals("false")){
+            return prop;
+        } else{
+            LOGGER.error("Invalid boolean value for atscale.jdbc.useAggregates: {} expected true or false", prop);
+            return String.valueOf(true);
+        }
+    }
+
+    public static String getJdbcGenerateAggregates() {
+        String prop =  getProperty("atscale.jdbc.generateAggregates", "false");
+        if (prop.equals("true") || prop.equals("false")){
+            return prop;
+        } else{
+            LOGGER.error("Invalid boolean value for atscale.jdbc.generateAggregates: {} expected true or false", prop);
+            return String.valueOf(false);
+        }
+    }
+
+    public static String getJdbcUseLocalCache() {
+        String prop =  getProperty("atscale.jdbc.useLocalCache", "false");
+        if (prop.equals("true") || prop.equals("false")){
+            return prop;
+        } else{
+            LOGGER.error("Invalid boolean value for atscale.jdbc.useLocalCache: {} expected true or false", prop);
+            return String.valueOf(false);
+        }
+    }
+
     public static String getXmlaUseAggregates() {
         String prop =  getProperty("atscale.xmla.useAggregates", "true");
         if (prop.equals("true") || prop.equals("false")){
