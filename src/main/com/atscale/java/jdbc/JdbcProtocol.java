@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 
 @SuppressWarnings("unused")
 public class JdbcProtocol {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JdbcProtocol.class);
     /**
      * Creates a JdbcProtocolBuilder for the AtScale JDBC connection.
      *
@@ -19,7 +20,6 @@ public class JdbcProtocol {
      */
 
     public static JdbcProtocolBuilder forDatabase(String model) {
-        Logger LOGGER = LoggerFactory.getLogger(JdbcProtocol.class);
         String url = getJdbcUrl(model);
         String userName = PropertiesFileReader.getAtScaleJdbcUserName(model);
         String password = PropertiesFileReader.getAtScaleJdbcPassword(model);
@@ -29,7 +29,7 @@ public class JdbcProtocol {
         String createAggregates = PropertiesFileReader.getJdbcGenerateAggregates();
         String initSql = String.format("set use_local_cache = %s; set create_aggregates = %s; set use_aggregates = %s", useLocalCache, createAggregates, useAggregates);
 
-        LOGGER.info("Initializing each connection with {}", initSql);
+        LOGGER.debug("Initializing each connection with {}", initSql);
 
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl(url);
