@@ -57,6 +57,10 @@ public class AtScaleXmlaScenario {
                                     long start = session.getLong("queryStart");
                                     long duration = end - start;
                                     int responseSize = response == null? 0: response.length();
+                                    if(statusCode != 200 ) {
+                                        LOGGER.error("Query '{}' with hash '{}' with payload '{}' returned status code {} and is marked as {}",
+                                                namedBuilder.queryName, namedBuilder.inboundTextAsMd5Hash, namedBuilder.xmlPayload, statusCode, status);
+                                    }
                                     if(logResponseBody) {
                                         SESSION_LOGGER.info("xmlaLog gatlingRunId='{}' status='{}' gatlingSessionId={} model='{}' cube='{}' catalog='{}' queryName='{}' inboundTextAsMd5Hash='{}' start={} end={} duration={} responseSize={} response={}",
                                                 gatlingRunId,  status, session.userId(), model, cube, catalog, namedBuilder.queryName, namedBuilder.inboundTextAsMd5Hash, start, end, duration, responseSize, response);

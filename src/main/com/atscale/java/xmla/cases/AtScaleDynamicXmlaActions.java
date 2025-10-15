@@ -29,7 +29,7 @@ public class AtScaleDynamicXmlaActions {
                 String queryName = query.getQueryName();
                 String inboundTextAsMd5Hash = query.getInboundTextAsMd5Hash();
                 String body = injectXmlaQuery(query.getInboundText(), cubeName, catalog);
-                builders.add(new NamedHttpRequestActionBuilder(httpRequest(queryName, body), queryName, inboundTextAsMd5Hash));
+                builders.add(new NamedHttpRequestActionBuilder(httpRequest(queryName, body), queryName, inboundTextAsMd5Hash, body));
                 LOGGER.debug("Created XMLA payload for query: {} hash: {} and body {}", queryName, query.getInboundTextAsMd5Hash(), body);
             }
             return builders;
@@ -67,7 +67,7 @@ public class AtScaleDynamicXmlaActions {
     private HttpRequestActionBuilder httpRequest(String queryName, String body) {
         return http(queryName)
                 .post("")
-                .body(StringBody(body))
+                .body(StringBody(body)).asXml()
                 .requestTimeout(java.time.Duration.ofSeconds(120))
                 .check(
                         status().saveAs("responseStatus"),
