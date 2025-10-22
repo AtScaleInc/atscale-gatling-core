@@ -2,9 +2,11 @@ package com.atscale.java.dao;
 
 import java.sql.*;
 import java.util.Properties;
+
+import com.atscale.java.utils.PropertiesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.atscale.java.utils.PropertiesFileReader;
+
 import java.util.List;
 import java.util.ArrayList;
 
@@ -78,9 +80,9 @@ public class AtScalePostgresDao {
     """;
 
     private AtScalePostgresDao() {
-        this.url = PropertiesFileReader.getAtScalePostgresURL();
-        this.user = PropertiesFileReader.getAtScalePostgresUser();
-        this.password = PropertiesFileReader.getAtScalePostgresPassword();
+        this.url = PropertiesManager.getAtScalePostgresURL();
+        this.user = PropertiesManager.getAtScalePostgresUser();
+        this.password = PropertiesManager.getAtScalePostgresPassword();
     }
 
     public static AtScalePostgresDao getInstance() {
@@ -193,7 +195,7 @@ public class AtScalePostgresDao {
                 where cube_name is not null
                 and query_language is not null
                 and q.query_language != 'none'
-                    """;
+                """;
         } else if (query != null && query.contains("atscale.queries")) {
             domainQuery = """
                 select DISTINCT q.query_language, p.cube_name
@@ -206,7 +208,7 @@ public class AtScalePostgresDao {
                 where cube_name is not null
                 and query_language is not null
                 and q.query_language != 'none'
-                    """;
+                """;
         } else {
             throw new IllegalArgumentException("The provided query does not reference a known AtScale schema.");
         }

@@ -2,7 +2,7 @@ package com.atscale.java.executors;
 
 import com.atscale.java.dao.AtScalePostgresDao;
 import com.atscale.java.utils.AwsSecretsManager;
-import com.atscale.java.utils.PropertiesFileReader;
+import com.atscale.java.utils.PropertiesManager;
 import com.atscale.java.utils.QueryHistoryFileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +21,7 @@ public class CustomQueryExtractExecutor {
 
     protected void execute() {
         LOGGER.info("QueryExtractExecutor started.");
-        List<String> models = PropertiesFileReader.getAtScaleModels();
+        List<String> models = PropertiesManager.getAtScaleModels();
 
         for(String model : models) {
             LOGGER.info("Processing model: {}", model);
@@ -160,12 +160,12 @@ public class CustomQueryExtractExecutor {
 
     protected void initAdditionalProperties() {
         String regionProperty = "aws.region";
-        String secretsKeyProperty = "aws.secret-key";
-        if(PropertiesFileReader.hasProperty(regionProperty) && PropertiesFileReader.hasProperty(secretsKeyProperty)) {
+        String secretsKeyProperty = "aws.secrets-key";
+        if(PropertiesManager.hasProperty(regionProperty) && PropertiesManager.hasProperty(secretsKeyProperty)) {
             LOGGER.info("Loading additional properties from AWS Secrets Manager.");
-            String region = PropertiesFileReader.getCustomProperty("aws.region");
-            String secretsKey = PropertiesFileReader.getCustomProperty("aws.secret-key");
-            PropertiesFileReader.setCustomProperties(new AwsSecretsManager().loadSecrets(region, secretsKey));
+            String region = PropertiesManager.getCustomProperty("aws.region");
+            String secretsKey = PropertiesManager.getCustomProperty("aws.secrets-key");
+            PropertiesManager.setCustomProperties(new AwsSecretsManager().loadSecrets(region, secretsKey));
         } else {
             LOGGER.warn("AWS region or secret-key property not found. Skipping loading additional properties from AWS Secrets Manager.");
         }

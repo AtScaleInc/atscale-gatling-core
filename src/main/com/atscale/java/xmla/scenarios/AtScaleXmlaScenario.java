@@ -1,6 +1,6 @@
 package com.atscale.java.xmla.scenarios;
 
-import com.atscale.java.utils.PropertiesFileReader;
+import com.atscale.java.utils.PropertiesManager;
 import com.atscale.java.xmla.cases.AtScaleDynamicXmlaActions;
 import com.atscale.java.xmla.cases.NamedHttpRequestActionBuilder;
 import io.gatling.javaapi.core.ChainBuilder;
@@ -32,8 +32,8 @@ public class AtScaleXmlaScenario {
      */
     public ScenarioBuilder buildScenario(String model, String cube, String catalog, String gatlingRunId, String ingestionFile, boolean ingestionFileHasHeader) {
         NamedHttpRequestActionBuilder[] builders;
-        boolean logResponseBody = PropertiesFileReader.getLogXmlaResponseBody(model);
-        Long throttleBy = PropertiesFileReader.getAtScaleThrottleMs();
+        boolean logResponseBody = PropertiesManager.getLogXmlaResponseBody(model);
+        Long throttleBy = PropertiesManager.getAtScaleThrottleMs();
         AtScaleDynamicXmlaActions xmlaActions = new AtScaleDynamicXmlaActions();
 
         if(StringUtils.isNotEmpty(ingestionFile)) {

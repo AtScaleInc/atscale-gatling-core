@@ -1,9 +1,10 @@
 package com.atscale.java.jdbc;
 
+import com.atscale.java.utils.PropertiesManager;
 import com.zaxxer.hikari.HikariConfig;
 import org.galaxio.gatling.javaapi.protocol.JdbcProtocolBuilder;
 import static org.galaxio.gatling.javaapi.JdbcDsl.DB;
-import com.atscale.java.utils.PropertiesFileReader;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,12 +22,12 @@ public class JdbcProtocol {
 
     public static JdbcProtocolBuilder forDatabase(String model) {
         String url = getJdbcUrl(model);
-        String userName = PropertiesFileReader.getAtScaleJdbcUserName(model);
-        String password = PropertiesFileReader.getAtScaleJdbcPassword(model);
-        int maxPool = PropertiesFileReader.getAtScaleJdbcMaxPoolSize(model);
-        String useAggregates = PropertiesFileReader.getJdbcUseAggregates();
-        String useLocalCache = PropertiesFileReader.getJdbcUseLocalCache();
-        String createAggregates = PropertiesFileReader.getJdbcGenerateAggregates();
+        String userName = PropertiesManager.getAtScaleJdbcUserName(model);
+        String password = PropertiesManager.getAtScaleJdbcPassword(model);
+        int maxPool = PropertiesManager.getAtScaleJdbcMaxPoolSize(model);
+        String useAggregates = PropertiesManager.getJdbcUseAggregates();
+        String useLocalCache = PropertiesManager.getJdbcUseLocalCache();
+        String createAggregates = PropertiesManager.getJdbcGenerateAggregates();
         String initSql = String.format("set use_local_cache = %s; set create_aggregates = %s; set use_aggregates = %s", useLocalCache, createAggregates, useAggregates);
 
         LOGGER.debug("Initializing each connection with {}", initSql);
@@ -43,7 +44,7 @@ public class JdbcProtocol {
     }
 
     private static String getJdbcUrl(String model) {
-        String url = PropertiesFileReader.getAtScaleJdbcConnection(model);
+        String url = PropertiesManager.getAtScaleJdbcConnection(model);
         // Split the URL to encode only the database name for Hive
         if(url.toLowerCase().contains("hive")) {
             int idx = url.indexOf('/', "jdbc:hive2://".length());

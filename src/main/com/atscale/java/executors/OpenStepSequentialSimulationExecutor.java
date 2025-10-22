@@ -2,7 +2,7 @@ package com.atscale.java.executors;
 
 import com.atscale.java.injectionsteps.AtOnceUsersOpenInjectionStep;
 import com.atscale.java.injectionsteps.OpenStep;
-import com.atscale.java.utils.PropertiesFileReader;
+import com.atscale.java.utils.PropertiesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
@@ -23,9 +23,9 @@ public class OpenStepSequentialSimulationExecutor extends SequentialSimulationEx
 
     protected List<MavenTaskDto<OpenStep>> getSimulationTasks() {
         Map<String, String> secrets = Collections.emptyMap();
-        if(PropertiesFileReader.hasProperty("aws.region") && PropertiesFileReader.hasProperty("aws.secret-key")) {
-            String region = PropertiesFileReader.getCustomProperty("aws.region");
-            String secretsKey = PropertiesFileReader.getCustomProperty("aws.secret-key");
+        if(PropertiesManager.hasProperty("aws.region") && PropertiesManager.hasProperty("aws.secrets-key")) {
+            String region = PropertiesManager.getCustomProperty("aws.region");
+            String secretsKey = PropertiesManager.getCustomProperty("aws.secrets-key");
             secrets = additionalProperties(region, secretsKey);
         }
 

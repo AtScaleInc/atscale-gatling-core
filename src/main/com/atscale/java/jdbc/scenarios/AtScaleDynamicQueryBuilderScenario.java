@@ -3,11 +3,11 @@ package com.atscale.java.jdbc.scenarios;
 import com.atscale.java.jdbc.cases.AtScaleDynamicJdbcActions;
 import com.atscale.java.jdbc.cases.NamedQueryActionBuilder;
 import com.atscale.java.utils.HashUtil;
-import com.atscale.java.utils.PropertiesFileReader;
+import com.atscale.java.utils.PropertiesManager;
 import io.gatling.javaapi.core.ScenarioBuilder;
 import io.gatling.javaapi.core.ChainBuilder;
 import org.apache.commons.lang.StringUtils;
-import scala.collection.immutable.Map;
+
 import static io.gatling.javaapi.core.CoreDsl.exec;
 
 import java.time.Duration;
@@ -42,8 +42,8 @@ public class AtScaleDynamicQueryBuilderScenario {
             LOGGER.info("Created {} JDBC query builders from model: {}", namedBuilders.length, model);
         }
 
-        boolean logRows = PropertiesFileReader.getLogSqlQueryRows(model);
-        Long throttleBy = PropertiesFileReader.getAtScaleThrottleMs();
+        boolean logRows = PropertiesManager.getLogSqlQueryRows(model);
+        Long throttleBy = PropertiesManager.getAtScaleThrottleMs();
 
         List<ChainBuilder> chains = Arrays.stream(namedBuilders)
                 .map(namedBuilder ->

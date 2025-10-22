@@ -14,23 +14,23 @@ import java.util.List;
 import java.util.Arrays;
 
 @SuppressWarnings("unused")
-public class PropertiesFileReader {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesFileReader.class);
+public class PropertiesManager {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesManager.class);
     private final Properties properties = new Properties();
     private static final String PROPERTIES_FILE = "systems.properties";
-    private static final PropertiesFileReader instance = new PropertiesFileReader();
+    private static final PropertiesManager instance = new PropertiesManager();
 
-    private PropertiesFileReader(){
+    private PropertiesManager(){
         try{
-            URL propertyFileURl = getClass().getClassLoader().getResource(PropertiesFileReader.PROPERTIES_FILE);
+            URL propertyFileURl = getClass().getClassLoader().getResource(PropertiesManager.PROPERTIES_FILE);
             if(null == propertyFileURl){
-                LOGGER.error("Properties file not found: {}", PropertiesFileReader.PROPERTIES_FILE);
+                LOGGER.error("Properties file not found: {}", PropertiesManager.PROPERTIES_FILE);
                 return;
             }
             Path path = java.nio.file.Paths.get(propertyFileURl.toURI());
             if (Files.isRegularFile(path)){
                 LOGGER.info("Loading properties file from path: {}", path);
-                try (InputStream input = getClass().getClassLoader().getResourceAsStream(PropertiesFileReader.PROPERTIES_FILE)) {
+                try (InputStream input = getClass().getClassLoader().getResourceAsStream(PropertiesManager.PROPERTIES_FILE)) {
                     properties.load(input);
                 } catch (IOException e){
                     LOGGER.error("Error loading properties file: {}", e.getMessage());

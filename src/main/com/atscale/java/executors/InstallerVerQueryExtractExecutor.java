@@ -1,7 +1,7 @@
 package com.atscale.java.executors;
 
 import com.atscale.java.dao.AtScalePostgresDao;
-import com.atscale.java.utils.PropertiesFileReader;
+import com.atscale.java.utils.PropertiesManager;
 import com.atscale.java.utils.QueryHistoryFileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +19,7 @@ public class InstallerVerQueryExtractExecutor {
 
     protected void execute() {
         LOGGER.info("QueryExtractExecutor started.");
-        List<String> models = PropertiesFileReader.getAtScaleModels();
+        List<String> models = PropertiesManager.getAtScaleModels();
 
         for(String model : models) {
             LOGGER.info("Processing model: {}", model);

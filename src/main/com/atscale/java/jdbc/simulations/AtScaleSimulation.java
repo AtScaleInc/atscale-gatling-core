@@ -3,7 +3,7 @@ package com.atscale.java.jdbc.simulations;
 import com.atscale.java.executors.MavenTaskDto;
 import com.atscale.java.jdbc.scenarios.AtScaleDynamicQueryBuilderScenario;
 import com.atscale.java.utils.JsonUtil;
-import com.atscale.java.utils.PropertiesFileReader;
+import com.atscale.java.utils.PropertiesManager;
 import io.gatling.javaapi.core.ScenarioBuilder;
 import io.gatling.javaapi.core.Simulation;
 import org.apache.commons.lang3.StringUtils;
@@ -49,7 +49,7 @@ abstract class AtScaleSimulation extends Simulation {
         ingestionFile = MavenTaskDto.decode(ingestionFile);
         additionalProperties = MavenTaskDto.decode(additionalProperties);
         Map<String, String> additionalPropertiesMap = JsonUtil.asMap(additionalProperties);
-        PropertiesFileReader.setCustomProperties(additionalPropertiesMap);
+        PropertiesManager.setCustomProperties(additionalPropertiesMap);
 
         LOGGER.info("Simulation class {} Gatling run ID: {}", this.getClass().getName(), runId);
         LOGGER.info("Using model: {}", model);
@@ -66,7 +66,7 @@ abstract class AtScaleSimulation extends Simulation {
             throw new IllegalArgumentException("AtScale model is required.");
         }
 
-        String url = PropertiesFileReader.getAtScaleJdbcConnection(model);
+        String url = PropertiesManager.getAtScaleJdbcConnection(model);
         if(StringUtils.isNotEmpty(url) && url.toLowerCase().contains("hive")) {
             //for AtScale Installer Support - ensure Hive JDBC Driver is loaded
             try {

@@ -8,54 +8,64 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.Map;
 
+/**
+ * Base executor for simulations.
+ *
+ * Provides a factory for {@link SecretsManager} and utilities to load additional properties,
+ * resolve the Maven wrapper script, and determine the application directory.
+ */
 public abstract class SimulationExecutor {
 
-    /** Factory method to create SecretsManager instance
-     * Override this method to provide a different implementation of SecretsManager
+    /**
+     * Factory method to create a {@link SecretsManager} instance.
+     * Override this method to provide a different implementation of {@link SecretsManager}.
+     *
+     * @return a new {@link SecretsManager} instance
      */
     protected SecretsManager createSecretsManager() {
         return new AwsSecretsManager();
     }
 
-    /** Default implementation
-     * Loads additional properties as a map of key value pairs from AWS Secrets Manager
-     * params[0] - AWS region
-     * params[1] - Secrets key
+    /**
+     * Default implementation.
+     * Loads additional properties as a map of key/value pairs from a secrets store.
      *
-     * The assumption is that we will pass this collection of additional properties
-     * to our PropertiesFileReader to augment the properties read from the systems.properties file.
+     * The method accepts varargs in {@code params} and expects:
+     * <ul>
+     *   <li>{@code params[0]} - AWS region</li>
+     *   <li>{@code params[1]} - Secrets key</li>
+     * </ul>
      *
-     * It's passed via the MavenTaskDto additionalProperties field, which is a Map<String, String>
-     * via a setter method:  setAdditionalProperties(Map<String, String> additionalProperties)
-     * The simulations marshal all MavenTaksDto fields to the Gatling Simulations.
+     * The implementation uses {@link SecretsManager#loadSecrets(String...)} to fetch a map
+     * where the secret value is the JSON string representation of a {@code Map<String,String>}
+     * (see {@link JsonUtil} for marshalling/unmarshalling).
      *
-     * We chose to store our secrets on AWS as a single key value pair.
-     * A singleKey fetches a JSON string that represents a Map of key value pairs.  For instance:
-     * Given a Map<String, String> storedSecrets = Map.of("dbUser", "admin", "dbPassword", "password123");
-     * We store it in AWS Secrets Manager as:
-     * {"mySecretKey": "{\"dbUser\":\"admin\",\"dbPassword\":\"password123\"}"}
-     * where "mySecretKey" is the key used to fetch the data from AWS Secrets Manager.
-     * JsonUtil has methods to convert a Map to a JSON string, and a JSON string back to a Map.
-     *
-     * This has been written in a very generic fashion so that other implementations
-     * of SecretsManager such as for other cloud providers can be created and used in the future.
-     *
-     * Alternately, build a map any way you wish, perhaps from environment variables
-     * and return it.
+     * @param params varargs where {@code params[0]} is the region and {@code params[1]} is the secrets key
+     * @return a map of additional properties loaded from the secrets store
      */
     public Map<String, String> additionalProperties(String... params) {
         String region = params[0];
         String secretsKey = params[1];
         SecretsManager secretsManager = createSecretsManager();
-        Map<String, String> awsSecrets = secretsManager.loadSecrets(region, secretsKey);
-        return awsSecrets;
+        return secretsManager.loadSecrets(region, secretsKey);
     }
 
+    /**
+     * Returns the platform-appropriate Maven wrapper script name.
+     *
+     * @return {@code "mvnw.cmd"} on Windows, otherwise {@code "./mvnw"}
+     */
     protected String getMavenWrapperScript() {
         String osName = System.getProperty("os.name").toLowerCase();
         return osName.contains("win") ?  "mvnw.cmd" : "./mvnw";
     }
 
+    /**
+     * Resolves the application directory from the current working directory.
+     *
+     * @return the absolute path to the application directory
+     * @throws RuntimeException if the resolved path is not a directory or cannot be determined
+     */
     protected String getApplicationDirectory() {
         try {
             String path = Paths.get(System.getProperty("user.dir")).toString();

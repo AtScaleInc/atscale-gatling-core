@@ -1,8 +1,9 @@
 package com.atscale.java.xmla;
 
+import com.atscale.java.utils.PropertiesManager;
 import io.gatling.javaapi.http.*;
 import static io.gatling.javaapi.http.HttpDsl.*;
-import com.atscale.java.utils.PropertiesFileReader;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
@@ -18,10 +19,10 @@ public class XmlaProtocol {
     private static final Logger LOGGER = LoggerFactory.getLogger(XmlaProtocol.class);
 
     public static HttpProtocolBuilder forXmla(String model) {
-        String url = PropertiesFileReader.getAtScaleXmlaConnection(model);
-        Integer maxConnections = PropertiesFileReader.getAtScaleXmlaMaxConnectionsPerHost();
+        String url = PropertiesManager.getAtScaleXmlaConnection(model);
+        Integer maxConnections = PropertiesManager.getAtScaleXmlaMaxConnectionsPerHost();
 
-        if (PropertiesFileReader.isContainerVersion(model)) {
+        if (PropertiesManager.isContainerVersion(model)) {
             LOGGER.info("Configured for container version.  Auth token is part of the URL.");
             LOGGER.info("Configured for max connections per host: {}", maxConnections);
             return http.baseUrl(url)
@@ -31,9 +32,9 @@ public class XmlaProtocol {
         } else {
             LOGGER.info("Configured for installer version.  Will obtain bearer auth token.");
             LOGGER.info("Configured for max connections per host: {}", maxConnections);
-            String authUrl = PropertiesFileReader.getAtScaleXmlaAuthConnection(model);
-            String tokenUserName = PropertiesFileReader.getAtScaleXmlaAuthUserName(model);
-            String tokenPassword = PropertiesFileReader.getAtScaleXmlaAuthPassword(model);
+            String authUrl = PropertiesManager.getAtScaleXmlaAuthConnection(model);
+            String tokenUserName = PropertiesManager.getAtScaleXmlaAuthUserName(model);
+            String tokenPassword = PropertiesManager.getAtScaleXmlaAuthPassword(model);
             String bearerToken = getBearerToken(authUrl, tokenUserName, tokenPassword);
             LOGGER.info("Obtained bearer token for user {} and model {}.", tokenUserName, model);
 

@@ -2,7 +2,7 @@ package com.atscale.java.xmla.simulations;
 
 import com.atscale.java.executors.MavenTaskDto;
 import com.atscale.java.utils.JsonUtil;
-import com.atscale.java.utils.PropertiesFileReader;
+import com.atscale.java.utils.PropertiesManager;
 import com.atscale.java.xmla.scenarios.AtScaleXmlaScenario;
 import io.gatling.javaapi.core.ScenarioBuilder;
 import org.slf4j.Logger;
@@ -48,7 +48,7 @@ abstract class AtScaleXmlaSimulation extends Simulation {
         ingestionFile = MavenTaskDto.decode(ingestionFile);
         additionalProperties = MavenTaskDto.decode(additionalProperties);
         java.util.Map<String, String> additionalPropertiesMap = JsonUtil.asMap(additionalProperties);
-        PropertiesFileReader.setCustomProperties(additionalPropertiesMap);
+        PropertiesManager.setCustomProperties(additionalPropertiesMap);
 
         LOGGER.info("Simulation class {} Gatling run ID: {}", this.getClass().getName(), runId);
         LOGGER.info("Using model: {}", model);
@@ -60,8 +60,8 @@ abstract class AtScaleXmlaSimulation extends Simulation {
         LOGGER.info("Using ingestion file has header: {}", ingestionFileHasHeader);
         LOGGER.info("Using {} additional properties", additionalPropertiesMap.size());
 
-        cube = PropertiesFileReader.getAtScaleXmlaCubeName(model);
-        catalog = PropertiesFileReader.getAtScaleXmlaCatalogName(model);
+        cube = PropertiesManager.getAtScaleXmlaCubeName(model);
+        catalog = PropertiesManager.getAtScaleXmlaCatalogName(model);
 
         if (model == null || model.isEmpty()) {
             LOGGER.error("AtScale model is not specified. Please set the 'atscale.model' system property.");

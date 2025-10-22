@@ -1,6 +1,5 @@
 package com.atscale.java.executors;
 
-import com.atscale.java.utils.PropertiesFileReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

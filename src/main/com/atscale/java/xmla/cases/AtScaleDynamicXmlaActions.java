@@ -2,7 +2,7 @@ package com.atscale.java.xmla.cases;
 
 import com.atscale.java.dao.QueryHistoryDto;
 import com.atscale.java.utils.CsvLoaderUtil;
-import com.atscale.java.utils.PropertiesFileReader;
+import com.atscale.java.utils.PropertiesManager;
 import com.atscale.java.utils.QueryHistoryFileUtil;
 import io.gatling.javaapi.http.HttpRequestActionBuilder;
 import static io.gatling.javaapi.core.CoreDsl.*;
@@ -98,10 +98,10 @@ public class AtScaleDynamicXmlaActions {
                         </Execute>
                     </Body>
                 </Envelope>
-                """, queryBody, cube, catalog, PropertiesFileReader.getXmlaUseAggregates(),
-                PropertiesFileReader.getXmlaGenerateAggregates(),
-                PropertiesFileReader.getXmlaUseQueryCache(),
-                PropertiesFileReader.getXmlaUseAggregateCache());
+                """, queryBody, cube, catalog, PropertiesManager.getXmlaUseAggregates(),
+                PropertiesManager.getXmlaGenerateAggregates(),
+                PropertiesManager.getXmlaUseQueryCache(),
+                PropertiesManager.getXmlaUseAggregateCache());
     }
 }
 
