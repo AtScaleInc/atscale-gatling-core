@@ -14,12 +14,12 @@ public class QueryExtractExecutor {
 
     public static void main(String[] args) {
         QueryExtractExecutor executor = new QueryExtractExecutor();
-        executor.initAdditionalProperties();
         executor.execute();
     }
 
     protected void execute() {
         LOGGER.info("QueryExtractExecutor started.");
+        initializeAdditionalProperties();
         List<String> models = PropertiesManager.getAtScaleModels();
         AtScalePostgresDao dao = AtScalePostgresDao.getInstance();
         QueryHistoryFileUtil queryHistoryFileUtil = new QueryHistoryFileUtil(dao);
@@ -32,13 +32,13 @@ public class QueryExtractExecutor {
         org.apache.logging.log4j.LogManager.shutdown();
     }
 
-    protected void initAdditionalProperties() {
+    protected void initializeAdditionalProperties() {
             String regionProperty = "aws.region";
             String secretsKeyProperty = "aws.secrets-key";
             if(PropertiesManager.hasProperty(regionProperty) && PropertiesManager.hasProperty(secretsKeyProperty)) {
                 LOGGER.info("Loading additional properties from AWS Secrets Manager.");
-                String region = PropertiesManager.getCustomProperty("aws.region");
-                String secretsKey = PropertiesManager.getCustomProperty("aws.secrets-key");
+                String region = PropertiesManager.getCustomProperty(regionProperty);
+                String secretsKey = PropertiesManager.getCustomProperty(secretsKeyProperty);
                 PropertiesManager.setCustomProperties(new AwsSecretsManager().loadSecrets(region, secretsKey));
             } else {
                 LOGGER.warn("AWS region or secret-key property not found. Skipping loading additional properties from AWS Secrets Manager.");
