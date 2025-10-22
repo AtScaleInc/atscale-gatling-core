@@ -2,7 +2,14 @@ package com.atscale.java.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Map;
 import java.util.Properties;
 import java.util.List;
 import java.util.Arrays;
@@ -14,14 +21,26 @@ public class PropertiesFileReader {
     private static final String PROPERTIES_FILE = "systems.properties";
     private static final PropertiesFileReader instance = new PropertiesFileReader();
 
-    private PropertiesFileReader() {
-        try (InputStream input = getClass().getClassLoader().getResourceAsStream(PropertiesFileReader.PROPERTIES_FILE)) {
-            if (input == null) {
-                throw new RuntimeException("Properties file not found: " + PropertiesFileReader.PROPERTIES_FILE);
+    private PropertiesFileReader(){
+        try{
+            URL propertyFileURl = getClass().getClassLoader().getResource(PropertiesFileReader.PROPERTIES_FILE);
+            if(null == propertyFileURl){
+                LOGGER.error("Properties file not found: {}", PropertiesFileReader.PROPERTIES_FILE);
+                return;
             }
-            properties.load(input);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to load properties file: " + PropertiesFileReader.PROPERTIES_FILE, e);
+            Path path = java.nio.file.Paths.get(propertyFileURl.toURI());
+            if (Files.isRegularFile(path)){
+                LOGGER.info("Loading properties file from path: {}", path.toString());
+                try (InputStream input = getClass().getClassLoader().getResourceAsStream(PropertiesFileReader.PROPERTIES_FILE)) {
+                    properties.load(input);
+                } catch (IOException e){
+                    LOGGER.error("Error loading properties file: {}", e.getMessage());
+                }
+            } else {
+                LOGGER.error("Properties file not found at path: {}", path.toString());
+            }
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -204,6 +223,17 @@ public class PropertiesFileReader {
     public static String getAtScaleXmlaAuthPassword(String model) {
         String key = String.format("atscale.%s.xmla.auth.password", clean(model));
         return getProperty(key);
+    }
+
+    public static void setCustomProperties(java.util.Map<String, String> customProperties) {
+        for (String key : customProperties.keySet()) {
+            LOGGER.info("Setting custom property: {} of size {}", key, customProperties.get(key).length());
+            instance.properties.setProperty(key, customProperties.get(key));
+        }
+    }
+
+    public static String getCustomProperty(String propertyName) {
+        return getProperty(propertyName);
     }
 
     private static String getProperty(String key) {

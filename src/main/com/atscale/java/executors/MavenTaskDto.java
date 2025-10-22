@@ -3,11 +3,13 @@ package com.atscale.java.executors;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.Base64;
 import java.nio.file.Path;
 import com.atscale.java.utils.CsvLoaderUtil;
 import com.atscale.java.utils.InjectionStepJsonUtil;
 import com.atscale.java.injectionsteps.*;
+import com.atscale.java.utils.JsonUtil;
 import org.apache.commons.lang3.StringUtils;
 
 @SuppressWarnings("unused")
@@ -24,6 +26,7 @@ public class MavenTaskDto<T> {
     public static final String ATSCALE_LOG_APPEND = "gatling_run_logAppend";
     public static final String ATSCALE_QUERY_INGESTION_FILE = "query_ingestion_file";
     public static final String ATSCALE_QUERY_INGESTION_FILE_HAS_HEADER = "query_ingestion_file_has_header";
+    public static final String ADDITIONAL_PROPERTIES = "additional_properties";
 
     private final String taskName;
     private String mavenCommand;
@@ -36,6 +39,7 @@ public class MavenTaskDto<T> {
     private List <T> injectionSteps;
     private String ingestionFileName;
     private boolean ingestionFileHasHeader;
+    private String additionalProperties;
 
     public MavenTaskDto(String taskName) {
         this.taskName = taskName;
@@ -169,6 +173,19 @@ public class MavenTaskDto<T> {
         return this.ingestionFileHasHeader;
     }
 
+    public void setAdditionalProperties(Map<String, String> additionalProperties) {
+        String additionalPrpos = JsonUtil.asJson(additionalProperties);
+        this.additionalProperties = encode(additionalPrpos);
+    }
+
+    public String getAdditionalProperties() {
+        return this.additionalProperties;
+    }
+
+    public Map<String, String> decodeAdditionalProperties(String additionalProperties) {
+        String additionalPropsJson = decode(additionalProperties);
+        return JsonUtil.asMap(additionalPropsJson);
+    }
 
     public static String encode(String input) {
         if(StringUtils.isEmpty(input)) {

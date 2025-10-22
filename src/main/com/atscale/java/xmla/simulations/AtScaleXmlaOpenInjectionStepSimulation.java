@@ -3,6 +3,7 @@ package com.atscale.java.xmla.simulations;
 import com.atscale.java.executors.MavenTaskDto;
 import com.atscale.java.injectionsteps.OpenStep;
 import com.atscale.java.utils.InjectionStepJsonUtil;
+import com.atscale.java.utils.JsonUtil;
 import com.atscale.java.utils.PropertiesFileReader;
 import com.atscale.java.xmla.XmlaProtocol;
 import com.atscale.java.xmla.scenarios.AtScaleXmlaScenario;
@@ -29,12 +30,16 @@ public class AtScaleXmlaOpenInjectionStepSimulation extends Simulation {
         String loggingAsAppend = System.getProperties().getProperty(MavenTaskDto.ATSCALE_LOG_APPEND);
         String ingestionFile = System.getProperties().getProperty(MavenTaskDto.ATSCALE_QUERY_INGESTION_FILE);
         String ingestionFileHasHeader = System.getProperties().getProperty(MavenTaskDto.ATSCALE_QUERY_INGESTION_FILE_HAS_HEADER);
+        String additionalProperties = System.getProperties().getProperty(MavenTaskDto.ADDITIONAL_PROPERTIES);
 
         model = MavenTaskDto.decode(model);
         steps = MavenTaskDto.decode(steps);
         runId = MavenTaskDto.decode(runId);
         ingestionFile = MavenTaskDto.decode(ingestionFile);
-
+        additionalProperties = MavenTaskDto.decode(additionalProperties);
+        java.util.Map<String, String> additionalPropertiesMap = JsonUtil.asMap(additionalProperties);
+        PropertiesFileReader.setCustomProperties(additionalPropertiesMap);
+        LOGGER.info("Using {} additional properties", additionalPropertiesMap.size());
 
         LOGGER.info("Simulation class {} Gatling run ID: {}", this.getClass().getName(), runId);
         LOGGER.info("Using model: {}", model);

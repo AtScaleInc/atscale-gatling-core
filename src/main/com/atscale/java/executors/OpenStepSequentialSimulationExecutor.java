@@ -2,11 +2,12 @@ package com.atscale.java.executors;
 
 import com.atscale.java.injectionsteps.AtOnceUsersOpenInjectionStep;
 import com.atscale.java.injectionsteps.OpenStep;
+import com.atscale.java.utils.PropertiesFileReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class OpenStepSequentialSimulationExecutor extends SequentialSimulationExecutor<OpenStep> {
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenStepSequentialSimulationExecutor.class);
@@ -20,6 +21,12 @@ public class OpenStepSequentialSimulationExecutor extends SequentialSimulationEx
     }
 
     protected List<MavenTaskDto<OpenStep>> getSimulationTasks() {
+        // To use the default implementation of Secrets Manager to read a map of
+        // secrets previously stored in AWS Secrets Manager
+        String region = PropertiesFileReader.getCustomProperty("aws.region");
+        String secretsKey = PropertiesFileReader.getCustomProperty("aws.secret-key");
+        Map<String, String> secrets = additionalProperties(region, secretsKey);
+
         List<MavenTaskDto<OpenStep>> tasks = new ArrayList<>();
 
         List<OpenStep> t1InjectionSteps = new ArrayList<>();
@@ -47,6 +54,7 @@ public class OpenStepSequentialSimulationExecutor extends SequentialSimulationEx
         task1.setModel( "internet_sales");
         task1.setInjectionSteps(t1InjectionSteps);
         task1.setIngestionFileName("internet_sales_xmla_queries.csv", true);
+        task1.setAdditionalProperties(secrets);
 
         MavenTaskDto<OpenStep> task2 = new MavenTaskDto<>("Internet Sales JDBC Simulation");
         tasks.add(task2);
@@ -57,6 +65,7 @@ public class OpenStepSequentialSimulationExecutor extends SequentialSimulationEx
         task2.setRunDescription("Internet Sales JDBC Model Tests");
         task2.setModel("internet_sales");
         task2.setInjectionSteps(t2InjectionSteps);
+        task2.setAdditionalProperties(secrets);
 
         MavenTaskDto<OpenStep> task3 = new MavenTaskDto<>("TPC-DS JDBC Simulation");
         tasks.add(task3);
@@ -66,6 +75,7 @@ public class OpenStepSequentialSimulationExecutor extends SequentialSimulationEx
         task3.setRunDescription("TPCDS JDBC Model Tests");
         task3.setModel("tpcds_benchmark_model");
         task3.setInjectionSteps(t3InjectionSteps);
+        task3.setAdditionalProperties(secrets);
         
         // Two example tasks for the Installer Version. Exclude by removing tasks.add as needed.
         MavenTaskDto<OpenStep> task4 = new MavenTaskDto<>("Installer TPC-DS JDBC Simulation");

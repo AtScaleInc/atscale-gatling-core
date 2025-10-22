@@ -4,6 +4,7 @@ import com.atscale.java.executors.MavenTaskDto;
 import com.atscale.java.jdbc.JdbcProtocol;
 import com.atscale.java.jdbc.scenarios.AtScaleDynamicQueryBuilderScenario;
 import com.atscale.java.utils.InjectionStepJsonUtil;
+import com.atscale.java.utils.JsonUtil;
 import io.gatling.javaapi.core.OpenInjectionStep;
 import io.gatling.javaapi.core.ScenarioBuilder;
 import io.gatling.javaapi.core.Simulation;
@@ -32,11 +33,15 @@ public class AtScaleOpenInjectionStepSimulation extends Simulation{
         String loggingAsAppend = System.getProperties().getProperty(MavenTaskDto.ATSCALE_LOG_APPEND);
         String ingestionFile = System.getProperties().getProperty(MavenTaskDto.ATSCALE_QUERY_INGESTION_FILE);
         String ingestionFileHasHeader = System.getProperties().getProperty(MavenTaskDto.ATSCALE_QUERY_INGESTION_FILE_HAS_HEADER);
+        String additionalProperties = System.getProperties().getProperty(MavenTaskDto.ADDITIONAL_PROPERTIES);
 
         model = MavenTaskDto.decode(model);
         steps = MavenTaskDto.decode(steps);
         runId = MavenTaskDto.decode(runId);
         ingestionFile = MavenTaskDto.decode(ingestionFile);
+        additionalProperties = MavenTaskDto.decode(additionalProperties);
+        java.util.Map<String, String> additionalPropertiesMap = JsonUtil.asMap(additionalProperties);
+        PropertiesFileReader.setCustomProperties(additionalPropertiesMap);
 
 
         LOGGER.info("Simulation class {} Gatling run ID: {}", this.getClass().getName(), runId);
@@ -47,7 +52,7 @@ public class AtScaleOpenInjectionStepSimulation extends Simulation{
         LOGGER.info("Logging as append: {}", loggingAsAppend);
         LOGGER.info("Using ingestion file: {}", ingestionFile);
         LOGGER.info("Using ingestion file has header: {}", ingestionFileHasHeader);
-
+        LOGGER.info("Using {} additional properties", additionalPropertiesMap.size());
 
         if (model == null || model.isEmpty()) {
             LOGGER.error("AtScale model is not specified. Please set the 'atscale.model' system property.");

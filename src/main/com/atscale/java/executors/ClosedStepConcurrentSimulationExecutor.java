@@ -44,6 +44,7 @@ public class ClosedStepConcurrentSimulationExecutor extends ConcurrentSimulation
         task1.setRunDescription("Internet Sales XMLA Model Tests");
         task1.setModel( "internet_sales");
         task1.setInjectionSteps(t1InjectionSteps);
+        task1.setIngestionFileName("internet_sales_xmla_queries.csv", true);
 
         MavenTaskDto<ClosedStep> task2 = new MavenTaskDto<>("Internet Sales JDBC User Simulation");
         tasks.add(task2);
