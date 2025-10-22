@@ -1,18 +1,19 @@
 package com.atscale.java.executors;
 
 import com.atscale.java.dao.AtScalePostgresDao;
+import com.atscale.java.utils.AwsSecretsManager;
 import com.atscale.java.utils.QueryHistoryFileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.atscale.java.utils.PropertiesFileReader;
 import java.util.List;
 
-
 public class QueryExtractExecutor {
     private static final Logger LOGGER = LoggerFactory.getLogger(QueryExtractExecutor.class);
 
     public static void main(String[] args) {
         QueryExtractExecutor executor = new QueryExtractExecutor();
+        executor.initAdditionalProperties();
         executor.execute();
     }
 
@@ -28,5 +29,18 @@ public class QueryExtractExecutor {
 
         LOGGER.info("QueryExtractExecutor finished.");
         org.apache.logging.log4j.LogManager.shutdown();
+    }
+
+    protected void initAdditionalProperties() {
+            String regionProperty = "aws.region";
+            String secretsKeyProperty = "aws.secret-key";
+            if(PropertiesFileReader.hasProperty(regionProperty) && PropertiesFileReader.hasProperty(secretsKeyProperty)) {
+                LOGGER.info("Loading additional properties from AWS Secrets Manager.");
+                String region = PropertiesFileReader.getCustomProperty("aws.region");
+                String secretsKey = PropertiesFileReader.getCustomProperty("aws.secret-key");
+                PropertiesFileReader.setCustomProperties(new AwsSecretsManager().loadSecrets(region, secretsKey));
+            } else {
+                LOGGER.warn("AWS region or secret-key property not found. Skipping loading additional properties from AWS Secrets Manager.");
+            }
     }
 }

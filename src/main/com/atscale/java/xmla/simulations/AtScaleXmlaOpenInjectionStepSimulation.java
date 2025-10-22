@@ -1,64 +1,21 @@
 package com.atscale.java.xmla.simulations;
 
-import com.atscale.java.executors.MavenTaskDto;
 import com.atscale.java.injectionsteps.OpenStep;
 import com.atscale.java.utils.InjectionStepJsonUtil;
-import com.atscale.java.utils.JsonUtil;
-import com.atscale.java.utils.PropertiesFileReader;
 import com.atscale.java.xmla.XmlaProtocol;
-import com.atscale.java.xmla.scenarios.AtScaleXmlaScenario;
 import io.gatling.javaapi.core.OpenInjectionStep;
-import io.gatling.javaapi.core.ScenarioBuilder;
-import io.gatling.javaapi.core.Simulation;
 import static io.gatling.javaapi.core.OpenInjectionStep.atOnceUsers;
-
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class AtScaleXmlaOpenInjectionStepSimulation extends Simulation {
+public class AtScaleXmlaOpenInjectionStepSimulation extends AtScaleXmlaSimulation {
     private static final Logger LOGGER = LoggerFactory.getLogger(AtScaleXmlaOpenInjectionStepSimulation.class);
 
     public AtScaleXmlaOpenInjectionStepSimulation() {
-        String model = System.getProperties().getProperty(MavenTaskDto.ATSCALE_MODEL);
-        String steps = System.getProperties().getProperty(MavenTaskDto.GATLING_INJECTION_STEPS);
-        String runId = System.getProperties().getProperty(MavenTaskDto.ATSCALE_RUN_ID);
-        String runLogFileName = System.getProperties().getProperty(MavenTaskDto.ATSCALE_LOG_FILE_NAME);
-        String loggingAsAppend = System.getProperties().getProperty(MavenTaskDto.ATSCALE_LOG_APPEND);
-        String ingestionFile = System.getProperties().getProperty(MavenTaskDto.ATSCALE_QUERY_INGESTION_FILE);
-        String ingestionFileHasHeader = System.getProperties().getProperty(MavenTaskDto.ATSCALE_QUERY_INGESTION_FILE_HAS_HEADER);
-        String additionalProperties = System.getProperties().getProperty(MavenTaskDto.ADDITIONAL_PROPERTIES);
-
-        model = MavenTaskDto.decode(model);
-        steps = MavenTaskDto.decode(steps);
-        runId = MavenTaskDto.decode(runId);
-        ingestionFile = MavenTaskDto.decode(ingestionFile);
-        additionalProperties = MavenTaskDto.decode(additionalProperties);
-        java.util.Map<String, String> additionalPropertiesMap = JsonUtil.asMap(additionalProperties);
-        PropertiesFileReader.setCustomProperties(additionalPropertiesMap);
-        LOGGER.info("Using {} additional properties", additionalPropertiesMap.size());
-
-        LOGGER.info("Simulation class {} Gatling run ID: {}", this.getClass().getName(), runId);
-        LOGGER.info("Using model: {}", model);
-        LOGGER.info("Using injection steps: {}", steps);
-        LOGGER.info("Using run id: {}", runId);
-        LOGGER.info("Using log file name: {}", runLogFileName);
-        LOGGER.info("Logging as append: {}", loggingAsAppend);
-        LOGGER.info("Using ingestion file: {}", ingestionFile);
-        LOGGER.info("Using ingestion file has header: {}", ingestionFileHasHeader);
-        
-        String cube = PropertiesFileReader.getAtScaleXmlaCubeName(model);
-        String catalog = PropertiesFileReader.getAtScaleXmlaCatalogName(model);
-        
-
-        if (model == null || model.isEmpty()) {
-            LOGGER.error("AtScale model is not specified. Please set the 'atscale.model' system property.");
-            throw new IllegalArgumentException("AtScale model is required.");
-        }
-
+        super();
 
         List<OpenStep> openSteps = InjectionStepJsonUtil.openInjectionStepsFromJson(steps);
         List<io.gatling.javaapi.core.OpenInjectionStep> injectionSteps = new ArrayList<>();
@@ -80,8 +37,6 @@ public class AtScaleXmlaOpenInjectionStepSimulation extends Simulation {
             injectionSteps.add(atOnceUsers(1));
         }
 
-        AtScaleXmlaScenario scn = new AtScaleXmlaScenario();
-        ScenarioBuilder sb = scn.buildScenario(model, cube, catalog, runId, ingestionFile, Boolean.parseBoolean(ingestionFileHasHeader));
         setUp(sb.injectOpen(injectionSteps).protocols(XmlaProtocol.forXmla(model)));
     }
 }

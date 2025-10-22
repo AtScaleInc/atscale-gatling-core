@@ -91,7 +91,7 @@ public class QueryHistoryFileUtil {
         } catch (IOException e) {
             throw new RuntimeException("Error caching queries to file: " + filePath, e);
         } catch (IllegalArgumentException e) {
-            LOGGER.warn("Validation error {}", e.getMessage(), e);
+            LOGGER.warn("Validation error {}", e.getMessage());
         }
     }
 

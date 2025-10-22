@@ -1,15 +1,14 @@
 package com.atscale.java.utils;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
 import java.util.Properties;
 import java.util.List;
 import java.util.Arrays;
@@ -30,14 +29,14 @@ public class PropertiesFileReader {
             }
             Path path = java.nio.file.Paths.get(propertyFileURl.toURI());
             if (Files.isRegularFile(path)){
-                LOGGER.info("Loading properties file from path: {}", path.toString());
+                LOGGER.info("Loading properties file from path: {}", path);
                 try (InputStream input = getClass().getClassLoader().getResourceAsStream(PropertiesFileReader.PROPERTIES_FILE)) {
                     properties.load(input);
                 } catch (IOException e){
                     LOGGER.error("Error loading properties file: {}", e.getMessage());
                 }
             } else {
-                LOGGER.error("Properties file not found at path: {}", path.toString());
+                LOGGER.error("Properties file not found at path: {}", path);
             }
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
@@ -230,6 +229,11 @@ public class PropertiesFileReader {
             LOGGER.info("Setting custom property: {} of size {}", key, customProperties.get(key).length());
             instance.properties.setProperty(key, customProperties.get(key));
         }
+    }
+
+    public static boolean hasProperty(String key) {
+        String property = instance.properties.getProperty(key);
+        return StringUtils.isNotEmpty(property);
     }
 
     public static String getCustomProperty(String propertyName) {

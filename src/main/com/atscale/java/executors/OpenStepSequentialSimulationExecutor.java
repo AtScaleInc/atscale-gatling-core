@@ -6,6 +6,7 @@ import com.atscale.java.utils.PropertiesFileReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -21,11 +22,12 @@ public class OpenStepSequentialSimulationExecutor extends SequentialSimulationEx
     }
 
     protected List<MavenTaskDto<OpenStep>> getSimulationTasks() {
-        // To use the default implementation of Secrets Manager to read a map of
-        // secrets previously stored in AWS Secrets Manager
-        String region = PropertiesFileReader.getCustomProperty("aws.region");
-        String secretsKey = PropertiesFileReader.getCustomProperty("aws.secret-key");
-        Map<String, String> secrets = additionalProperties(region, secretsKey);
+        Map<String, String> secrets = Collections.emptyMap();
+        if(PropertiesFileReader.hasProperty("aws.region") && PropertiesFileReader.hasProperty("aws.secret-key")) {
+            String region = PropertiesFileReader.getCustomProperty("aws.region");
+            String secretsKey = PropertiesFileReader.getCustomProperty("aws.secret-key");
+            secrets = additionalProperties(region, secretsKey);
+        }
 
         List<MavenTaskDto<OpenStep>> tasks = new ArrayList<>();
 
