@@ -174,8 +174,8 @@ public class MavenTaskDto<T> {
     }
 
     public void setAdditionalProperties(Map<String, String> additionalProperties) {
-        String additionalPrpos = JsonUtil.asJson(additionalProperties);
-        this.additionalProperties = encode(additionalPrpos);
+        String additionalProps = JsonUtil.asJson(additionalProperties);
+        this.additionalProperties = encode(additionalProps);
     }
 
     public String getAdditionalProperties() {

@@ -21,13 +21,14 @@ public class JsonUtilTest {
     }
 
     @Test
-    public void nullStringShoulReturnEmptyMap() {
+    public void nullStringShouldReturnEmptyMap() {
         // Placeholder test
         Map<String, String> map = JsonUtil.asMap("null");
         Assertions.assertNotNull(map);
         Assertions.assertEquals(0, map.size());
     }
 
+    @Test
     public void nullObjectShouldReturnEmptyMap() {
         // Placeholder test
         Map<String, String> map = JsonUtil.asMap(null);

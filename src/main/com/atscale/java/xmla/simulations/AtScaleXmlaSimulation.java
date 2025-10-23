@@ -40,7 +40,8 @@ abstract class AtScaleXmlaSimulation extends Simulation {
         runLogFileName = System.getProperties().getProperty(MavenTaskDto.ATSCALE_LOG_FILE_NAME);
         loggingAsAppend = System.getProperties().getProperty(MavenTaskDto.ATSCALE_LOG_APPEND);
         ingestionFile = System.getProperties().getProperty(MavenTaskDto.ATSCALE_QUERY_INGESTION_FILE, null);
-        ingestionFileHasHeader = System.getProperties().getProperty(MavenTaskDto.ATSCALE_QUERY_INGESTION_FILE_HAS_HEADER);additionalProperties = System.getProperties().getProperty(MavenTaskDto.ADDITIONAL_PROPERTIES);
+        ingestionFileHasHeader = System.getProperties().getProperty(MavenTaskDto.ATSCALE_QUERY_INGESTION_FILE_HAS_HEADER);
+        additionalProperties = System.getProperties().getProperty(MavenTaskDto.ADDITIONAL_PROPERTIES);
 
         model = MavenTaskDto.decode(model);
         steps = MavenTaskDto.decode(steps);
