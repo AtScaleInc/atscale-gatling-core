@@ -1,6 +1,10 @@
 package com.atscale.java.utils;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.commons.collections4.Get;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRequest;
@@ -9,6 +13,10 @@ import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRespon
 public class AwsSecretsManager implements SecretsManager{
 
     public Map<String, String> loadSecrets(String... params) {
+        return processAwsSecrets(callAws(params));
+    }
+
+    public String callAws(String... params) {
         SecretsManagerClient client = null;
 
         try {
@@ -22,16 +30,22 @@ public class AwsSecretsManager implements SecretsManager{
 
             GetSecretValueResponse getSecretValueResponse = client.getSecretValue(getSecretValueRequest);
 
-            // Convert the aws response to a map
-            // AWS sends back a map with the key and the value.  In our case the value is a Java Map in the
-            // form of a JSON string.  Use the key to get the value, convert it to a map of key value pairs
-            // and return it to the caller.
-            Map<String, String> awsSecrets = JsonUtil.asMap(getSecretValueResponse.secretString());
-            return JsonUtil.asMap(awsSecrets.get(params[1]));
+            return getSecretValueResponse.secretString();
         } finally {
             if (client != null) {
                 client.close();
             }
         }
+    }
+
+    protected Map<String, String> processAwsSecrets(String secretString) {
+        Map<String, String> flattenedSecrets = new HashMap<>();
+
+        Map<String, String> awsSecrets = JsonUtil.asMap(secretString);
+        for(String secretKey: awsSecrets.keySet()) {
+            flattenedSecrets.put(secretKey, awsSecrets.get(secretKey));
+
+        }
+        return flattenedSecrets;
     }
 }
