@@ -1,11 +1,14 @@
 package com.atscale.java.executors;
 
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Base64;
 import java.nio.file.Path;
+import java.util.regex.Pattern;
+
 import com.atscale.java.utils.CsvLoaderUtil;
 import com.atscale.java.utils.InjectionStepJsonUtil;
 import com.atscale.java.injectionsteps.*;
@@ -40,6 +43,7 @@ public class MavenTaskDto<T> {
     private String ingestionFileName;
     private boolean ingestionFileHasHeader;
     private String additionalProperties;
+    private String alternatePropertiesFileName;
 
     public MavenTaskDto(String taskName) {
         this.taskName = taskName;
@@ -185,6 +189,23 @@ public class MavenTaskDto<T> {
     public Map<String, String> decodeAdditionalProperties(String additionalProperties) {
         String additionalPropsJson = decode(additionalProperties);
         return JsonUtil.asMap(additionalPropsJson);
+    }
+
+    public String getAlternatePropertiesFileName() {
+        return alternatePropertiesFileName;
+    }
+
+    public void setAlternatePropertiesFileName(String alternatePropertiesFileName) {
+        Pattern validFileNamePattern = Pattern.compile("^[A-Za-z0-9._-]+$");
+
+        if (alternatePropertiesFileName == null || !validFileNamePattern.matcher(alternatePropertiesFileName).matches()) {
+            throw new IllegalArgumentException("Invalid alternate properties file name. File name can only include characters a-z, A-Z, 0-9, periods, dashes, and underscores.");
+        }
+        URL propertyFileURl = getClass().getClassLoader().getResource(alternatePropertiesFileName);
+        if(null == propertyFileURl){
+            throw new IllegalArgumentException("Alternate properties file not found in classpath: " + alternatePropertiesFileName);
+        }
+        this.alternatePropertiesFileName = alternatePropertiesFileName;
     }
 
     public static String encode(String input) {

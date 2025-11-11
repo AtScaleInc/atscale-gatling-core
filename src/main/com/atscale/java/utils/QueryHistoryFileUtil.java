@@ -137,11 +137,13 @@ public class QueryHistoryFileUtil {
 
     public static String getXmlaFilePath(String model) {
         model = StringUtil.stripQuotes(model);
-        return Paths.get(System.getProperty("user.dir"), "queries", model + "_xmla_queries.json").toString();
+        String differentiator = PropertiesManager.getDifferentiator();
+        return Paths.get(System.getProperty("user.dir"), "queries", model + "_xmla_queries" + differentiator + ".json").toString();
     }
 
     public static String getJdbcFilePath(String model) {
         model = StringUtil.stripQuotes(model);
-        return Paths.get(System.getProperty("user.dir"), "queries", model + "_jdbc_queries.json").toString();
+        String differentiator = PropertiesManager.getDifferentiator();
+        return Paths.get(System.getProperty("user.dir"), "queries", model + "_jdbc_queries" + differentiator + ".json").toString();
     }
 }

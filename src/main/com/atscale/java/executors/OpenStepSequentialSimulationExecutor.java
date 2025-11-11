@@ -5,10 +5,8 @@ import com.atscale.java.injectionsteps.OpenStep;
 import com.atscale.java.utils.PropertiesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 public class OpenStepSequentialSimulationExecutor extends SequentialSimulationExecutor<OpenStep> {
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenStepSequentialSimulationExecutor.class);
@@ -22,11 +20,11 @@ public class OpenStepSequentialSimulationExecutor extends SequentialSimulationEx
     }
 
     protected List<MavenTaskDto<OpenStep>> getSimulationTasks() {
-        Map<String, String> secrets = Collections.emptyMap();
+        Map<String, String> secrets = new HashMap<>();
         if(PropertiesManager.hasProperty("aws.region") && PropertiesManager.hasProperty("aws.secrets-key")) {
             String region = PropertiesManager.getCustomProperty("aws.region");
             String secretsKey = PropertiesManager.getCustomProperty("aws.secrets-key");
-            secrets = additionalProperties(region, secretsKey);
+            secrets.putAll(additionalProperties(region, secretsKey));
         }
 
         List<MavenTaskDto<OpenStep>> tasks = new ArrayList<>();

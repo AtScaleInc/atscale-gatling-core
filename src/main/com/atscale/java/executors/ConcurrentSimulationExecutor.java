@@ -1,5 +1,6 @@
 package com.atscale.java.executors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
@@ -48,6 +49,7 @@ public abstract class ConcurrentSimulationExecutor<T> extends SimulationExecutor
                     String ingestFile = String.format("-D%s=%s", MavenTaskDto.ATSCALE_QUERY_INGESTION_FILE, task.getIngestionFileName());
                     String ingestFileHasHeader = String.format("-D%s=%s", MavenTaskDto.ATSCALE_QUERY_INGESTION_FILE_HAS_HEADER, task.getIngestionFileHasHeader());
                     String additionalProperties = String.format("-D%s=%s", MavenTaskDto.ADDITIONAL_PROPERTIES, task.getAdditionalProperties());
+                    String alternatePropertiesFileName = task.getAlternatePropertiesFileName();
 
                     LOGGER.debug("SimEx Using simulation class: {}", simClass);
                     LOGGER.debug("SimEx Using run description: {}", runDesc);
@@ -59,6 +61,8 @@ public abstract class ConcurrentSimulationExecutor<T> extends SimulationExecutor
                     LOGGER.debug("SimEx Using ingestion file: {}", ingestFile);
                     LOGGER.debug("SimEx Ingestion file has header: {}", ingestFileHasHeader);
                     LOGGER.debug("SimEx Additional properties: {}", additionalProperties);
+                    LOGGER.debug("SimEx Using alternate properties file name: {}", alternatePropertiesFileName);
+
 
                     command.add(simClass);
                     command.add(runDesc);
@@ -70,6 +74,10 @@ public abstract class ConcurrentSimulationExecutor<T> extends SimulationExecutor
                     command.add(ingestFile);
                     command.add(ingestFileHasHeader);
                     command.add(additionalProperties);
+                    if(StringUtils.isNotEmpty(alternatePropertiesFileName)){
+                        String systemsPropertiesFileName = String.format("-D%s=%s", "systems.properties.file", alternatePropertiesFileName);
+                        command.add(systemsPropertiesFileName);
+                    }
 
                     // Add the Maven goal (e.g., gatling:test)
                     command.add(task.getMavenCommand());
@@ -117,6 +125,7 @@ public abstract class ConcurrentSimulationExecutor<T> extends SimulationExecutor
                 if (files != null) {
                     for (File file : files) {
                         if (file.isFile() && file.length() == 0) {
+                            //noinspection ResultOfMethodCallIgnored
                             file.delete();
                         }
                     }

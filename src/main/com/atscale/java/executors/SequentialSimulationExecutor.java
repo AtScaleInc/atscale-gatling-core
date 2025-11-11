@@ -1,5 +1,6 @@
 package com.atscale.java.executors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,7 +9,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "RV_RETURN_VALUE_IGNORED"})
 public abstract class SequentialSimulationExecutor<T> extends SimulationExecutor {
     private static final Logger LOGGER = LoggerFactory.getLogger(SequentialSimulationExecutor.class);
 
@@ -47,7 +48,10 @@ public abstract class SequentialSimulationExecutor<T> extends SimulationExecutor
                     String ingestFile = String.format("-D%s=%s", MavenTaskDto.ATSCALE_QUERY_INGESTION_FILE, task.getIngestionFileName());
                     String ingestFileHasHeader = String.format("-D%s=%s", MavenTaskDto.ATSCALE_QUERY_INGESTION_FILE_HAS_HEADER, task.getIngestionFileHasHeader());
                     String additionalProperties = String.format("-D%s=%s", MavenTaskDto.ADDITIONAL_PROPERTIES, task.getAdditionalProperties());
-
+                    String alternatePropertiesFileName = task.getAlternatePropertiesFileName();
+                    if(StringUtils.isNotEmpty(alternatePropertiesFileName)){
+                        throw new UnsupportedOperationException("Sequential executors do not support the use of alternate properties files.  Remove the call(s) to setAlternatePropertiesFileName() in the task definition(s).");
+                    }
 
                     LOGGER.debug("SimEx Using simulation class: {}", simClass);
                     LOGGER.debug("SimEx Using run description: {}", runDesc);
@@ -59,7 +63,6 @@ public abstract class SequentialSimulationExecutor<T> extends SimulationExecutor
                     LOGGER.debug("SimEx Using ingestion file: {}", ingestFile);
                     LOGGER.debug("SimEx Ingestion file has header: {}", ingestFileHasHeader);
                     LOGGER.debug("SimEx Using additional properties: {}", additionalProperties);
-
 
                     command.add(simClass);
                     command.add(runDesc);
@@ -106,6 +109,7 @@ public abstract class SequentialSimulationExecutor<T> extends SimulationExecutor
             if (files != null) {
                 for (File file : files) {
                     if (file.isFile() && file.length() == 0) {
+                        //noinspection ResultOfMethodCallIgnored
                         file.delete();
                     }
                 }

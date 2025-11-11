@@ -1,6 +1,6 @@
 package com.atscale.java.utils;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
@@ -17,20 +17,29 @@ import java.util.Arrays;
 public class PropertiesManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesManager.class);
     private final Properties properties = new Properties();
-    private static final String PROPERTIES_FILE = "systems.properties";
+    private final String propertiesFileName;
+    private final String differentiator;
     private static final PropertiesManager instance = new PropertiesManager();
 
     private PropertiesManager(){
         try{
-            URL propertyFileURl = getClass().getClassLoader().getResource(PropertiesManager.PROPERTIES_FILE);
+            if(System.getProperty("systems.properties.file") != null){
+                propertiesFileName = System.getProperty("systems.properties.file");
+                LOGGER.info("Loading properties file from system property: {}", propertiesFileName);
+                differentiator = "¹";
+            } else {
+                propertiesFileName = "systems.properties";
+                differentiator = "";
+            }
+            URL propertyFileURl = getClass().getClassLoader().getResource(propertiesFileName);
             if(null == propertyFileURl){
-                LOGGER.error("Properties file not found: {}", PropertiesManager.PROPERTIES_FILE);
+                LOGGER.error("Properties file not found: {}", propertiesFileName);
                 return;
             }
             Path path = java.nio.file.Paths.get(propertyFileURl.toURI());
             if (Files.isRegularFile(path)){
                 LOGGER.info("Loading properties file from path: {}", path);
-                try (InputStream input = getClass().getClassLoader().getResourceAsStream(PropertiesManager.PROPERTIES_FILE)) {
+                try (InputStream input = getClass().getClassLoader().getResourceAsStream(propertiesFileName)) {
                     properties.load(input);
                 } catch (IOException e){
                     LOGGER.error("Error loading properties file: {}", e.getMessage());
@@ -43,10 +52,14 @@ public class PropertiesManager {
         }
     }
 
+    public static String getDifferentiator() {
+        return instance.differentiator;
+    }
+
     public static List<String> getAtScaleModels(){
         String property = instance.properties.getProperty("atscale.models");
         if (property == null || property.isEmpty()) {
-            throw new RuntimeException("atscale.models is not set in properties file: " + PROPERTIES_FILE);
+            throw new RuntimeException("atscale.models is not set in properties file: " + instance.propertiesFileName);
         }
         String[] models = property.split("\\s*,\\s*"); // Splits on commas, trims spaces
         LOGGER.info("AtScale models loaded: {}", Arrays.toString(models));
@@ -134,7 +147,7 @@ public class PropertiesManager {
     public static String getAtScalePostgresURL() {
         String property = instance.properties.getProperty("atscale.postgres.jdbc.url");
         if (property == null || property.isEmpty()) {
-            throw new RuntimeException("atscale.postgres.jdbc.url is not set in properties file: " + PROPERTIES_FILE);
+            throw new RuntimeException("atscale.postgres.jdbc.url is not set in properties file: " + instance.propertiesFileName);
         }
         return property;
     }
@@ -142,7 +155,7 @@ public class PropertiesManager {
     public static String getAtScalePostgresUser() {
         String property = instance.properties.getProperty("atscale.postgres.jdbc.username");
         if (property == null || property.isEmpty()) {
-            throw new RuntimeException("atscale.postgres.jdbc.username is not set in properties file: " + PROPERTIES_FILE);
+            throw new RuntimeException("atscale.postgres.jdbc.username is not set in properties file: " + instance.propertiesFileName);
         }
         return property;
     }
@@ -150,7 +163,7 @@ public class PropertiesManager {
     public static String getAtScalePostgresPassword() {
         String property = instance.properties.getProperty("atscale.postgres.jdbc.password");
         if (property == null || property.isEmpty()) {
-            throw new RuntimeException("atscale.postgres.jdbc.password is not set in properties file: " + PROPERTIES_FILE);
+            throw new RuntimeException("atscale.postgres.jdbc.password is not set in properties file: " + instance.propertiesFileName);
         }
         return property;
     }
@@ -243,7 +256,7 @@ public class PropertiesManager {
     private static String getProperty(String key) {
         String property = instance.properties.getProperty(key);
         if (property == null || property.isEmpty()) {
-            throw new RuntimeException("Property " + key + " is not set in properties file: " + PROPERTIES_FILE);
+            throw new RuntimeException("Property " + key + " is not set in properties file: " + instance.propertiesFileName);
         }
         return property;
     }

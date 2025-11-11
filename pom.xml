@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.atscale.gatling</groupId>
   <artifactId>atscale-gatling-core</artifactId>
-  <version>1.6</version>
+  <version>1.7</version>
   <packaging>jar</packaging>
 
   <name>atscale_gatling</name>
@@ -350,6 +350,11 @@
         <artifactId>commons-pool2</artifactId>
         <version>2.12.1</version>
       </dependency>
+      <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpcore</artifactId>
+        <version>4.4.16</version>
+      </dependency>
   </dependencies>
   </dependencyManagement>
   <dependencies>
@@ -485,14 +490,6 @@
           <artifactId>netty-buffer</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.apache.httpcomponents</groupId>
-          <artifactId>httpcore</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.httpcomponents</groupId>
-          <artifactId>httpcomponents-httpcore</artifactId>
-        </exclusion>
-        <exclusion>
           <groupId>commons-logging</groupId>
           <artifactId>commons-logging</artifactId>
         </exclusion>
@@ -500,6 +497,12 @@
           <groupId>commons-codec</groupId>
           <artifactId>commons-codec</artifactId>
         </exclusion>
+        <!--  Needed here don't exclude else the AWS SDK will not work
+        <exclusion>
+          <groupId>org.apache.httpcomponents</groupId>
+          <artifactId>httpcore</artifactId>
+        </exclusion>
+        -->
       </exclusions>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->

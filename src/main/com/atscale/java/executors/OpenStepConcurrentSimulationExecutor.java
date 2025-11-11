@@ -66,7 +66,7 @@ public class OpenStepConcurrentSimulationExecutor extends ConcurrentSimulationEx
         
         // Two example tasks for the Installer Version. Exclude by removing tasks.add as needed.
         MavenTaskDto<OpenStep> task4 = new MavenTaskDto<>("Installer TPC-DS JDBC Simulation");
-        //tasks.add(task4);
+        tasks.add(task4);
         task4.setMavenCommand("gatling:test");
         task4.setRunLogFileName("tpcds_benchmark_hive.log");
         task4.setLoggingAsAppend(false);
@@ -74,10 +74,11 @@ public class OpenStepConcurrentSimulationExecutor extends ConcurrentSimulationEx
         task4.setRunDescription("TPCDS JDBC Model Tests");
         task4.setModel("TPC-DS Benchmark Model");
         task4.setInjectionSteps(atOnceInjectionSteps);
+        task4.setAlternatePropertiesFileName("installer_systems.properties");
           
 
         MavenTaskDto<OpenStep> task5 = new MavenTaskDto<>("Installer TPC-DS XMLA Simulation");
-        //tasks.add(task5);
+        tasks.add(task5);
         task5.setMavenCommand("gatling:test");
         task5.setRunLogFileName("tpcds_benchmark_xmla.log");
         task5.setLoggingAsAppend(false);
@@ -85,6 +86,7 @@ public class OpenStepConcurrentSimulationExecutor extends ConcurrentSimulationEx
         task5.setRunDescription("TPCDS XMLA Model Tests");
         task5.setModel("TPC-DS Benchmark Model");
         task5.setInjectionSteps(atOnceInjectionSteps);
+        task5.setAlternatePropertiesFileName("installer_systems.properties");
 
         return tasks;
     }
