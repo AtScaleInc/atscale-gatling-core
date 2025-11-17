@@ -26,7 +26,7 @@ public class PropertiesManager {
             if(System.getProperty("systems.properties.file") != null){
                 propertiesFileName = System.getProperty("systems.properties.file");
                 LOGGER.info("Loading properties file from system property: {}", propertiesFileName);
-                differentiator = "¹";
+                differentiator = "-altprops";
             } else {
                 propertiesFileName = "systems.properties";
                 differentiator = "";
