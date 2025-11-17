@@ -26,6 +26,7 @@ class QueryHistoryFileUtilTest {
                 QueryHistoryDto dto = new QueryHistoryDto();
                 dto.setQueryName(String.valueOf(i));
                 dto.setInboundText("SELECT " + (i + 1));
+                dto.setAtscaleQueryId(String.valueOf(i));
                 dtos.add(dto);
             }
             testData.put(model, dtos);
@@ -63,8 +64,11 @@ class QueryHistoryFileUtilTest {
             for (int i = 0; i < 5; i++) {
                 Assertions.assertEquals(String.valueOf(i), dtosJdbc.get(i).getQueryName());
                 Assertions.assertEquals("SELECT " + (i + 1), dtosJdbc.get(i).getInboundText());
+                Assertions.assertEquals(String.valueOf(i), dtosJdbc.get(i).getAtscaleQueryId());
+
                 Assertions.assertEquals(String.valueOf(i), dtosXmla.get(i).getQueryName());
                 Assertions.assertEquals("SELECT " + (i + 1), dtosXmla.get(i).getInboundText());
+                Assertions.assertEquals(String.valueOf(i), dtosXmla.get(i).getAtscaleQueryId());
             }
         }
     }

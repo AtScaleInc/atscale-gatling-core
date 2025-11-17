@@ -39,6 +39,7 @@ public class AtScalePostgresDao {
                         q.service,
                         q.query_language,
                         q.query_text as inbound_text,
+                        q.query_id as atscale_query_id,
                         MAX(s.subquery_text) as outbound_text,
                         p.cube_name,
                         p.project_id,
@@ -73,8 +74,9 @@ public class AtScalePostgresDao {
                         1,
                         2,
                         3,
-                        5,
-                        6
+                        4,
+                        6,
+                        7
                     HAVING COUNT(*) >= 1
                     ORDER BY 3
     """;
@@ -169,6 +171,7 @@ public class AtScalePostgresDao {
             dto.setService(resultSet.getString("service"));
             dto.setQueryLanguage(resultSet.getString("query_language"));
             dto.setInboundText(resultSet.getString("inbound_text"));
+            dto.setAtscaleQueryId(resultSet.getString("atscale_query_id"));
             dto.setOutboundText(resultSet.getString("outbound_text"));
             dto.setCubeName(resultSet.getString("cube_name"));
             dto.setProjectId(resultSet.getString("project_id"));

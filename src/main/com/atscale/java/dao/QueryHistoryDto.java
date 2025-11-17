@@ -20,6 +20,7 @@ public class QueryHistoryDto {
     private int numTimes;
     private Timestamp elapsedTimeInSeconds;
     private int avgResultSetSize;
+    private String atscaleQueryId;
 
     public String getQueryName() {
         return queryName;
@@ -114,6 +115,13 @@ public class QueryHistoryDto {
         this.avgResultSetSize = avgResultSetSize;
     }
 
+    public String getAtscaleQueryId() {
+        return atscaleQueryId;
+    }
+    public void setAtscaleQueryId(String atscaleQueryId) {
+        this.atscaleQueryId = atscaleQueryId;
+    }
+
     @Override
     public String toString() {
         return "QueryHistoryDto{" +
@@ -128,6 +136,7 @@ public class QueryHistoryDto {
                 ", numTimes=" + numTimes +
                 ", elapsedTimeInSeconds=" + elapsedTimeInSeconds +
                 ", avgResultSetSize=" + avgResultSetSize +
+                ", atscaleQueryId='" + atscaleQueryId + '\'' +
                 '}';
     }
 
