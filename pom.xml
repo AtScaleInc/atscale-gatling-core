@@ -497,12 +497,6 @@
           <groupId>commons-codec</groupId>
           <artifactId>commons-codec</artifactId>
         </exclusion>
-        <!--  Needed here don't exclude else the AWS SDK will not work
-        <exclusion>
-          <groupId>org.apache.httpcomponents</groupId>
-          <artifactId>httpcore</artifactId>
-        </exclusion>
-        -->
       </exclusions>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
