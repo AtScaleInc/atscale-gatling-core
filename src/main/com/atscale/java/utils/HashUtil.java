@@ -22,7 +22,8 @@ public class HashUtil {
         }
     }
 
-        public static String TO_SHA256(String input) throws NoSuchAlgorithmException {
+    public static String TO_SHA256(String input) {
+        try {
             // Get the SHA-256 MessageDigest object
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
 
@@ -42,5 +43,8 @@ public class HashUtil {
             }
 
             return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Error generating SHA-256 hash", e);
         }
     }
+}
