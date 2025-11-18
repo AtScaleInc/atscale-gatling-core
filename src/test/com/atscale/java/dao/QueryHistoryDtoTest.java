@@ -82,7 +82,7 @@ public class QueryHistoryDtoTest {
         }
     }
 
-    public void testJsonRoundTripStructuralEquality(QueryHistoryDto dto) {
+    private void testJsonRoundTripStructuralEquality(QueryHistoryDto dto) {
         com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
         // produce json from dto1
         String json = dto.toJson();
@@ -96,10 +96,9 @@ public class QueryHistoryDtoTest {
         Assertions.assertEquals(nodeOriginal, nodeRoundTrip, "Round-trip JSON should be structurally equal to original DTO");
     }
 
-    public void testReflectionEqualsRoundTripUsingReflection(QueryHistoryDto dto) {
+    private void testReflectionEqualsRoundTripUsingReflection(QueryHistoryDto dto) {
         QueryHistoryDto dtoFromJson = QueryHistoryDto.fromJson(dto.toJson());
         boolean equal = EqualsBuilder.reflectionEquals(dto, dtoFromJson, true);
         Assertions.assertTrue(equal, "Reflection-based equality should hold after JSON round-trip");
     }
-
 }
