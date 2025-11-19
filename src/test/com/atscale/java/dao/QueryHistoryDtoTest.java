@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +28,7 @@ public class QueryHistoryDtoTest {
         dto1.setProjectId("proj-1");
         dto1.setAggregateUsed(false);
         dto1.setNumTimes(1);
-        dto1.setElapsedTimeInSeconds(new Timestamp(System.currentTimeMillis()));
+        dto1.setElapsedTimeInSeconds(19.7);
         dto1.setAvgResultSetSize(1);
         dto1.setAtscaleQueryId("qid-1");
 
@@ -43,7 +42,7 @@ public class QueryHistoryDtoTest {
         dto2.setProjectId("proj-2");
         dto2.setAggregateUsed(true);
         dto2.setNumTimes(5);
-        dto2.setElapsedTimeInSeconds(new Timestamp(System.currentTimeMillis()));
+        dto2.setElapsedTimeInSeconds(227.9);
         dto2.setAvgResultSetSize(100);
         dto2.setAtscaleQueryId("qid-2");
 
@@ -57,7 +56,7 @@ public class QueryHistoryDtoTest {
         dto3.setProjectId("proj-3");
         dto3.setAggregateUsed(false);
         dto3.setNumTimes(2);
-        dto3.setElapsedTimeInSeconds(new Timestamp(System.currentTimeMillis()));
+        dto3.setElapsedTimeInSeconds(5.0);
         dto3.setAvgResultSetSize(10);
         dto3.setAtscaleQueryId("qid-3");
 
