@@ -1,8 +1,5 @@
 package com.atscale.java.dao;
 
-import java.sql.Timestamp;
-import java.time.Duration;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.atscale.java.utils.HashUtil;

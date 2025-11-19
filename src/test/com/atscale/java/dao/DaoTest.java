@@ -1,7 +1,6 @@
 package com.atscale.java.dao;
 
 import com.atscale.java.utils.HashUtil;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.AfterAll;
@@ -82,8 +81,8 @@ public class DaoTest {
                     """);
 
             stmt.execute("""
-                    ALTER TABLE engine.query_results 
-                    ADD CONSTRAINT query_results_query_id_fkey 
+                    ALTER TABLE engine.query_results
+                    ADD CONSTRAINT query_results_query_id_fkey
                     FOREIGN KEY (query_id) REFERENCES engine.queries(query_id);
                     """);
 
@@ -102,8 +101,8 @@ public class DaoTest {
                     """);
 
             stmt.execute("""
-                    ALTER TABLE engine.queries_planned 
-                    ADD CONSTRAINT queries_planned_query_id_fkey 
+                    ALTER TABLE engine.queries_planned
+                    ADD CONSTRAINT queries_planned_query_id_fkey
                     FOREIGN KEY (query_id) REFERENCES engine.queries(query_id);
                     """);
 
@@ -124,8 +123,8 @@ public class DaoTest {
                     """);
 
             stmt.execute("""
-                    ALTER TABLE engine.subqueries 
-                    ADD CONSTRAINT subqueries_query_id_fkey 
+                    ALTER TABLE engine.subqueries
+                    ADD CONSTRAINT subqueries_query_id_fkey
                     FOREIGN KEY (query_id) REFERENCES engine.queries(query_id);
                     """);
         }

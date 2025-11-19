@@ -1,7 +1,6 @@
 package com.atscale.java.dao;
 
 import java.sql.*;
-import java.time.Duration;
 import java.util.Properties;
 
 import com.atscale.java.utils.PropertiesManager;
