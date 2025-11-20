@@ -7,21 +7,6 @@ import java.math.BigInteger;
 
 public class HashUtil {
 
-    public static String TO_MD5(String input) {
-        try {
-            MessageDigest MD5_DIGEST = MessageDigest.getInstance("MD5");
-            byte[] inputBytes = input.getBytes();
-            byte[] hashBytes = MD5_DIGEST.digest(inputBytes);
-            StringBuilder sb = new StringBuilder();
-            for (byte b : hashBytes) {
-                sb.append(String.format("%02x", b));
-            }
-            return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Error generating MD5 hash", e);
-        }
-    }
-
     public static String TO_SHA256(String input) {
         try {
             // Get the SHA-256 MessageDigest object
