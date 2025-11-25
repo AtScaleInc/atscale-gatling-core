@@ -30,7 +30,8 @@ public class AtScalePostgresDao {
         }
     }
 
-    private static AtScalePostgresDao INSTANCE;
+    private static AtScalePostgresDao INSTANCE = new AtScalePostgresDao();
+
     private static final String query = """
             SELECT
                         q.service,
@@ -94,9 +95,6 @@ public class AtScalePostgresDao {
     }
 
     public static AtScalePostgresDao getInstance() {
-        if(null == INSTANCE) {
-            INSTANCE = new AtScalePostgresDao();
-        }
         return INSTANCE;
     }
 
