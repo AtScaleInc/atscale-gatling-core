@@ -46,29 +46,29 @@ public class AtScaleDynamicQueryBuilderScenario {
         Long throttleBy = PropertiesManager.getAtScaleThrottleMs();
 
         List<ChainBuilder> chains = Arrays.stream(namedBuilders)
-                .map(namedBuilder ->
-                        exec(session -> session
-                            .set("queryStart", System.currentTimeMillis())
-                        ).exec(
-                            namedBuilder.builder
-                        ).exec(session -> {
-                            long end = System.currentTimeMillis();
-                            List<?> resultSet = session.getList("queryResultSet");
-                            long start = session.getLong("queryStart");
-                            long duration = end - start;
-                            int rowCount = resultSet.size();
-                            String status = (rowCount < 1) ? "FAILED" : "SUCCEEDED";
-                            SESSION_LOGGER.info("sqlLog gatlingRunId='{}' status='{}' gatlingSessionId={} model='{}' queryName='{}' inboundTextAsMd5Hash='{}' start={} end={} duration={} rows={}", gatlingRunId, status, session.userId(), model, namedBuilder.queryName, namedBuilder.inboundTextAsMd5Hash, start, end, duration, rowCount);
-                            if (logRows) {
-                                int rownum = 0;
-                                for (Object row : resultSet) {
-                                    SESSION_LOGGER.info("sqlLog gatlingRunId='{}' status='{}' gatlingSessionId={} model='{}' queryName='{}' inboundTextAsMd5Hash='{}' rownumber={} row={} rowhash={}", gatlingRunId, status, session.userId(), model, namedBuilder.queryName, namedBuilder.inboundTextAsMd5Hash, rownum++, row, HashUtil.TO_MD5(row.toString()));
-                                }
-                            }
-                            return session;
-                        }).pause(Duration.ofMillis(throttleBy))).collect(Collectors.toList());
+            .map(namedBuilder ->
+                exec(session -> session
+                    .set("queryStart", System.currentTimeMillis())
+                ).exec(
+                    namedBuilder.builder
+                ).exec(session -> {
+                    long end = System.currentTimeMillis();
+                    List<?> resultSet = session.getList("queryResultSet");
+                    long start = session.getLong("queryStart");
+                    long duration = end - start;
+                    int rowCount = resultSet.size();
+                    String status = (rowCount < 1) ? "FAILED" : "SUCCEEDED";
+                    SESSION_LOGGER.info("sqlLog gatlingRunId='{}' status='{}' gatlingSessionId={} model='{}' queryName='{}' atscaleQueryId='{}' inboundTextAsHash='{}' start={} end={} duration={} rows={}", gatlingRunId, status, session.userId(), model, namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, start, end, duration, rowCount);
+                    if (logRows) {
+                        int rownum = 0;
+                        for (Object row : resultSet) {
+                            SESSION_LOGGER.info("sqlLog gatlingRunId='{}' status='{}' gatlingSessionId={} model='{}' queryName='{}' atscaleQueryId='{}' inboundTextAsHash='{}' rownumber={} row={} rowhash={}", gatlingRunId, status, session.userId(), model, namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, rownum++, row, HashUtil.TO_SHA256(row.toString()));
+                        }
+                    }
+                    return session;
+                }).pause(Duration.ofMillis(throttleBy))).collect(Collectors.toList());
 
-        // pause the scenario executions at 10 milliseconds apart
-        return scenario("AtScale Dynamic Query Builder Scenario").exec(chains).pause(Duration.ofMillis(10));
+        // pause the scenario executions at 2 milliseconds apart
+        return scenario("AtScale Dynamic Query Builder Scenario").exec(chains).pause(Duration.ofMillis(2));
     }
 }

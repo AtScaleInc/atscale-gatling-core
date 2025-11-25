@@ -1,6 +1,5 @@
 package com.atscale.java.dao;
 
-import java.sql.Timestamp;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.atscale.java.utils.HashUtil;
@@ -12,14 +11,15 @@ public class QueryHistoryDto {
     private String service;
     private String queryLanguage;
     private String inboundText;
-    private String inboundTextAsMd5Hash;
+    private String inboundTextAsHash;
     private String outboundText;
     private String cubeName;
     private String projectId;
     private boolean aggregateUsed;
     private int numTimes;
-    private Timestamp elapsedTimeInSeconds;
+    private Double elapsedTimeInSeconds;
     private int avgResultSetSize;
+    private String atscaleQueryId;
 
     public String getQueryName() {
         return queryName;
@@ -49,13 +49,13 @@ public class QueryHistoryDto {
         return inboundText;
     }
 
-    public String getInboundTextAsMd5Hash() {
-        return StringUtils.isEmpty(inboundTextAsMd5Hash)? HashUtil.TO_MD5(inboundText) : inboundTextAsMd5Hash;
+    public String getInboundTextAsHash() {
+        return StringUtils.isEmpty(inboundTextAsHash)? HashUtil.TO_SHA256(inboundText) : inboundTextAsHash;
     }
 
     public void setInboundText(String inboundText) {
         this.inboundText = inboundText;
-        this.inboundTextAsMd5Hash = HashUtil.TO_MD5(inboundText);
+        this.inboundTextAsHash = HashUtil.TO_SHA256(inboundText);
     }
 
     public String getOutboundText() {
@@ -98,11 +98,11 @@ public class QueryHistoryDto {
         this.numTimes = numTimes;
     }
 
-    public Timestamp getElapsedTimeInSeconds() {
+    public Double getElapsedTimeInSeconds() {
         return elapsedTimeInSeconds;
     }
 
-    public void setElapsedTimeInSeconds(Timestamp elapsedTimeInSeconds) {
+    public void setElapsedTimeInSeconds(Double elapsedTimeInSeconds) {
         this.elapsedTimeInSeconds = elapsedTimeInSeconds;
     }
 
@@ -114,13 +114,20 @@ public class QueryHistoryDto {
         this.avgResultSetSize = avgResultSetSize;
     }
 
+    public String getAtscaleQueryId() {
+        return atscaleQueryId;
+    }
+    public void setAtscaleQueryId(String atscaleQueryId) {
+        this.atscaleQueryId = atscaleQueryId;
+    }
+
     @Override
     public String toString() {
         return "QueryHistoryDto{" +
                 "service='" + service + '\'' +
                 ", queryLanguage='" + queryLanguage + '\'' +
                 ", inboundText='" + inboundText + '\'' +
-                ", inboundTextAsMd5Hash='" + inboundTextAsMd5Hash + '\'' +
+                ", inboundTextAsHash='" + inboundTextAsHash + '\'' +
                 ", outboundText='" + outboundText + '\'' +
                 ", cubeName='" + cubeName + '\'' +
                 ", projectId='" + projectId + '\'' +
@@ -128,6 +135,7 @@ public class QueryHistoryDto {
                 ", numTimes=" + numTimes +
                 ", elapsedTimeInSeconds=" + elapsedTimeInSeconds +
                 ", avgResultSetSize=" + avgResultSetSize +
+                ", atscaleQueryId='" + atscaleQueryId + '\'' +
                 '}';
     }
 

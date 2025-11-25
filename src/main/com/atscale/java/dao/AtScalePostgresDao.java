@@ -30,21 +30,20 @@ public class AtScalePostgresDao {
         }
     }
 
-    private final String url;
-    private final String user;
-    private final String password;
-    private static final AtScalePostgresDao INSTANCE = new AtScalePostgresDao();
+    private static AtScalePostgresDao INSTANCE = new AtScalePostgresDao();
+
     private static final String query = """
             SELECT
                         q.service,
                         q.query_language,
                         q.query_text as inbound_text,
+                        MAX(q.query_id::text) as atscale_query_id,
                         MAX(s.subquery_text) as outbound_text,
                         p.cube_name,
                         p.project_id,
                         case when MAX(s.subquery_text) like '%as_agg_%' then true else false end as used_agg,
                         COUNT(*)                             AS num_times,
-                        AVG(r.finished - p.planning_started) AS elasped_time_in_seconds,
+                        extract(EPOCH from AVG(r.finished - p.planning_started)) AS elapsed_time_in_seconds,
                         AVG(r.result_size)                   AS avg_result_size
                     FROM
                         atscale.engine.queries q
@@ -62,39 +61,53 @@ public class AtScalePostgresDao {
                         q.query_id=s.query_id
                     WHERE
                         q.query_language = ?
-                    AND p.planning_started > current_timestamp - interval '60 day'
+                    AND p.planning_started > current_timestamp - interval '60' DAY
                     and p.cube_name = ?
                     AND q.service = 'user-query'
                     AND r.succeeded = true
-                    AND LENGTH(q.query_text) > 100
+                    AND LENGTH(q.query_text) > 1
                     AND q.query_text NOT LIKE '/* Virtual query to get the members of a level */%'
                     AND q.query_text NOT LIKE '-- statement does not return rows%'
                     GROUP BY
                         1,
                         2,
                         3,
-                        5,
-                        6
+                        6,
+                        7
                     HAVING COUNT(*) >= 1
                     ORDER BY 3
     """;
 
     private AtScalePostgresDao() {
-        this.url = PropertiesManager.getAtScalePostgresURL();
-        this.user = PropertiesManager.getAtScalePostgresUser();
-        this.password = PropertiesManager.getAtScalePostgresPassword();
+      super();
+    }
+
+    protected String getDatabaseUrl() {
+        return PropertiesManager.getAtScalePostgresURL();
+    }
+
+    protected String getDatabaseUser() {
+        return PropertiesManager.getAtScalePostgresUser();
+    }
+
+    protected String getDatabasePassword() {
+        return PropertiesManager.getAtScalePostgresPassword();
     }
 
     public static AtScalePostgresDao getInstance() {
         return INSTANCE;
     }
 
-    private Connection getConnection() throws SQLException {
+    protected Properties getConnectionProperties() {
         Properties props = new Properties();
-        props.setProperty("user", user);
-        props.setProperty("password", password);
+        props.setProperty("user", getDatabaseUser());
+        props.setProperty("password", getDatabasePassword());
         props.setProperty("currentSchema", "engine");
-        return DriverManager.getConnection(url, props);
+        return props;
+    }
+
+    private Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(getDatabaseUrl(), getConnectionProperties());
     }
 
     public List<QueryHistoryDto> getQueryHistory(QueryLanguage queryLanguage, String cubeName) {
@@ -169,12 +182,13 @@ public class AtScalePostgresDao {
             dto.setService(resultSet.getString("service"));
             dto.setQueryLanguage(resultSet.getString("query_language"));
             dto.setInboundText(resultSet.getString("inbound_text"));
+            dto.setAtscaleQueryId(resultSet.getString("atscale_query_id"));
             dto.setOutboundText(resultSet.getString("outbound_text"));
             dto.setCubeName(resultSet.getString("cube_name"));
             dto.setProjectId(resultSet.getString("project_id"));
             dto.setAggregateUsed(resultSet.getBoolean("used_agg"));
             dto.setNumTimes(resultSet.getInt("num_times"));
-            dto.setElapsedTimeInSeconds(resultSet.getTimestamp("elasped_time_in_seconds"));
+            dto.setElapsedTimeInSeconds(resultSet.getDouble("elapsed_time_in_seconds"));
             dto.setAvgResultSetSize(resultSet.getInt("avg_result_size"));
             queryHistory.add(dto);
         }
@@ -218,12 +232,12 @@ public class AtScalePostgresDao {
             PreparedStatement stmt = conn.prepareStatement(domainQuery);
             
             ResultSet resultSet = stmt.executeQuery();
-                    LOGGER.info("Check your Model (cube name) and Query Language.  We extract from known queries. The following Model and Query Language combinations were found:");
-                 while (resultSet.next()) {
-                    String queryLanguage = resultSet.getString("query_language");
-                    String model = resultSet.getString("cube_name");
-                    LOGGER.info("Model: {}, Query Language: {}", model, queryLanguage);
-                 }
+            LOGGER.info("Check your Model (cube name) and Query Language.  We extract from known queries. The following Model and Query Language combinations were found:");
+             while (resultSet.next()) {
+                String queryLanguage = resultSet.getString("query_language");
+                String model = resultSet.getString("cube_name");
+                LOGGER.info("Model: {}, Query Language: {}", model, queryLanguage);
+             }
         } catch (SQLException e) {
             throw new RuntimeException("Error fetching model configuration from the AtScale Postgres database", e);
         }

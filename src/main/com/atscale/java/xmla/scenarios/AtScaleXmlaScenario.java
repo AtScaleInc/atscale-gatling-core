@@ -58,15 +58,15 @@ public class AtScaleXmlaScenario {
                                     long duration = end - start;
                                     int responseSize = response == null? 0: response.length();
                                     if(statusCode != 200 ) {
-                                        LOGGER.error("Query '{}' with hash '{}' with payload '{}' returned status code {} and is marked as {}",
-                                                namedBuilder.queryName, namedBuilder.inboundTextAsMd5Hash, namedBuilder.xmlPayload, statusCode, status);
+                                        LOGGER.error("Query '{}' with QueryId'{}' with hash '{}' with payload '{}' returned status code {} and is marked as {}",
+                                                namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, namedBuilder.xmlPayload, statusCode, status);
                                     }
                                     if(logResponseBody) {
-                                        SESSION_LOGGER.info("xmlaLog gatlingRunId='{}' status='{}' gatlingSessionId={} model='{}' cube='{}' catalog='{}' queryName='{}' inboundTextAsMd5Hash='{}' start={} end={} duration={} responseSize={} response={}",
-                                                gatlingRunId,  status, session.userId(), model, cube, catalog, namedBuilder.queryName, namedBuilder.inboundTextAsMd5Hash, start, end, duration, responseSize, response);
+                                        SESSION_LOGGER.info("xmlaLog gatlingRunId='{}' status='{}' gatlingSessionId={} model='{}' cube='{}' catalog='{}' queryName='{}' atscaleQueryId='{}' inboundTextAsHash='{}' start={} end={} duration={} responseSize={} response={}",
+                                                gatlingRunId,  status, session.userId(), model, cube, catalog, namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, start, end, duration, responseSize, response);
                                     } else {
-                                        SESSION_LOGGER.info("xmlaLog gatlingRunId='{}' status='{}' gatlingSessionId={} model='{}' cube='{}' catalog='{}' queryName='{}' inboundTextAsMd5Hash='{}' start={} end={} duration={} responseSize={}",
-                                                gatlingRunId, status, session.userId(), model, cube, catalog, namedBuilder.queryName, namedBuilder.inboundTextAsMd5Hash, start, end, duration, responseSize);
+                                        SESSION_LOGGER.info("xmlaLog gatlingRunId='{}' status='{}' gatlingSessionId={} model='{}' cube='{}' catalog='{}' queryName='{}' atscaleQueryId='{}' inboundTextAsHash='{}' start={} end={} duration={} responseSize={}",
+                                                gatlingRunId, status, session.userId(), model, cube, catalog, namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, start, end, duration, responseSize);
                                     }
                                     return session;
                                 }).pause(Duration.ofMillis(throttleBy))).collect(Collectors.toList());

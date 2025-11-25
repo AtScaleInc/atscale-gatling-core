@@ -38,10 +38,18 @@ public class CsvLoaderUtil {
                     LOGGER.warn("Skipping line with insufficient columns: {}", (Object) nextLine);
                     continue;
                 }
-                QueryHistoryDto query = new QueryHistoryDto();
-                query.setQueryName(nextLine[0]);
-                query.setInboundText(nextLine[1]);
-                queries.add(query);
+                if(nextLine.length == 2) {
+                    QueryHistoryDto query = new QueryHistoryDto();
+                    query.setQueryName(nextLine[0]);
+                    query.setInboundText(nextLine[1]);
+                    queries.add(query);
+                } else if (nextLine.length == 3) {
+                    QueryHistoryDto query = new QueryHistoryDto();
+                    query.setQueryName(nextLine[0]);
+                    query.setAtscaleQueryId(nextLine[1]);
+                    query.setInboundText(nextLine[2]);
+                    queries.add(query);
+                }
             }
         } catch (Exception e) {
             throw new RuntimeException("Failed to load queries from CSV file: " + this.fileName, e);

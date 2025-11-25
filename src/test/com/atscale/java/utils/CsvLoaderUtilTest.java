@@ -3,18 +3,18 @@ package com.atscale.java.utils;
 import com.atscale.java.dao.QueryHistoryDto;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.params.shadow.com.univocity.parsers.csv.Csv;
 
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
+@SuppressWarnings("all")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CsvLoaderUtilTest {
     private final CsvLoaderUtil csvLoader = new CsvLoaderUtil(RandomStringUtils.secure().nextAlphabetic(10) + ".csv", true);
-    private final String query0 = """
+	final static String query0 = """
         DEFINE
-	    VAR __DS0Core = 
+	    VAR __DS0Core =
 		SUMMARIZECOLUMNS(
 			'Product'[Category.Key0],
 			'Product'[Category],
@@ -40,7 +40,7 @@ class CsvLoaderUtilTest {
             [Internet_Sales_Amount_Local] DESC, 'Product'[Category], 'Product'[Category.Key0]   
         """;
 
-    private final String query1 = """
+    final static String query1 = """
         DEFINE
 			VAR __H0FilterTable = 
 				TREATAS({CURRENCY(""1"")}, 'Product'[Category.Key0])
@@ -76,7 +76,7 @@ class CsvLoaderUtilTest {
 			'Customer'[Customer Country.Key0]
         """;
 
-	private final String query2 = """
+	final static String query2 = """
 		DEFINE
 		VAR __DS0Core = 
 			SUMMARIZECOLUMNS(
@@ -106,7 +106,7 @@ class CsvLoaderUtilTest {
 			'Customer'[Customer Country.Key0]
     """;
 
-	private final String query3 = """
+	final static String query3 = """
 		DEFINE
 		VAR __H0FilterTable = 
 			TREATAS({""Germany""}, 'Customer'[Customer Country.Key0])
