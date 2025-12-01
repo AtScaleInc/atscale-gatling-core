@@ -29,7 +29,7 @@ jobs:
 
       - name: "Deploy artifacts to Sonatype"
         if: github.ref == 'refs/heads/main'
-        run: ./mvnw clean deploy -DskipTests
+        run: ./mvnw clean deploy -DskipTests -X
         env:
           MAVEN_GPG_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
