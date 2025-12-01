@@ -25,7 +25,9 @@ jobs:
 
       - name: "Configure :: Install Hive Driver"
         run: ./mvnw -X install:install-file -Dfile=./lib/hive-jdbc-uber-2.6.3.0-235.jar -DpomFile=./lib/hive-jdbc-uber-2.6.3.0-235.pom
-      
+
+      - name: "Echo Sonatype Username"
+        run: echo "Sonatype Username is ${{ secrets.SONATYPE_USERNAME }}"
 
       - name: "Deploy artifacts to Sonatype"
         if: github.ref == 'refs/heads/main'
