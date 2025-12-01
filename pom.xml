@@ -286,6 +286,16 @@
       </plugin>
     </plugins>
   </build>
+  <distributionManagement>
+    <snapshotRepository>
+      <id>central</id>
+      <url>central.sonatype.com</url>
+    </snapshotRepository>
+    <repository>
+      <id>central</id>
+      <url>central.sonatype.com</url>
+    </repository>
+  </distributionManagement>
   <dependencyManagement>
     <dependencies>
       <dependency>
