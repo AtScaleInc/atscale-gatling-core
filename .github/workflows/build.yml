@@ -26,11 +26,14 @@ jobs:
       - name: "Configure :: Install Hive Driver"
         run: ./mvnw -X install:install-file -Dfile=./lib/hive-jdbc-uber-2.6.3.0-235.jar -DpomFile=./lib/hive-jdbc-uber-2.6.3.0-235.pom
       
-      - name: "Compile :: Project"
+      - name: "Compile"
         run: ./mvnw clean compile
 
-      - name: "Build :: sign artifacts"
-        run: ./mvnw install
+      - name "Test"
+        run: ./mvnw test
+
+      - name: "Sign artifacts"
+        run: ./mvnw install -DskipTests
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
