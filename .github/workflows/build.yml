@@ -12,8 +12,8 @@ jobs:
       - name: "Spy On Parameters"
         run: |
           # Assign secrets to local shell variables first
-          export SONATYPE_USERNAME="${{ secrets.SONATYPE_USERNAME }}"
-          export SONATYPE_PASSWORD="${{ secrets.SONATYPE_PASSWORD }}"
+          export SONATYPE_USERNAME="${{ secrets.TEMP_SONATYPE_USERNAME }}"
+          export SONATYPE_PASSWORD="${{ secrets.TEMP_SONATYPE_PASSWORD }}"
           export GPG_SIGNING_KEY="${{ secrets.GPG_PRIVATE_KEY }}"
           export GPG_SIGNING_PASSPHRASE="${{ secrets.GPG_PASSPHRASE }}"
           
@@ -36,8 +36,8 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
           server-id: 'central'
-          server-username: ${{ secrets.SONATYPE_USERNAME }}
-          server-password: ${{ secrets.SONATYPE_PASSWORD }}
+          server-username: ${{ secrets.TEMP_SONATYPE_USERNAME }}
+          server-password: ${{ secrets.TEMP_SONATYPE_PASSWORD }}
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
