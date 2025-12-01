@@ -15,10 +15,14 @@ jobs:
           SONATYPE_PASSWORD=${{ secrets.SONATYPE_PASSWORD }}
           GPG_SIGNING_KEY=${{ secrets.GPG_PRIVATE_KEY }}
           GPG_SIGNING_PASSPHRASE=${{ secrets.GPG_PASSPHRASE }}
-          echo "Sonatype Username is ${SONATYPE_USERNAME}"
-          echo "Sonatype Password is ${SONATYPE_PASSWORD:0:4}****"
-          echo "GPG Signing Key is ${GPG_SIGNING_KEY:0:6}****"
-          echo "GPG Signing Passphrase is ${GPG_SIGNING_PASSPHRASE:0:6}****"
+          LENGTH=${#SONATYPE_USERNAME}
+          echo "Sonatype Username Length is ${LENGTH}"
+          LENGTH=${#SONATYPE_PASSWORD}
+          echo "Sonatype Password Length is ${LENGTH}"
+          LENGTH=${#GPG_SIGNING_KEY}
+          echo "GPG Signing Key Length is ${LENGTH}"
+          LENGTH=${#GPG_SIGNING_PASSPHRASE}
+          echo "GPG Signing Passphrase Length is ${LENGTH}"
 
       - name: "Git :: Checkout"
         uses: actions/checkout@v4
