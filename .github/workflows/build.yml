@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Spy On Parameters"
-        run:
+        run: |
           # Assign secrets to local shell variables first
           export SONATYPE_USERNAME="${{ secrets.SONATYPE_USERNAME }}"
           export SONATYPE_PASSWORD="${{ secrets.SONATYPE_PASSWORD }}"
