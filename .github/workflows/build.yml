@@ -9,6 +9,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: "Spy On Parameters"
+        run:
+          SONATYPE_USERNAME=${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD=${{ secrets.SONATYPE_PASSWORD }}
+          GPG_SIGNING_KEY=${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_SIGNING_PASSPHRASE=${{ secrets.GPG_PASSPHRASE }}
+          echo "Sonatype Username is ${SONATYPE_USERNAME}"
+          echo "Sonatype Password is ${SONATYPE_PASSWORD:0:4}****"
+          echo "GPG Signing Key is ${GPG_SIGNING_KEY:0:6}****"
+          echo "GPG Signing Passphrase is ${GPG_SIGNING_PASSPHRASE:0:6}****"
+
       - name: "Git :: Checkout"
         uses: actions/checkout@v4
 
@@ -26,10 +37,7 @@ jobs:
       - name: "Configure :: Install Hive Driver"
         run: ./mvnw -X install:install-file -Dfile=./lib/hive-jdbc-uber-2.6.3.0-235.jar -DpomFile=./lib/hive-jdbc-uber-2.6.3.0-235.pom
 
-      - name: "Echo Sonatype Username"
-        run: echo "Sonatype Username is ${{ secrets.SONATYPE_USERNAME }}"
-
-      - name: "Deploy artifacts to Sonatype"
+      - name: "Clean, Build, Test and Deploy artifacts to Sonatype"
         if: github.ref == 'refs/heads/main'
         run: ./mvnw clean deploy -DskipTests -X
         env:
