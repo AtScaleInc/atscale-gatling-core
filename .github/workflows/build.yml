@@ -11,10 +11,13 @@ jobs:
     steps:
       - name: "Spy On Parameters"
         run:
-          SONATYPE_USERNAME=${{ secrets.SONATYPE_USERNAME }}
-          SONATYPE_PASSWORD=${{ secrets.SONATYPE_PASSWORD }}
-          GPG_SIGNING_KEY=${{ secrets.GPG_PRIVATE_KEY }}
-          GPG_SIGNING_PASSPHRASE=${{ secrets.GPG_PASSPHRASE }}
+          # Assign secrets to local shell variables first
+          export SONATYPE_USERNAME="${{ secrets.SONATYPE_USERNAME }}"
+          export SONATYPE_PASSWORD="${{ secrets.SONATYPE_PASSWORD }}"
+          export GPG_SIGNING_KEY="${{ secrets.GPG_PRIVATE_KEY }}"
+          export GPG_SIGNING_PASSPHRASE="${{ secrets.GPG_PASSPHRASE }}"
+          
+          # Now measure and echo the lengths using the shell variables
           LENGTH=${#SONATYPE_USERNAME}
           echo "Sonatype Username Length is ${LENGTH}"
           LENGTH=${#SONATYPE_PASSWORD}
