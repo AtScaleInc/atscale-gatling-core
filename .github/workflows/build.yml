@@ -26,22 +26,12 @@ jobs:
       - name: "Configure :: Install Hive Driver"
         run: ./mvnw -X install:install-file -Dfile=./lib/hive-jdbc-uber-2.6.3.0-235.jar -DpomFile=./lib/hive-jdbc-uber-2.6.3.0-235.pom
       
-      - name: "Compile"
-        run: ./mvnw clean compile
-
-      - name: "Test"
-        run: pwd
-
-      - name: "Sign artifacts"
-        run: ./mvnw install -DskipTests
-        env:
-          MAVEN_GPG_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-
 
       - name: "Deploy artifacts to Sonatype"
         if: github.ref == 'refs/heads/main'
-        run: ./mvnw deploy -DskipTests
+        run: ./mvnw clean deploy -DskipTests
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          MAVEN_GPG_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
