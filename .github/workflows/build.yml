@@ -30,11 +30,14 @@ jobs:
         run: ./mvnw clean compile
 
       - name: "Build :: sign artifacts"
-        run: ./mvnw clean install -P release -Dgpg.passphrase=${{ secrets.GPG_PASSPHRASE }}
+        run: ./mvnw install
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
 
       - name: "Deploy artifacts to Sonatype"
         if: github.ref == 'refs/heads/main'
-        run: ./mvnw deploy -P release -DskipTests
+        run: ./mvnw deploy -DskipTests
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
