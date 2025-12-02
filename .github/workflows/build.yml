@@ -27,9 +27,15 @@ jobs:
           LENGTH=${#GPG_SIGNING_PASSPHRASE}
           echo "GPG Signing Passphrase Length is ${LENGTH}"
 
+      # Remove this step after debugging, as it prints secrets in plaintext
       - name: "Debug :: Inspect Generated settings.xml"
-        run: cat /home/runner/.m2/settings.xml
-        # Remove this step after debugging, as it prints secrets in plaintext
+        run: |
+          SETTINGS_PATH=$(find /home/runner -name "settings.xml" | head -n 1)
+         
+          echo "Found settings.xml at: $SETTINGS_PATH"
+          
+          # Use 'cat' to print the contents of the found file
+          cat "$SETTINGS_PATH"
 
       - name: "Git :: Checkout"
         uses: actions/checkout@v4
