@@ -289,11 +289,11 @@
   <distributionManagement>
     <snapshotRepository>
       <id>central</id>
-      <url>central.sonatype.com</url>
+      <url>https://central.sonatype.com/content/repositories/snapshots/</url>
     </snapshotRepository>
     <repository>
       <id>central</id>
-      <url>central.sonatype.com</url>
+      <url>https://central.sonatype.com/service/local/staging/deploy/maven2/</url>
     </repository>
   </distributionManagement>
   <dependencyManagement>
