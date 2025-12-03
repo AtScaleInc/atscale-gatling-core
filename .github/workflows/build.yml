@@ -60,7 +60,10 @@ jobs:
 
       - name: "Effective Settings Spy"
         run: |
-          echo(/mvnw -X help:effective-settings)
+          echo(./mvnw -X help:effective-settings)
+
+      - name: "Fail fast"
+        run: ./mvnw crashme
 
       - name: "Configure :: Install Hive Driver"
         run: ./mvnw -X install:install-file -Dfile=./lib/hive-jdbc-uber-2.6.3.0-235.jar -DpomFile=./lib/hive-jdbc-uber-2.6.3.0-235.pom
