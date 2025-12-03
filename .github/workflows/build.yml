@@ -65,7 +65,7 @@ jobs:
           EOF
           echo "Wrote settings to $GITHUB_WORKSPACE/.m2/settings.xml"
 
-      - name: "Build, Test and Deploy artifacts to Sonatype"
+      - name: "Build, Sign, and Deploy artifacts to Sonatype"
         if: github.ref == 'refs/heads/main'
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
