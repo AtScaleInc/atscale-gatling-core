@@ -67,16 +67,46 @@ jobs:
 
       - name: "Clean, Build, Test and Deploy artifacts to Sonatype"
         if: github.ref == 'refs/heads/main'
-        run: |
-          SETTINGS_PATH=$(find /home/runner -name "settings.xml" | head -n 1)
-          echo "Found settings.xml at: $SETTINGS_PATH"
-          #./mvnw -s "$SETTINGS_PATH" clean deploy -DskipTests -X
-          ./mvnw clean deploy -DskipTests -X
         env:
-          SONATYPE_USERNAME: ${{ secrets.TEMP_SONATYPE_USERNAME }}
-          SONATYPE_PASSWORD: ${{ secrets.TEMP_SONATYPE_PASSWORD }}
+          TMP_SONATYPE_USERNAME: ${{ secrets.TEMP_SONATYPE_USERNAME }}
+          TMP_SONATYPE_PASSWORD: ${{ secrets.TEMP_SONATYPE_PASSWORD }}
           MAVEN_GPG_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          set -euo pipefail
+
+          SETTINGS_PATH=$(find /home/runner -name "settings.xml" | head -n 1)
+          echo "Found settings.xml at: $SETTINGS_PATH"
+
+          # try xmllint first (robust); fall back to grep/sed if missing
+          USER_PLACEHOLDER=$(xmllint --xpath 'string(//*[local-name()="server"][*[local-name()="id"]="central"]/*[local-name()="username"])' "$SETTINGS_PATH" 2>/dev/null || true)
+          PASS_PLACEHOLDER=$(xmllint --xpath 'string(//*[local-name()="server"][*[local-name()="id"]="central"]/*[local-name()="password"])' "$SETTINGS_PATH" 2>/dev/null || true)
+
+          if [ -z "$USER_PLACEHOLDER" ] || [ -z "$PASS_PLACEHOLDER" ]; then
+            USER_PLACEHOLDER=$(sed -n '/<server>/,/<\/server>/p' "$SETTINGS_PATH" | awk '/<id>central<\/id>/{f=1} f && /<username>/{print; f=0}' | sed -E 's/.*<username>(.*)<\/username>.*/\1/')
+            PASS_PLACEHOLDER=$(sed -n '/<server>/,/<\/server>/p' "$SETTINGS_PATH" | awk '/<id>central<\/id>/{f=1} f && /<password>/{print; f=0}' | sed -E 's/.*<password>(.*)<\/password>.*/\1/')
+          fi
+
+          echo "Discovered placeholders (masked in logs):"
+          echo "  username placeholder: ${USER_PLACEHOLDER//[A-Za-z0-9_]/\*}"
+          echo "  password placeholder: ${PASS_PLACEHOLDER//[A-Za-z0-9_]/\*}"
+
+          # strip the \${env. and trailing } to get the variable name
+          USER_VAR=$(echo "$USER_PLACEHOLDER" | sed -E 's/^\$\{env\.([^}]+)\}$/\1/' || true)
+          PASS_VAR=$(echo "$PASS_PLACEHOLDER" | sed -E 's/^\$\{env\.([^}]+)\}$/\1/' || true)
+
+          if [ -z "$USER_VAR" ] || [ -z "$PASS_VAR" ]; then
+            echo "ERROR: could not determine env var names in settings.xml for server id 'central'."
+            echo "Run the Debug steps (redacted effective-settings) to inspect the file."
+            exit 1
+          fi
+
+          echo "Exporting discovered names to your provided secrets (no secret values will be printed)."
+          export "$USER_VAR"="$TMP_SONATYPE_USERNAME"
+          export "$PASS_VAR"="$TMP_SONATYPE_PASSWORD"
+
+          # run maven using the discovered settings file
+          ./mvnw -s "$SETTINGS_PATH" clean deploy -DskipTests -X
 
       - name: "Skip Deploy: Wrong branch"
         if: github.ref != 'refs/heads/main'
