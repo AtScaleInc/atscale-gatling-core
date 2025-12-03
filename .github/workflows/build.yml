@@ -51,62 +51,45 @@ jobs:
           # Use 'cat' to print the contents of the found file
           cat "$SETTINGS_PATH"
 
-      - name: "Debug :: Show env var names used in generated settings.xml"
+      - name: "Maven :: Clean"
         run: |
-          SETTINGS_PATH=$(find /home/runner -name "settings.xml" | head -n 1)
-          echo "Found settings.xml at: $SETTINGS_PATH"
-          # extract ${env.NAME} placeholders and print only NAME (no values)
-          grep -oP '\$\{env\.[^}]+\}' "$SETTINGS_PATH" | sed -E 's/\$\{env\.([^}]+)\}/\1/' | sort -u || true
-
-      - name: "Effective Settings Spy"
-        run: |
-          ./mvnw -X help:effective-settings
+          ./mvnw -X clean
 
       - name: "Configure :: Install Hive Driver"
         run: ./mvnw -X install:install-file -Dfile=./lib/hive-jdbc-uber-2.6.3.0-235.jar -DpomFile=./lib/hive-jdbc-uber-2.6.3.0-235.pom
 
+      - name: "Prepare deterministic settings.xml"
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/.m2"
+          cat > "$GITHUB_WORKSPACE/.m2/settings.xml" <<'EOF'
+          <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd">
+            <servers>
+              <server>
+                <id>central</id>
+                <username>${env.SONATYPE_USERNAME}</username>
+                <password>${env.SONATYPE_PASSWORD}</password>
+              </server>
+              <server>
+                <id>gpg.passphrase</id>
+                <passphrase>${env.MAVEN_GPG_PASSPHRASE}</passphrase>
+              </server>
+            </servers>
+          </settings>
+          EOF
+          echo "Wrote settings to $GITHUB_WORKSPACE/.m2/settings.xml"
+
       - name: "Clean, Build, Test and Deploy artifacts to Sonatype"
         if: github.ref == 'refs/heads/main'
         env:
-          TMP_SONATYPE_USERNAME: ${{ secrets.TEMP_SONATYPE_USERNAME }}
-          TMP_SONATYPE_PASSWORD: ${{ secrets.TEMP_SONATYPE_PASSWORD }}
+          SONATYPE_USERNAME: ${{ secrets.TEMP_SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.TEMP_SONATYPE_PASSWORD }}
           MAVEN_GPG_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          set -euo pipefail
-
-          SETTINGS_PATH=$(find /home/runner -name "settings.xml" | head -n 1)
-          echo "Found settings.xml at: $SETTINGS_PATH"
-
-          # try xmllint first (robust); fall back to grep/sed if missing
-          USER_PLACEHOLDER=$(xmllint --xpath 'string(//*[local-name()="server"][*[local-name()="id"]="central"]/*[local-name()="username"])' "$SETTINGS_PATH" 2>/dev/null || true)
-          PASS_PLACEHOLDER=$(xmllint --xpath 'string(//*[local-name()="server"][*[local-name()="id"]="central"]/*[local-name()="password"])' "$SETTINGS_PATH" 2>/dev/null || true)
-
-          if [ -z "$USER_PLACEHOLDER" ] || [ -z "$PASS_PLACEHOLDER" ]; then
-            USER_PLACEHOLDER=$(sed -n '/<server>/,/<\/server>/p' "$SETTINGS_PATH" | awk '/<id>central<\/id>/{f=1} f && /<username>/{print; f=0}' | sed -E 's/.*<username>(.*)<\/username>.*/\1/')
-            PASS_PLACEHOLDER=$(sed -n '/<server>/,/<\/server>/p' "$SETTINGS_PATH" | awk '/<id>central<\/id>/{f=1} f && /<password>/{print; f=0}' | sed -E 's/.*<password>(.*)<\/password>.*/\1/')
-          fi
-
-          echo "Discovered placeholders (masked in logs):"
-          echo "  username placeholder: ${USER_PLACEHOLDER//[A-Za-z0-9_]/\*}"
-          echo "  password placeholder: ${PASS_PLACEHOLDER//[A-Za-z0-9_]/\*}"
-
-          # strip the \${env. and trailing } to get the variable name
-          USER_VAR=$(echo "$USER_PLACEHOLDER" | sed -E 's/^\$\{env\.([^}]+)\}$/\1/' || true)
-          PASS_VAR=$(echo "$PASS_PLACEHOLDER" | sed -E 's/^\$\{env\.([^}]+)\}$/\1/' || true)
-
-          if [ -z "$USER_VAR" ] || [ -z "$PASS_VAR" ]; then
-            echo "ERROR: could not determine env var names in settings.xml for server id 'central'."
-            echo "Run the Debug steps (redacted effective-settings) to inspect the file."
-            exit 1
-          fi
-
-          echo "Exporting discovered names to your provided secrets (no secret values will be printed)."
-          export "$USER_VAR"="$TMP_SONATYPE_USERNAME"
-          export "$PASS_VAR"="$TMP_SONATYPE_PASSWORD"
-
-          # run maven using the discovered settings file
-          ./mvnw -s "$SETTINGS_PATH" clean deploy -DskipTests -X
+          ./mvnw -s "$GITHUB_WORKSPACE/.m2/settings.xml" clean deploy -DskipTests -X
+          
 
       - name: "Skip Deploy: Wrong branch"
         if: github.ref != 'refs/heads/main'
