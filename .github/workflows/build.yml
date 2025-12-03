@@ -58,6 +58,10 @@ jobs:
           # extract ${env.NAME} placeholders and print only NAME (no values)
           grep -oP '\$\{env\.[^}]+\}' "$SETTINGS_PATH" | sed -E 's/\$\{env\.([^}]+)\}/\1/' | sort -u || true
 
+      - name: "Effective Settings Spy"
+        run: |
+          echo(/mvnw -X help:effective-settings)
+
       - name: "Configure :: Install Hive Driver"
         run: ./mvnw -X install:install-file -Dfile=./lib/hive-jdbc-uber-2.6.3.0-235.jar -DpomFile=./lib/hive-jdbc-uber-2.6.3.0-235.pom
 
@@ -66,7 +70,8 @@ jobs:
         run: |
           SETTINGS_PATH=$(find /home/runner -name "settings.xml" | head -n 1)
           echo "Found settings.xml at: $SETTINGS_PATH"
-          ./mvnw -s "$SETTINGS_PATH" clean deploy -DskipTests -X
+          #./mvnw -s "$SETTINGS_PATH" clean deploy -DskipTests -X
+          ./mvnw clean deploy -DskipTests -X
         env:
           SONATYPE_USERNAME: ${{ secrets.TEMP_SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.TEMP_SONATYPE_PASSWORD }}
