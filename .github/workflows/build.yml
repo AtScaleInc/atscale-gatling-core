@@ -60,7 +60,7 @@ jobs:
 
       - name: "Effective Settings Spy"
         run: |
-          echo(./mvnw -X help:effective-settings)
+          ./mvnw -X help:effective-settings
 
       - name: "Fail fast"
         run: ./mvnw crashme
