@@ -33,6 +33,7 @@ public class AtScaleXmlaScenario {
     public ScenarioBuilder buildScenario(String model, String cube, String catalog, String gatlingRunId, String ingestionFile, boolean ingestionFileHasHeader) {
         NamedHttpRequestActionBuilder[] builders;
         boolean logResponseBody = PropertiesManager.getLogXmlaResponseBody(model);
+        boolean redactRawData = PropertiesManager.getRedactRawData(model);
         Long throttleBy = PropertiesManager.getAtScaleThrottleMs();
         AtScaleDynamicXmlaActions xmlaActions = new AtScaleDynamicXmlaActions();
 
@@ -62,8 +63,15 @@ public class AtScaleXmlaScenario {
                                                 namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, namedBuilder.xmlPayload, statusCode, status);
                                     }
                                     if(logResponseBody) {
-                                        SESSION_LOGGER.info("xmlaLog gatlingRunId='{}' status='{}' gatlingSessionId={} model='{}' cube='{}' catalog='{}' queryName='{}' atscaleQueryId='{}' inboundTextAsHash='{}' start={} end={} duration={} responseSize={} response={}",
-                                                gatlingRunId,  status, session.userId(), model, cube, catalog, namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, start, end, duration, responseSize, response);
+                                        // Since we are streaming the data from atscale we can only stream once before the stream is exhausted.
+                                        // therefore, we can get either to raw response or its hash, but not both.
+                                        if(redactRawData) {
+                                            SESSION_LOGGER.info("xmlaLog gatlingRunId='{}' status='{}' gatlingSessionId={} model='{}' cube='{}' catalog='{}' queryName='{}' atscaleQueryId='{}' inboundTextAsHash='{}' start={} end={} duration={} responseSize={} responseHash='{}' response='{}'",
+                                                    gatlingRunId, status, session.userId(), model, cube, catalog, namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, start, end, duration, responseSize, response, "REDACTED");
+                                        } else {
+                                            SESSION_LOGGER.info("xmlaLog gatlingRunId='{}' status='{}' gatlingSessionId={} model='{}' cube='{}' catalog='{}' queryName='{}' atscaleQueryId='{}' inboundTextAsHash='{}' start={} end={} duration={} responseSize={} responseHash='{}' response='{}'",
+                                                    gatlingRunId, status, session.userId(), model, cube, catalog, namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, start, end, duration, responseSize, "REDACTED", response);
+                                        }
                                     } else {
                                         SESSION_LOGGER.info("xmlaLog gatlingRunId='{}' status='{}' gatlingSessionId={} model='{}' cube='{}' catalog='{}' queryName='{}' atscaleQueryId='{}' inboundTextAsHash='{}' start={} end={} duration={} responseSize={}",
                                                 gatlingRunId, status, session.userId(), model, cube, catalog, namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, start, end, duration, responseSize);

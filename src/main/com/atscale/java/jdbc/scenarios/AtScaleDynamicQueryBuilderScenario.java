@@ -43,6 +43,7 @@ public class AtScaleDynamicQueryBuilderScenario {
         }
 
         boolean logRows = PropertiesManager.getLogSqlQueryRows(model);
+        boolean redactRawData = PropertiesManager.getRedactRawData(model);
         Long throttleBy = PropertiesManager.getAtScaleThrottleMs();
 
         List<ChainBuilder> chains = Arrays.stream(namedBuilders)
@@ -61,14 +62,20 @@ public class AtScaleDynamicQueryBuilderScenario {
                     SESSION_LOGGER.info("sqlLog gatlingRunId='{}' status='{}' gatlingSessionId={} model='{}' queryName='{}' atscaleQueryId='{}' inboundTextAsHash='{}' start={} end={} duration={} rows={}", gatlingRunId, status, session.userId(), model, namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, start, end, duration, rowCount);
                     if (logRows) {
                         int rownum = 0;
-                        for (Object row : resultSet) {
-                            SESSION_LOGGER.info("sqlLog gatlingRunId='{}' status='{}' gatlingSessionId={} model='{}' queryName='{}' atscaleQueryId='{}' inboundTextAsHash='{}' rownumber={} row={} rowhash={}", gatlingRunId, status, session.userId(), model, namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, rownum++, row, HashUtil.TO_SHA256(row.toString()));
+                        if(redactRawData) {
+                            for (Object row : resultSet) {
+                                SESSION_LOGGER.info("sqlLog gatlingRunId='{}' status='{}' gatlingSessionId={} model='{}' queryName='{}' atscaleQueryId='{}' inboundTextAsHash='{}' rownumber={} row={} rowhash={}", gatlingRunId, status, session.userId(), model, namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, rownum++, "{REDACTED}", HashUtil.TO_SHA256(row.toString()));
+                            }
+                        } else {
+                            for (Object row : resultSet) {
+                                SESSION_LOGGER.info("sqlLog gatlingRunId='{}' status='{}' gatlingSessionId={} model='{}' queryName='{}' atscaleQueryId='{}' inboundTextAsHash='{}' rownumber={} row={} rowhash={}", gatlingRunId, status, session.userId(), model, namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, rownum++, row, HashUtil.TO_SHA256(row.toString()));
+                            }
                         }
                     }
                     return session;
                 }).pause(Duration.ofMillis(throttleBy))).collect(Collectors.toList());
 
-        // pause the scenario executions at 2 milliseconds apart
-        return scenario("AtScale Dynamic Query Builder Scenario").exec(chains).pause(Duration.ofMillis(2));
+        // pause the scenario executions at 1 millisecond apart
+        return scenario("AtScale Dynamic Query Builder Scenario").exec(chains).pause(Duration.ofMillis(1));
     }
 }
