@@ -59,8 +59,8 @@ public class AtScaleXmlaScenario {
                                     long duration = end - start;
                                     int responseSize = response == null? 0: response.length();
                                     if(statusCode != 200 ) {
-                                        LOGGER.error("Query '{}' with QueryId'{}' with hash '{}' with payload '{}' returned status code {} and is marked as {}",
-                                                namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, namedBuilder.xmlPayload, statusCode, status);
+                                        LOGGER.error("Query '{}' with QueryId'{}' with hash '{}' with payload '{}' returned sessionIsFailed '{}' status code {} and is marked as {}",
+                                                namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, namedBuilder.xmlPayload, session.isFailed(), statusCode, status);
                                     }
                                     if(logResponseBody) {
                                         // Since we are streaming the data from atscale we can only stream once before the stream is exhausted.
