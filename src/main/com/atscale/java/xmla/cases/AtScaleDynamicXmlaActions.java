@@ -73,27 +73,31 @@ public class AtScaleDynamicXmlaActions {
     }
 
     private HttpRequestActionBuilder httpRequest(String queryName, String body, String model) {
-        if(PropertiesManager.getRedactRawData(model)) {
-            return http(queryName)
-                    .post("")
-                    .body(StringBody(body)).asXml()
-                    .requestTimeout(java.time.Duration.ofSeconds(120))
-                    .transformResponse(new SoapTransformerFactory().createTransformer())
-                    .check(
-                            status().saveAs("responseStatus"),
-                            status().is(200),
-                            bodyString().saveAs("responseBody")
-                    );
-        } else {
-            return http(queryName)
-                    .post("")
-                    .body(StringBody(body)).asXml()
-                    .requestTimeout(java.time.Duration.ofSeconds(120))
-                    .check(
-                            status().saveAs("responseStatus"),
-                            status().is(200),
-                            bodyString().saveAs("responseBody")
-                    );
+        try {
+            if (PropertiesManager.getRedactRawData(model)) {
+                return http(queryName)
+                        .post("")
+                        .body(StringBody(body)).asXml()
+                        .requestTimeout(java.time.Duration.ofSeconds(120))
+                        .transformResponse(new SoapTransformerFactory().createTransformer())
+                        .check(
+                                status().saveAs("responseStatus"),
+                                status().is(200),
+                                bodyString().saveAs("responseBody")
+                        );
+            } else {
+                return http(queryName)
+                        .post("")
+                        .body(StringBody(body)).asXml()
+                        .requestTimeout(java.time.Duration.ofSeconds(120))
+                        .check(
+                                status().saveAs("responseStatus"),
+                                status().is(200),
+                                bodyString().saveAs("responseBody")
+                        );
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error during HTTP request for XMLA query: " + queryName, e);
         }
     }
 
@@ -130,7 +134,7 @@ public class AtScaleDynamicXmlaActions {
 
         public SoapTransformerFactory (){
             super();
-            LOGGER.info("Initialized SOAP Transformer Factory");
+            LOGGER.debug("Initialized SOAP Transformer Factory");
         }
 
         public BiFunction<Response, Session, Response> createTransformer() {
