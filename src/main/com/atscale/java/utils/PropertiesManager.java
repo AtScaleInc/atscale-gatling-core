@@ -188,6 +188,11 @@ public class PropertiesManager {
         return Integer.parseInt(getProperty(key, "10"));
     }
 
+    public static boolean getRedactRawData(String model) {
+        String key = String.format("atscale.%s.redactRawdata", clean(model));
+        return Boolean.parseBoolean(getProperty(key, "true"));
+    }
+
     public static String getAtScaleXmlaConnection(String model) {
         String key = String.format("atscale.%s.xmla.url", clean(model));
         return getProperty(key);

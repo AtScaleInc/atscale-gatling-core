@@ -82,6 +82,7 @@ public abstract class SequentialSimulationExecutor<T> extends SimulationExecutor
                     // Set working directory to project root where mvnw(.cmd) exists
                     processBuilder.directory(new File(projectRoot));
                     processBuilder.inheritIO(); // This will print output to console
+                    processBuilder.redirectErrorStream(true);
 
                     LOGGER.info("Starting the test suite on a separate JVM.  Using command args: {}", command);
                     Process process = processBuilder.start();
