@@ -99,10 +99,9 @@ public class PayloadParserTest {
         AtScaleDynamicXmlaActions.HashingSaxHandler handler = new AtScaleDynamicXmlaActions.HashingSaxHandler();
         Assertions.assertNotNull(handler);
 
-        InputStream inputStream = new FileInputStream(testContent);
-
-        SAXParserFactory.newNSInstance().newSAXParser().parse(inputStream, handler);
-
+        try (InputStream inputStream = new FileInputStream(testContent)) {
+            SAXParserFactory.newNSInstance().newSAXParser().parse(inputStream, handler);
+        }
         return handler.getHash();
     }
 }
