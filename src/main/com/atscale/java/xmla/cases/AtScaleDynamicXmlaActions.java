@@ -147,7 +147,7 @@ public class AtScaleDynamicXmlaActions {
                     hash = handler.getHash();
                     LOGGER.debug("Computed SOAP response hash: {}", hash);
                 } catch (Exception e) {
-                    throw new RuntimeException("Error transforming SOAP response", e);
+                    throw new RuntimeException("Error computing SOAP response hash: " + e.getMessage(), e);
                 }
                 ResponseBody newBody = new StringResponseBody(hash, StandardCharsets.UTF_8);
                 return response.copy(response.request(),
