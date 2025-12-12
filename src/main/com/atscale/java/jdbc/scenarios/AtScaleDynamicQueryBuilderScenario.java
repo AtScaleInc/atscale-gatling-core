@@ -4,6 +4,7 @@ import com.atscale.java.jdbc.cases.AtScaleDynamicJdbcActions;
 import com.atscale.java.jdbc.cases.NamedQueryActionBuilder;
 import com.atscale.java.utils.HashUtil;
 import com.atscale.java.utils.PropertiesManager;
+import io.gatling.javaapi.core.CoreDsl;
 import io.gatling.javaapi.core.ScenarioBuilder;
 import io.gatling.javaapi.core.ChainBuilder;
 import org.apache.commons.lang.StringUtils;
@@ -51,14 +52,22 @@ public class AtScaleDynamicQueryBuilderScenario {
                 exec(session -> session
                     .set("queryStart", System.currentTimeMillis())
                 ).exec(
-                    namedBuilder.builder
+                        CoreDsl.tryMax(1).on(
+                            namedBuilder.builder
+                        ).exitHereIfFailed().exec(
+                            session ->  {
+                                LOGGER.error("Huston I found a problem");
+                                        return session;
+
+                            }
+                        )
                 ).exec(session -> {
                     long end = System.currentTimeMillis();
                     List<?> resultSet = session.getList("queryResultSet");
                     long start = session.getLong("queryStart");
                     long duration = end - start;
                     int rowCount = resultSet.size();
-                    String status = (rowCount < 1) ? "FAILED" : "SUCCEEDED";
+                    String status = (session.isFailed()) ? "FAILED" : "SUCCEEDED";
                     SESSION_LOGGER.info("sqlLog gatlingRunId='{}' status='{}' gatlingSessionId={} model='{}' queryName='{}' atscaleQueryId='{}' inboundTextAsHash='{}' start={} end={} duration={} rows={}", gatlingRunId, status, session.userId(), model, namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, start, end, duration, rowCount);
                     if (logRows) {
                         int rownum = 0;
@@ -72,6 +81,7 @@ public class AtScaleDynamicQueryBuilderScenario {
                             }
                         }
                     }
+                    session.markAsSucceeded();  // reset the session status for next query
                     return session;
                 }).pause(Duration.ofMillis(throttleBy))).collect(Collectors.toList());
 
