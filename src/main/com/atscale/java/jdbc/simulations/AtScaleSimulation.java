@@ -1,10 +1,8 @@
 package com.atscale.java.jdbc.simulations;
 
 import com.atscale.java.executors.MavenTaskDto;
-import com.atscale.java.jdbc.scenarios.AtScaleDynamicQueryBuilderScenario;
 import com.atscale.java.utils.JsonUtil;
 import com.atscale.java.utils.PropertiesManager;
-import io.gatling.javaapi.core.ScenarioBuilder;
 import io.gatling.javaapi.core.Simulation;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -31,7 +29,7 @@ abstract class AtScaleSimulation extends Simulation {
     String ingestionFile;
     String ingestionFileHasHeader;
     String additionalProperties;
-    ScenarioBuilder sb;
+
 
     AtScaleSimulation() {
         model = System.getProperties().getProperty(MavenTaskDto.ATSCALE_MODEL);
@@ -76,8 +74,5 @@ abstract class AtScaleSimulation extends Simulation {
                 LOGGER.error("Hive JDBC Driver not found in classpath.", e);
             }
         }
-
-        AtScaleDynamicQueryBuilderScenario scn = new AtScaleDynamicQueryBuilderScenario();
-        sb = scn.buildScenario(model, runId, ingestionFile, Boolean.parseBoolean(ingestionFileHasHeader));
     }
 }

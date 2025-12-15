@@ -4,20 +4,15 @@ import com.atscale.java.jdbc.cases.AtScaleDynamicJdbcActions;
 import com.atscale.java.jdbc.cases.NamedQueryActionBuilder;
 import com.atscale.java.utils.HashUtil;
 import com.atscale.java.utils.PropertiesManager;
-import io.gatling.javaapi.core.CoreDsl;
-import io.gatling.javaapi.core.ScenarioBuilder;
-import io.gatling.javaapi.core.ChainBuilder;
+import io.gatling.javaapi.core.*;
 import org.apache.commons.lang.StringUtils;
-
-import static io.gatling.javaapi.core.CoreDsl.exec;
-
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static io.gatling.javaapi.core.CoreDsl.scenario;
+
+import static io.gatling.javaapi.core.CoreDsl.*;
 
 public class AtScaleDynamicQueryBuilderScenario {
     private static final Logger SESSION_LOGGER = LoggerFactory.getLogger("SqlLogger");
@@ -33,7 +28,7 @@ public class AtScaleDynamicQueryBuilderScenario {
      *
      * @return A ScenarioBuilder instance representing the dynamic query execution scenario.
      */
-    public ScenarioBuilder buildScenario(String model, String gatlingRunId, String ingestionFilePath, boolean ingestionFileHasHeader) {
+    public List<PopulationBuilder> buildScenario(String model, String gatlingRunId, String ingestionFilePath, boolean ingestionFileHasHeader, List<OpenInjectionStep> openSteps, List<ClosedInjectionStep> closedSteps) {
         NamedQueryActionBuilder[] namedBuilders;
         if(StringUtils.isNotEmpty(ingestionFilePath)) {
             namedBuilders = AtScaleDynamicJdbcActions.createBuildersIngestedQueries(ingestionFilePath, ingestionFileHasHeader);
@@ -45,29 +40,21 @@ public class AtScaleDynamicQueryBuilderScenario {
 
         boolean logRows = PropertiesManager.getLogSqlQueryRows(model);
         boolean redactRawData = PropertiesManager.getRedactRawData(model);
-        Long throttleBy = PropertiesManager.getAtScaleThrottleMs();
-
-        List<ChainBuilder> chains = Arrays.stream(namedBuilders)
-            .map(namedBuilder ->
-                exec(session -> session
+        // Create and return List<PopulationBuilder>
+        return Arrays.stream(namedBuilders)
+        .map(namedBuilder -> {
+            ScenarioBuilder scn = scenario("Scenario for query: " + namedBuilder.queryName)
+                .exec(session -> session
                     .set("queryStart", System.currentTimeMillis())
                 ).exec(
-                        CoreDsl.tryMax(1).on(
-                            namedBuilder.builder
-                        ).exitHereIfFailed().exec(
-                            session ->  {
-                                LOGGER.error("Huston I found a problem");
-                                        return session;
-
-                            }
-                        )
-                ).exec(session -> {
+                        namedBuilder.builder
+                ).exec ( session -> {
                     long end = System.currentTimeMillis();
                     List<?> resultSet = session.getList("queryResultSet");
                     long start = session.getLong("queryStart");
                     long duration = end - start;
                     int rowCount = resultSet.size();
-                    String status = (session.isFailed()) ? "FAILED" : "SUCCEEDED";
+                    String status = resultSet.isEmpty()? "FAILED" : "SUCCEEDED";
                     SESSION_LOGGER.info("sqlLog gatlingRunId='{}' status='{}' gatlingSessionId={} model='{}' queryName='{}' atscaleQueryId='{}' inboundTextAsHash='{}' start={} end={} duration={} rows={}", gatlingRunId, status, session.userId(), model, namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, start, end, duration, rowCount);
                     if (logRows) {
                         int rownum = 0;
@@ -81,11 +68,15 @@ public class AtScaleDynamicQueryBuilderScenario {
                             }
                         }
                     }
-                    session.markAsSucceeded();  // reset the session status for next query
                     return session;
-                }).pause(Duration.ofMillis(throttleBy))).collect(Collectors.toList());
+                }
+            );
 
-        // pause the scenario executions at 1 millisecond apart
-        return scenario("AtScale Dynamic Query Builder Scenario").exec(chains).pause(Duration.ofMillis(1));
+           if(null != openSteps) {
+               return scn.injectOpen(openSteps);
+           } else {
+               return scn.injectClosed(closedSteps);
+           }
+        }).collect(Collectors.toList());
     }
 }
