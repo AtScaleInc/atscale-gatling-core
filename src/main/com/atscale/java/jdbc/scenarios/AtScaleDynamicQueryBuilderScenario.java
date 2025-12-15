@@ -72,7 +72,7 @@ public class AtScaleDynamicQueryBuilderScenario {
                 }
             );
 
-           if(null != openSteps) {
+           if (openSteps != null) {
                return scn.injectOpen(openSteps);
            } else {
                return scn.injectClosed(closedSteps);
