@@ -45,7 +45,18 @@
             <AppenderRef ref="STDOUT"/>
             <AppenderRef ref="ASYNC_APP_LOG"/>
         </Root>
-        <Logger name="io.gatling" level="error"/>
+        <Logger name="io.gatling" level="debug" additivity="false">
+            <!-- commented out to avoid console logging
+            <AppenderRef ref="STDOUT"/>
+            -->
+            <AppenderRef ref="ASYNC_APP_LOG"/>
+        </Logger>
+        <Logger name="org.galaxio" level="debug" additivity="false">
+            <!-- commented out to avoid console logging
+            <AppenderRef ref="STDOUT"/>
+            -->
+            <AppenderRef ref="ASYNC_APP_LOG"/>
+        </Logger>
         <Logger name="SqlLogger" level="info" additivity="false">
             <AppenderRef ref="ASYNC_SQL"/>
         </Logger>

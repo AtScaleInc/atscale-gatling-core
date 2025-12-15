@@ -53,14 +53,17 @@ public class AtScaleXmlaScenario {
                                     long end = System.currentTimeMillis();
                                     String response = session.getString("responseBody");
                                     int statusCode = session.getInt("responseStatus");
-                                    boolean isSuccess = !session.isFailed() && statusCode >= 200 && statusCode < 300;
+                                    boolean isSuccess = statusCode >= 200 && statusCode < 300;
                                     String status = isSuccess ? "SUCCEEDED" : "FAILED";
                                     long start = session.getLong("queryStart");
                                     long duration = end - start;
                                     int responseSize = response == null? 0: response.length();
-                                    if(statusCode != 200 ) {
-                                        LOGGER.error("Query '{}' with QueryId'{}' with hash '{}' with payload '{}' returned sessionIsFailed '{}' status code {} and is marked as {}",
-                                                namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, namedBuilder.xmlPayload, session.isFailed(), statusCode, status);
+                                    if(isSuccess) {
+                                        LOGGER.info("Query '{}' with QueryId'{}' with hash '{}' returned status code {} and is marked as {}",
+                                                namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, statusCode, status);
+                                    } else {
+                                            LOGGER.error("Query '{}' with QueryId'{}' with hash '{}' returned status code {} and is marked as {}",
+                                                    namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, statusCode, status);
                                     }
                                     if(logResponseBody) {
                                         // Since we are streaming the data from atscale we can only stream once before the stream is exhausted.

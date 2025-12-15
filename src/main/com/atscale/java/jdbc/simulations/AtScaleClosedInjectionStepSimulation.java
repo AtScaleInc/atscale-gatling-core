@@ -2,8 +2,10 @@ package com.atscale.java.jdbc.simulations;
 
 import com.atscale.java.injectionsteps.ClosedStep;
 import com.atscale.java.jdbc.JdbcProtocol;
+import com.atscale.java.jdbc.scenarios.AtScaleDynamicQueryBuilderScenario;
 import com.atscale.java.utils.InjectionStepJsonUtil;
 import io.gatling.javaapi.core.ClosedInjectionStep;
+import io.gatling.javaapi.core.PopulationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.time.Duration;
@@ -37,6 +39,9 @@ public class AtScaleClosedInjectionStepSimulation extends AtScaleSimulation{
             injectionSteps.add(constantConcurrentUsers(1).during(Duration.ofMinutes(1))); // Default to 1 user for 1 minute
         }
 
-        setUp(sb.injectClosed(injectionSteps).protocols(JdbcProtocol.forDatabase(model)));
+        AtScaleDynamicQueryBuilderScenario scn = new AtScaleDynamicQueryBuilderScenario();
+        List<PopulationBuilder> sb = scn.buildScenario(model, runId, ingestionFile, Boolean.parseBoolean(ingestionFileHasHeader), null, injectionSteps);
+
+        setUp(sb.toArray(new PopulationBuilder[0])).protocols(JdbcProtocol.forDatabase(model));
     }
 }

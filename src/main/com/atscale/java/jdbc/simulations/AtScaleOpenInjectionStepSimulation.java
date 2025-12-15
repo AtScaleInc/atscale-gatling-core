@@ -1,10 +1,13 @@
 package com.atscale.java.jdbc.simulations;
 
 import com.atscale.java.jdbc.JdbcProtocol;
+import com.atscale.java.jdbc.scenarios.AtScaleDynamicQueryBuilderScenario;
 import com.atscale.java.utils.InjectionStepJsonUtil;
 import io.gatling.javaapi.core.OpenInjectionStep;
 import java.util.List;
 import java.util.ArrayList;
+
+import io.gatling.javaapi.core.PopulationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static io.gatling.javaapi.core.OpenInjectionStep.atOnceUsers;
@@ -39,6 +42,9 @@ public class AtScaleOpenInjectionStepSimulation extends AtScaleSimulation{
             injectionSteps.add(atOnceUsers(1));
         }
 
-        setUp(sb.injectOpen(injectionSteps).protocols(JdbcProtocol.forDatabase(model)));
+        AtScaleDynamicQueryBuilderScenario scn = new AtScaleDynamicQueryBuilderScenario();
+        List<PopulationBuilder> sb = scn.buildScenario(model, runId, ingestionFile, Boolean.parseBoolean(ingestionFileHasHeader), injectionSteps, null);
+
+        setUp(sb.toArray(new PopulationBuilder[0])).protocols(JdbcProtocol.forDatabase(model));
     }
 }

@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.atscale.opensource</groupId>
   <artifactId>atscale-gatling-core</artifactId>
-  <version>1.9</version>
+  <version>1.10</version>
   <packaging>jar</packaging>
 
   <name>atscale_gatling</name>
