@@ -62,7 +62,7 @@ public class AtScaleXmlaScenario {
                                         LOGGER.info("Query '{}' with QueryId'{}' with hash '{}' returned status code {} and is marked as {}",
                                                 namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, statusCode, status);
                                     } else {
-                                            LOGGER.error("Query '{}' with QueryId'{}' with hash '{}' returned  status code {} and is marked as {}",
+                                            LOGGER.error("Query '{}' with QueryId'{}' with hash '{}' returned status code {} and is marked as {}",
                                                     namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, statusCode, status);
                                     }
                                     if(logResponseBody) {
