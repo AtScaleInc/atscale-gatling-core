@@ -54,7 +54,7 @@ public class AtScaleDynamicQueryBuilderScenario {
                     long start = session.getLong("queryStart");
                     long duration = end - start;
                     int rowCount = resultSet.size();
-                    String status = resultSet.isEmpty() ? "FAILED" : "SUCCEEDED";
+                    String status = session.get("jdbcFailed") ? "FAILED" : "SUCCEEDED";
                     SESSION_LOGGER.info("sqlLog gatlingRunId='{}' status='{}' gatlingSessionId={} model='{}' queryName='{}' atscaleQueryId='{}' inboundTextAsHash='{}' start={} end={} duration={} rows={}", gatlingRunId, status, session.userId(), model, namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, start, end, duration, rowCount);
                     if (logRows) {
                         int rownum = 0;
