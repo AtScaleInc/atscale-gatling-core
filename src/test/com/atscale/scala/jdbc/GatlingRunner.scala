@@ -26,7 +26,7 @@ object GatlingRunner {
     // gatling:test]
 
     // emulate the system properties that would be passed via command line
-    // from the maven execcutor to the Simulation
+    // from the maven executor to the Simulation
     // Some of these properties are base64 encoded
     System.setProperty("atscale.model", "dHBjZHNfYmVuY2htYXJrX21vZGVs")
     System.setProperty("atscale.run.id", "MjAyNS0xMi0xNi1HcFk0eG1QZ1lq")
