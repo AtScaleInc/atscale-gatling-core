@@ -22,12 +22,13 @@ public class AtScaleDynamicJdbcActions {
             String queryName = query.getQueryName();
             String inboundTextAsHash = query.getInboundTextAsHash();
             String atscaleQueryId = query.getAtscaleQueryId();
+            String inboundText = query.getInboundText();
             QueryActionBuilder builder = jdbc(queryName)
                 .query(query.getInboundText())
                 .check(
                     allResults().saveAs("queryResultSet")
                 );
-            builders.add(new NamedQueryActionBuilder(builder, queryName, inboundTextAsHash, atscaleQueryId));
+            builders.add(new NamedQueryActionBuilder(builder, queryName, inboundTextAsHash, atscaleQueryId, inboundText));
         }
         return builders;
 
