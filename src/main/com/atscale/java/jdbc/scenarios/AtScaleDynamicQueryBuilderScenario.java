@@ -44,17 +44,31 @@ public class AtScaleDynamicQueryBuilderScenario {
         return Arrays.stream(namedBuilders)
         .map(namedBuilder -> {
             ScenarioBuilder scn = scenario("Scenario for query: " + namedBuilder.queryName)
-                .exec(session -> session
-                    .set("queryStart", System.currentTimeMillis())
+                .exec(session -> {
+                            return session.set("queryStart", System.currentTimeMillis());
+                    }
                 ).exec(
                         namedBuilder.builder
                 ).exec ( session -> {
                     long end = System.currentTimeMillis();
+                    Boolean isJdbcFailed = session.get("jdbcFailed");
+                    String message = session.get("message");
+                    if(isJdbcFailed == null) {
+                        LOGGER.error("""
+                                Unexpected state returned from the galaxio jdbc plugin!
+                                JDBC failed flag is null for queryName: {} with inbound hash: {}.
+                                Manually set failed state to TRUE, since we cannot detect true state from the plugin.
+                                """, namedBuilder.queryName, namedBuilder.inboundTextAsHash);
+                        isJdbcFailed = Boolean.TRUE;
+                    } else if (isJdbcFailed) {
+                        LOGGER.error("Returned JDBC failed flag: {} for queryName: {} with inbound hash: {} with message: {}",
+                                isJdbcFailed, namedBuilder.queryName, namedBuilder.inboundTextAsHash, message);
+                    }
                     List<?> resultSet = session.getList("queryResultSet");
                     long start = session.getLong("queryStart");
                     long duration = end - start;
                     int rowCount = resultSet.size();
-                    String status = resultSet.isEmpty() ? "FAILED" : "SUCCEEDED";
+                    String status = isJdbcFailed ? "FAILED" : "SUCCEEDED";
                     SESSION_LOGGER.info("sqlLog gatlingRunId='{}' status='{}' gatlingSessionId={} model='{}' queryName='{}' atscaleQueryId='{}' inboundTextAsHash='{}' start={} end={} duration={} rows={}", gatlingRunId, status, session.userId(), model, namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, start, end, duration, rowCount);
                     if (logRows) {
                         int rownum = 0;
