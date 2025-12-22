@@ -44,7 +44,7 @@ jobs:
         run: ./mvnw -X install:install-file -Dfile=./lib/hive-jdbc-uber-2.6.3.0-235.jar -DpomFile=./lib/hive-jdbc-uber-2.6.3.0-235.pom
 
       - name: "Configure :: Install customized Galaxio JDBC Plugin to make available to the shade plugin"
-        run: ./mvnw -X install:install-file -Dfile=lib/gatling-jdbc-plugin_2.13-0.14-atscale.jar -DpomFile=lib/gatling-jdbc-plugin_2.13-0.14.1-atscale.pom
+        run: ./mvnw -X install:install-file -Dfile=lib/gatling-jdbc-plugin_2.13-0.14.1-atscale.jar -DpomFile=lib/gatling-jdbc-plugin_2.13-0.14.1-atscale.pom
 
       - name: "Prepare deterministic settings.xml"
         run: |
