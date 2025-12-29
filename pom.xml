@@ -47,6 +47,7 @@
     <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
     <log4j2.version>2.25.3</log4j2.version>
     <mockito.version>5.20.0</mockito.version>
+    <netty.version>4.2.9.Final</netty.version>
   </properties>
   <build>
     <sourceDirectory>src/main</sourceDirectory>
@@ -400,6 +401,11 @@
       <version>3.2.18</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-all</artifactId>
+      <version>${netty.version}</version>
+    </dependency>
     <!-- For Gatling load simulations, we only need this single dependency -->
     <dependency>
       <groupId>io.gatling.highcharts</groupId>
@@ -414,6 +420,10 @@
         <exclusion>
           <groupId>ch.qos.logback</groupId>
           <artifactId>logback-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.netty</groupId>
+          <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -482,43 +492,7 @@
       <exclusions>
         <exclusion>
           <groupId>io.netty</groupId>
-          <artifactId>netty-transport-classes-epoll</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>io.netty</groupId>
-          <artifactId>netty-handler</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>io.netty</groupId>
-          <artifactId>netty-transport</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>io.netty</groupId>
-          <artifactId>netty-transport-resolver</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>io.netty</groupId>
-          <artifactId>netty-transport-buffer</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>io.netty</groupId>
-          <artifactId>netty-codec-http</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>io.netty</groupId>
-          <artifactId>netty-codec-http2</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>io.netty</groupId>
-          <artifactId>netty-common</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>io.netty</groupId>
-          <artifactId>netty-resolver</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>io.netty</groupId>
-          <artifactId>netty-buffer</artifactId>
+          <artifactId>*</artifactId>
         </exclusion>
         <exclusion>
           <groupId>commons-logging</groupId>
