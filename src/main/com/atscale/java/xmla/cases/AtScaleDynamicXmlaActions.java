@@ -78,7 +78,6 @@ public class AtScaleDynamicXmlaActions {
                 return http(queryName)
                         .post("")
                         .body(StringBody(body)).asXml()
-                        .requestTimeout(java.time.Duration.ofSeconds(120))
                         .transformResponse(new SoapTransformerFactory().createTransformer())
                         .check(
                                 status().saveAs("responseStatus"),

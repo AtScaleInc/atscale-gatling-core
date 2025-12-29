@@ -45,3 +45,6 @@ build/
 /logs/
 src/main/resources/container_systems.properties
 src/main/resources/systems.properties
+/dependency-reduced-pom.xml
+/src/test/resources/test_systems.properties
+/ingest/tpcds_benchmark_jdbc_queries.csv
