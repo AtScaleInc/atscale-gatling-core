@@ -6,8 +6,7 @@ import com.atscale.java.utils.InjectionStepJsonUtil;
 import io.gatling.javaapi.core.OpenInjectionStep;
 import java.util.List;
 import java.util.ArrayList;
-
-import io.gatling.javaapi.core.PopulationBuilder;
+import io.gatling.javaapi.core.ScenarioBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static io.gatling.javaapi.core.OpenInjectionStep.atOnceUsers;
@@ -15,9 +14,6 @@ import static io.gatling.javaapi.core.OpenInjectionStep.atOnceUsers;
 @SuppressWarnings("unused")
 public class AtScaleOpenInjectionStepSimulation extends AtScaleSimulation{
     private static final Logger LOGGER = LoggerFactory.getLogger(AtScaleOpenInjectionStepSimulation.class);
-
-    
-    //Full Maven command: mvnw.cmd -Dgatling.simulationClass=com.atscale.java.xmla.simulations.AtScaleXmlaOpenInjectionStepSimulation -Dgatling.runDescription=VFBDRFMgWE1MQSBNb2RlbCBUZXN0cw== -Datscale.model=VFBDLURTIEJlbmNobWFyayBNb2RlbA== -Datscale.run.id=MjAyNS0wOS0yMi1QSWdka3VRcjhD -Datscale.log.fileName=dHBjZHNfYmVuY2htYXJrX3htbGEubG9n -Dgatling_run_logAppend=ZmFsc2U= gatling:test
 
     public AtScaleOpenInjectionStepSimulation(){
         super();
@@ -43,8 +39,8 @@ public class AtScaleOpenInjectionStepSimulation extends AtScaleSimulation{
         }
 
         AtScaleDynamicQueryBuilderScenario scn = new AtScaleDynamicQueryBuilderScenario();
-        List<PopulationBuilder> sb = scn.buildScenario(model, runId, ingestionFile, Boolean.parseBoolean(ingestionFileHasHeader), injectionSteps, null);
+        ScenarioBuilder sb = scn.buildScenario(model, runId, ingestionFile, Boolean.parseBoolean(ingestionFileHasHeader));
 
-        setUp(sb.toArray(new PopulationBuilder[0])).protocols(JdbcProtocol.forDatabase(model));
+        setUp(sb.injectOpen(injectionSteps)).protocols(JdbcProtocol.forDatabase(model));
     }
 }

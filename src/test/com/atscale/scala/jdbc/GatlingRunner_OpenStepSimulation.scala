@@ -8,7 +8,7 @@ just paste it into the VM properties for the IDE run configuration
 exactly as shown including the starting characters --
 --add-opens=java.base/java.lang=ALL-UNNAMED
  */
-object GatlingRunner {
+object GatlingRunner_OpenStepSimulation {
 
   def main(args: Array[String]): Unit = {
     //Using command args that I grabbed from mvn command line execution in the application.log
@@ -22,7 +22,7 @@ object GatlingRunner {
     // -Datscale.gatling.injection.steps=W3sidXNlcnMiOjEsInR5cGUiOiJBdE9uY2VVc2Vyc09wZW5JbmplY3Rpb25TdGVwIn1d,
     // -Dquery_ingestion_file=null,
     // -Dquery_ingestion_file_has_header=false,
-    // -Dadditional_properties=e30=,
+    // -Dadditional_properties=,
     // gatling:test]
 
     // emulate the system properties that would be passed via command line
@@ -42,7 +42,8 @@ object GatlingRunner {
     val gatlingArgs = Array(
       "--simulation", "com.atscale.java.jdbc.simulations.AtScaleOpenInjectionStepSimulation", // Selects the specific simulation class
       "--results-folder", "./target/gatling-results", // Specifies where to write reports
-      "--binaries-folder", "./target/classes" // Specifies where compiled classes are located
+      "--binaries-folder", "./target/classes", // Specifies where compiled classes are located
+      "--run-description", "Gatling Runner Test Simulation"
       // Add other options as needed
     )
 
