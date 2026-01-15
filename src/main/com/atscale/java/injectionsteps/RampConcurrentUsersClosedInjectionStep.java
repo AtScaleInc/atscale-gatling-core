@@ -1,6 +1,8 @@
 package com.atscale.java.injectionsteps;
 
 import io.gatling.javaapi.core.ClosedInjectionStep;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import static io.gatling.javaapi.core.CoreDsl.rampConcurrentUsers;
 import java.time.Duration;
@@ -36,5 +38,17 @@ public class RampConcurrentUsersClosedInjectionStep implements ClosedStep {
     @Override
     public ClosedInjectionStep toGatlingStep() {
         return rampConcurrentUsers(from).to(to).during(Duration.ofMinutes(durationMinutes));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        return EqualsBuilder.reflectionEquals(this, o);
+    }
+
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
     }
 }

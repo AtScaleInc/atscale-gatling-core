@@ -14,6 +14,7 @@ import com.atscale.java.utils.InjectionStepJsonUtil;
 import com.atscale.java.injectionsteps.*;
 import com.atscale.java.utils.JsonUtil;
 import org.apache.commons.lang3.StringUtils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @SuppressWarnings("unused")
 public class MavenTaskDto<T> {
@@ -42,8 +43,13 @@ public class MavenTaskDto<T> {
     private List <T> injectionSteps;
     private String ingestionFileName;
     private boolean ingestionFileHasHeader;
-    private String additionalProperties;
+    private Map<String, String> additionalProperties;
     private String alternatePropertiesFileName;
+
+    public MavenTaskDto() {
+        // Delegate to the single-arg constructor so all initialization logic is reused
+        this("Default Task Name");
+    }
 
     public MavenTaskDto(String taskName) {
         this.taskName = taskName;
@@ -82,6 +88,11 @@ public class MavenTaskDto<T> {
     }
 
     public String getModel() {
+        return this.model;
+    }
+
+    @JsonIgnore
+    public String getModelBase64() {
         return encode(this.model);
     }
 
@@ -93,7 +104,12 @@ public class MavenTaskDto<T> {
         this.injectionSteps = injectionSteps;
     }
 
-    public String getInjectionSteps() {
+    public List<T> getInjectionSteps() {
+        return this.injectionSteps;
+    }
+
+    @JsonIgnore
+    public String getInjectionStepsAsBase64() {
         String injectionStepsAsJson;
         if (injectionSteps != null && !injectionSteps.isEmpty() && injectionSteps.get(0) instanceof OpenStep) {
             // Safely filter and cast to OpenStep
@@ -129,6 +145,11 @@ public class MavenTaskDto<T> {
     }
 
     public String getRunId() {
+        return this.runId;
+    }
+
+    @JsonIgnore
+    public String getRunIdBase64() {
         return encode(this.runId);
     }
 
@@ -139,6 +160,14 @@ public class MavenTaskDto<T> {
     public String getRunLogFileName() {
          // do not encode this it causes problems with log4j2.xml picking up the encoded value as a literal
         return this.logFileName;
+    }
+
+    public boolean getRunLogAppend() {
+        return this.runLogAppend;
+    }
+
+    public void setRunLogAppend(boolean append) {
+        this.runLogAppend = append;
     }
 
     public void setLoggingAsAppend(boolean append) {
@@ -170,6 +199,11 @@ public class MavenTaskDto<T> {
     }
 
     public String getIngestionFileName() {
+        return this.ingestionFileName;
+    }
+
+    @JsonIgnore
+    public String getIngestionFileNameBase64() {
         return encode(this.ingestionFileName);
     }
 
@@ -178,12 +212,17 @@ public class MavenTaskDto<T> {
     }
 
     public void setAdditionalProperties(Map<String, String> additionalProperties) {
-        String additionalProps = JsonUtil.asJson(additionalProperties);
-        this.additionalProperties = encode(additionalProps);
+        this.additionalProperties = additionalProperties;
     }
 
-    public String getAdditionalProperties() {
+    public Map<String, String> getAdditionalProperties() {
         return this.additionalProperties;
+    }
+
+    @JsonIgnore
+    public String getAdditionalPropertiesBase64() {
+        String additionalProps = JsonUtil.asJson(additionalProperties);
+        return encode(additionalProps);
     }
 
     public Map<String, String> decodeAdditionalProperties(String additionalProperties) {
@@ -196,9 +235,13 @@ public class MavenTaskDto<T> {
     }
 
     public void setAlternatePropertiesFileName(String alternatePropertiesFileName) {
+        if(StringUtils.isEmpty(alternatePropertiesFileName)) {
+            return;
+        }
+
         Pattern validFileNamePattern = Pattern.compile("^[A-Za-z0-9._-]+$");
 
-        if (alternatePropertiesFileName == null || !validFileNamePattern.matcher(alternatePropertiesFileName).matches()) {
+        if (!validFileNamePattern.matcher(alternatePropertiesFileName).matches()) {
             throw new IllegalArgumentException("Invalid alternate properties file name. File name can only include characters a-z, A-Z, 0-9, periods, dashes, and underscores.");
         }
         URL propertyFileURl = getClass().getClassLoader().getResource(alternatePropertiesFileName);
@@ -223,5 +266,21 @@ public class MavenTaskDto<T> {
         } else {
             return new String(Base64.getDecoder().decode(base64));
         }
+    }
+
+    public MavenTaskDto<T> copy(String newTaskName) {
+        MavenTaskDto<T> copy = new MavenTaskDto<>(newTaskName);
+        copy.setMavenCommand(this.mavenCommand);
+        copy.setSimulationClass(this.simulationClass);
+        copy.setRunDescription(this.runDescription);
+        copy.setModel(this.model);
+        copy.setRunId(this.runId);
+        copy.setRunLogFileName(this.logFileName);
+        copy.setRunLogAppend(this.runLogAppend);
+        copy.setInjectionSteps(this.injectionSteps);
+        copy.setIngestionFileName(this.ingestionFileName, this.ingestionFileHasHeader);
+        copy.setAdditionalProperties(this.additionalProperties);
+        copy.setAlternatePropertiesFileName(this.alternatePropertiesFileName);
+        return copy;
     }
 }
