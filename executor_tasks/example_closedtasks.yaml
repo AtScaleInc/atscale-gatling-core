@@ -1,10 +1,10 @@
 ---
 - taskName: "Internet Sales XMLA Simulation"
   mavenCommand: "gatling:test"
-  simulationClass: "com.atscale.java.xmla.simulations.AtScaleXmlaOpenInjectionStepSimulation"
+  simulationClass: "com.atscale.java.xmla.simulations.AtScaleXmlaClosedInjectionStepSimulation"
   runDescription: "Internet Sales XMLA Model Tests"
   model: "internet_sales"
-  runId: "2026-01-20-GhZuFPsnLX"
+  runId: "2026-01-21-bhsj44ZlmF"
   runLogAppend: true
   injectionSteps:
   - users: 1
@@ -17,10 +17,10 @@
   runLogFileName: "internet_sales_xmla.log"
 - taskName: "Internet Sales JDBC Simulation"
   mavenCommand: "gatling:test"
-  simulationClass: "com.atscale.java.jdbc.simulations.AtScaleOpenInjectionStepSimulation"
+  simulationClass: "com.atscale.java.jdbc.simulations.AtScaleClosedInjectionStepSimulation"
   runDescription: "Internet Sales JDBC Model Tests"
   model: "internet_sales"
-  runId: "2026-01-20-ldbQgyQ6hA"
+  runId: "2026-01-21-1a7yCrxLXr"
   runLogAppend: true
   injectionSteps:
   - users: 1
@@ -33,10 +33,10 @@
   runLogFileName: "internet_sales_jdbc.log"
 - taskName: "TPC-DS JDBC Simulation"
   mavenCommand: "gatling:test"
-  simulationClass: "com.atscale.java.jdbc.simulations.AtScaleOpenInjectionStepSimulation"
+  simulationClass: "com.atscale.java.jdbc.simulations.AtScaleClosedInjectionStepSimulation"
   runDescription: "TPCDS JDBC Model Tests"
   model: "tpcds_benchmark_model"
-  runId: "2026-01-20-qIDGVmwoZQ"
+  runId: "2026-01-21-MTjdup9FSg"
   runLogAppend: true
   injectionSteps:
   - from: 1

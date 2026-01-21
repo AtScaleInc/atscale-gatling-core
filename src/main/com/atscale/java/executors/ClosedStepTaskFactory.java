@@ -42,7 +42,7 @@ public class ClosedStepTaskFactory {
         task1.setMavenCommand("gatling:test");
         task1.setRunLogFileName("internet_sales_xmla.log");
         task1.setLoggingAsAppend(true);
-        task1.setSimulationClass("com.atscale.java.xmla.simulations.AtScaleXmlaOpenInjectionStepSimulation");
+        task1.setSimulationClass("com.atscale.java.xmla.simulations.AtScaleXmlaClosedInjectionStepSimulation");
         task1.setRunDescription("Internet Sales XMLA Model Tests");
         task1.setModel( "internet_sales");
         task1.setInjectionSteps(t1InjectionSteps);
@@ -53,7 +53,7 @@ public class ClosedStepTaskFactory {
         task2.setMavenCommand("gatling:test");
         task2.setRunLogFileName("internet_sales_jdbc.log");
         task2.setLoggingAsAppend(true);
-        task2.setSimulationClass("com.atscale.java.jdbc.simulations.AtScaleOpenInjectionStepSimulation");
+        task2.setSimulationClass("com.atscale.java.jdbc.simulations.AtScaleClosedInjectionStepSimulation");
         task2.setRunDescription("Internet Sales JDBC Model Tests");
         task2.setModel("internet_sales");
         task2.setInjectionSteps(t2InjectionSteps);
@@ -63,7 +63,7 @@ public class ClosedStepTaskFactory {
         task3.setMavenCommand("gatling:test");
         task3.setRunLogFileName("tpcds_benchmark_jdbc.log");
         task3.setLoggingAsAppend(true);
-        task3.setSimulationClass("com.atscale.java.jdbc.simulations.AtScaleOpenInjectionStepSimulation");
+        task3.setSimulationClass("com.atscale.java.jdbc.simulations.AtScaleClosedInjectionStepSimulation");
         task3.setRunDescription("TPCDS JDBC Model Tests");
         task3.setModel("tpcds_benchmark_model");
         task3.setInjectionSteps(t3InjectionSteps);

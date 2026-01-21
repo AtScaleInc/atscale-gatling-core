@@ -1,10 +1,10 @@
 [ {
   "taskName" : "Internet Sales XMLA Simulation",
   "mavenCommand" : "gatling:test",
-  "simulationClass" : "com.atscale.java.xmla.simulations.AtScaleXmlaOpenInjectionStepSimulation",
+  "simulationClass" : "com.atscale.java.xmla.simulations.AtScaleXmlaClosedInjectionStepSimulation",
   "runDescription" : "Internet Sales XMLA Model Tests",
   "model" : "internet_sales",
-  "runId" : "2026-01-20-3fe0kR667H",
+  "runId" : "2026-01-21-jTxd0a1YNv",
   "runLogAppend" : true,
   "injectionSteps" : [ {
     "users" : 1,
@@ -19,10 +19,10 @@
 }, {
   "taskName" : "Internet Sales JDBC Simulation",
   "mavenCommand" : "gatling:test",
-  "simulationClass" : "com.atscale.java.jdbc.simulations.AtScaleOpenInjectionStepSimulation",
+  "simulationClass" : "com.atscale.java.jdbc.simulations.AtScaleClosedInjectionStepSimulation",
   "runDescription" : "Internet Sales JDBC Model Tests",
   "model" : "internet_sales",
-  "runId" : "2026-01-20-SSSlEPYjdQ",
+  "runId" : "2026-01-21-7gcinbnxay",
   "runLogAppend" : true,
   "injectionSteps" : [ {
     "users" : 1,
@@ -37,10 +37,10 @@
 }, {
   "taskName" : "TPC-DS JDBC Simulation",
   "mavenCommand" : "gatling:test",
-  "simulationClass" : "com.atscale.java.jdbc.simulations.AtScaleOpenInjectionStepSimulation",
+  "simulationClass" : "com.atscale.java.jdbc.simulations.AtScaleClosedInjectionStepSimulation",
   "runDescription" : "TPCDS JDBC Model Tests",
   "model" : "tpcds_benchmark_model",
-  "runId" : "2026-01-20-cl2kOrFKJZ",
+  "runId" : "2026-01-21-nQNVj9O2na",
   "runLogAppend" : true,
   "injectionSteps" : [ {
     "from" : 1,
