@@ -2,7 +2,7 @@ package com.atscale.java.executors;
 
 import com.atscale.java.utils.PropertiesManager;
 import com.atscale.java.utils.AdditionalPropertiesLoader;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.atscale.java.utils.RunLogUtils;
@@ -19,7 +19,15 @@ public class ArchiveJdbcToSnowflakeExecutor {
     public static void main(String[] args) {
         LOGGER.info("ArchiveJdbcToSnowflakeExecutor started.");
         try {
+            LOGGER.info("Command-line arguments {}.", Arrays.toString(args));
             Map<String, String> arguments = parseArgs(args);
+            LOGGER.info("Parsed arguments: {}", arguments);
+            if (!arguments.containsKey("data_file")) {
+                LOGGER.error("Missing required argument: --data_file=<path_to_log_file>");
+                throw new IllegalArgumentException("Missing required argument: --data_file=<path_to_log_file>");
+            } else {
+                LOGGER.info("Using data_file argument: {}", arguments.get("data_file"));
+            }
             Path dataFile = Path.of(arguments.get("data_file"));
 
             ArchiveJdbcToSnowflakeExecutor executor = new ArchiveJdbcToSnowflakeExecutor();
@@ -386,11 +394,11 @@ public class ArchiveJdbcToSnowflakeExecutor {
         String privateKeyFile = null;
         String privateKeyPwd = null;
 
-        try {
+        if(PropertiesManager.hasProperty("snowflake.archive.keyfile.path")  && PropertiesManager.hasProperty("snowflake.archive.keyfile.password")) {
             privateKeyFile = PropertiesManager.getCustomProperty("snowflake.archive.keyfile.path");
             privateKeyPwd = PropertiesManager.getCustomProperty("snowflake.archive.keyfile.password");
-        } catch (Exception e) {
-            LOGGER.warn("No private key file or password values found for properties snowflake.archive.keyfile.path or snowflake.archive.keyfile.password.", e);
+        } else {
+            LOGGER.warn("No private key file or password values found for properties snowflake.archive.keyfile.path or snowflake.archive.keyfile.password.");
         }
 
         if (PropertiesManager.hasProperty("snowflake.archive.role")) {
@@ -611,6 +619,9 @@ public class ArchiveJdbcToSnowflakeExecutor {
             if (a.startsWith("--") && a.contains("=")) {
                 int i = a.indexOf('=');
                 m.put(a.substring(2, i).toLowerCase(Locale.ROOT), a.substring(i + 1));
+            } else {
+                int i = a.indexOf('=');
+                m.put(a.substring(0, i).toLowerCase(Locale.ROOT), a.substring(i + 1));
             }
         }
         return m;
