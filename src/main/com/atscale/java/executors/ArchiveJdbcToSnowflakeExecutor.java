@@ -416,7 +416,7 @@ public class ArchiveJdbcToSnowflakeExecutor {
 
         // Debug: log username and masked password info (do NOT log secrets)
         if (LOGGER.isDebugEnabled()) {
-            int pwLen = password == null ? 0 : password.length();
+            int pwLen = StringUtils.isEmpty(password) ? 0 : password.length();
             String masked = pwLen > 0 ? ("***" + pwLen + "chars**") : "(empty)";
             LOGGER.debug("Snowflake connection properties: user='{}', password={}", user, masked);
         }
