@@ -3,13 +3,25 @@ package com.atscale.java.executors;
 import com.atscale.java.injectionsteps.AtOnceUsersOpenInjectionStep;
 import com.atscale.java.injectionsteps.OpenStep;
 import com.atscale.java.utils.MavenTaskJsonUtil;
+import com.atscale.java.utils.MavenTaskYamlUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExecutorTaskFactory {
+public class OpenStepTaskFactory {
 
     public static void main(String[] args) {
+        if(args.length == 0) {
+            MavenTaskJsonUtil.writeOpenStepTasksToFile("example_opentasks.json", OpenStepTaskFactory.getTasks());
+            MavenTaskYamlUtil.writeOpenStepTasksToFile("example_opentasks.yaml", OpenStepTaskFactory.getTasks());
+        } else if (args.length == 1 && args[0].equalsIgnoreCase("json")) {
+            MavenTaskJsonUtil.writeOpenStepTasksToFile("example_opentasks.json", OpenStepTaskFactory.getTasks());
+        } else if (args.length == 1 && args[0].equalsIgnoreCase("yaml")) {
+            MavenTaskYamlUtil.writeOpenStepTasksToFile("example_opentasks.yaml", OpenStepTaskFactory.getTasks());
+        }
+    }
+
+    public static List<MavenTaskDto<OpenStep>> getTasks() {
         List<MavenTaskDto<OpenStep>> tasks = new ArrayList<>();
 
         List<OpenStep> t1InjectionSteps = new ArrayList<>();
@@ -55,6 +67,6 @@ public class ExecutorTaskFactory {
         task3.setInjectionSteps(t3InjectionSteps);
         task3.setIngestionFileName("tpcds_benchmark_jdbc_queries.csv", true);
 
-        MavenTaskJsonUtil.writeOpenStepTasksToFile("example_tasks.json", tasks);
+        return tasks;
     }
 }

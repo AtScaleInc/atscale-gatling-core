@@ -75,7 +75,7 @@
         <version>${maven-jar-plugin.version}</version>
         <configuration>
           <excludes>
-            <exclude>systems.properties</exclude>
+            <exclude>*.properties</exclude>
             <exclude>com/atscale/java/executors/ClosedStepConcurrentSimulationExecutor.class</exclude>
             <exclude>com/atscale/java/executors/ClosedStepSequentialSimulationExecutor.class</exclude>
             <exclude>com/atscale/java/executors/OpenStepConcurrentSimulationExecutor.class</exclude>
@@ -296,16 +296,24 @@
               <goal>shade</goal>
             </goals>
             <configuration>
-              <createDependencyReducedPom>true</createDependencyReducedPom>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
               <!-- Add this to swap the POM inside the JAR file itself -->
-              <useDependencyReducedPomInJar>true</useDependencyReducedPomInJar>
-              <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
-              <artifactSet>
-                <includes>
-                  <!-- ONLY bundle your custom patched jar -->
-                  <include>org.galaxio:gatling-jdbc-plugin_2.13</include>
-                </includes>
-              </artifactSet>
+              <useDependencyReducedPomInJar>false</useDependencyReducedPomInJar>
+              <promoteTransitiveDependencies>false</promoteTransitiveDependencies>
+              <verbose>true</verbose>
+              <!-- Attach the shaded artifact with an explicit classifier so you can inspect it separately. -->
+              <shadedArtifactAttached>false</shadedArtifactAttached>
+              <shadedClassifierName>shaded</shadedClassifierName>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                  </excludes>
+                </filter>
+              </filters>
             </configuration>
           </execution>
         </executions>
@@ -359,7 +367,7 @@
       <dependency>
           <groupId>com.fasterxml.jackson.core</groupId>
           <artifactId>jackson-databind</artifactId>
-          <version>2.19.2</version>
+          <version>2.21.0</version>
       </dependency>
       <dependency>
           <groupId>org.apache.commons</groupId>
@@ -513,6 +521,11 @@
       <artifactId>h2</artifactId>
       <version>2.4.240</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-yaml</artifactId>
+      <version>2.21.0</version>
     </dependency>
     <!-- Support JDBC for AtScale Installer Version requires Hive JDBC Uber Jar downloaded to /lib.
     It is sourced from https://github.com/timveil/hive-jdbc-uber-jar/releases

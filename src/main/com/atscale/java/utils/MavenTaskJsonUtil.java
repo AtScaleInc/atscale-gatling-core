@@ -8,10 +8,9 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.lang3.StringUtils;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
-public class MavenTaskJsonUtil {
+public class MavenTaskJsonUtil extends MavenTaskUtil{
 
     public static String openStepTasksToJson(List<MavenTaskDto<OpenStep>> tasks) {
         ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
@@ -98,33 +97,5 @@ public class MavenTaskJsonUtil {
     public static void writeClosedStepTasksToFile(String fileName, List<MavenTaskDto<ClosedStep>> tasks) {
         String json = closedStepTasksToJson(tasks);
         writeTaskFile(fileName, json);
-    }
-
-    private static void writeTaskFile(String fileName, String content) {
-        Path path = getTaskFilePath(fileName);
-        try {
-            java.nio.file.Files.createDirectories(path.getParent());
-            java.nio.file.Files.writeString(path, content);
-        } catch (Exception e) {
-            throw new RuntimeException(String.format("Error writing task file: %s cause: %s ", path, e.getMessage()), e);
-        }
-    }
-
-    public static void deleteTaskFile(String fileName) {
-        Path path = getTaskFilePath(fileName);
-        try {
-            java.nio.file.Files.deleteIfExists(path);
-        } catch (Exception e) {
-            throw new RuntimeException(String.format("Error deleting task file: %s cause: %s ", path, e.getMessage()), e);
-        }
-    }
-
-    public static boolean taskFileExists(String fileName) {
-        Path path = getTaskFilePath(fileName);
-        return java.nio.file.Files.exists(path);
-    }
-
-    private static Path getTaskFilePath(String fileName) {
-        return Paths.get(System.getProperty("user.dir"), "executor_tasks", fileName);
     }
 }

@@ -3,6 +3,7 @@ package com.atscale.java.executors;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Base64;
@@ -43,7 +44,7 @@ public class MavenTaskDto<T> {
     private List <T> injectionSteps;
     private String ingestionFileName;
     private boolean ingestionFileHasHeader;
-    private Map<String, String> additionalProperties;
+    private Map<String, String> additionalProperties = new HashMap<>();
     private String alternatePropertiesFileName;
 
     public MavenTaskDto() {

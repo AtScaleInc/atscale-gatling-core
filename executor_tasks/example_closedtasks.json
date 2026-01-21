@@ -1,0 +1,56 @@
+[ {
+  "taskName" : "Internet Sales XMLA Simulation",
+  "mavenCommand" : "gatling:test",
+  "simulationClass" : "com.atscale.java.xmla.simulations.AtScaleXmlaOpenInjectionStepSimulation",
+  "runDescription" : "Internet Sales XMLA Model Tests",
+  "model" : "internet_sales",
+  "runId" : "2026-01-20-3fe0kR667H",
+  "runLogAppend" : true,
+  "injectionSteps" : [ {
+    "users" : 1,
+    "durationMinutes" : 1,
+    "type" : "ConstantConcurrentUsersClosedInjectionStep"
+  } ],
+  "ingestionFileName" : "internet_sales_xmla_queries.csv",
+  "ingestionFileHasHeader" : true,
+  "additionalProperties" : { },
+  "alternatePropertiesFileName" : null,
+  "runLogFileName" : "internet_sales_xmla.log"
+}, {
+  "taskName" : "Internet Sales JDBC Simulation",
+  "mavenCommand" : "gatling:test",
+  "simulationClass" : "com.atscale.java.jdbc.simulations.AtScaleOpenInjectionStepSimulation",
+  "runDescription" : "Internet Sales JDBC Model Tests",
+  "model" : "internet_sales",
+  "runId" : "2026-01-20-SSSlEPYjdQ",
+  "runLogAppend" : true,
+  "injectionSteps" : [ {
+    "users" : 1,
+    "durationMinutes" : 1,
+    "type" : "ConstantConcurrentUsersClosedInjectionStep"
+  } ],
+  "ingestionFileName" : null,
+  "ingestionFileHasHeader" : false,
+  "additionalProperties" : { },
+  "alternatePropertiesFileName" : null,
+  "runLogFileName" : "internet_sales_jdbc.log"
+}, {
+  "taskName" : "TPC-DS JDBC Simulation",
+  "mavenCommand" : "gatling:test",
+  "simulationClass" : "com.atscale.java.jdbc.simulations.AtScaleOpenInjectionStepSimulation",
+  "runDescription" : "TPCDS JDBC Model Tests",
+  "model" : "tpcds_benchmark_model",
+  "runId" : "2026-01-20-cl2kOrFKJZ",
+  "runLogAppend" : true,
+  "injectionSteps" : [ {
+    "from" : 1,
+    "to" : 3,
+    "durationMinutes" : 2,
+    "type" : "RampConcurrentUsersClosedInjectionStep"
+  } ],
+  "ingestionFileName" : "tpcds_benchmark_jdbc_queries.csv",
+  "ingestionFileHasHeader" : true,
+  "additionalProperties" : { },
+  "alternatePropertiesFileName" : null,
+  "runLogFileName" : "tpcds_benchmark_jdbc.log"
+} ]
