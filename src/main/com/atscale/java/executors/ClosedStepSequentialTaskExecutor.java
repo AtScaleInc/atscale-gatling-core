@@ -48,7 +48,7 @@ public class ClosedStepSequentialTaskExecutor extends SequentialSimulationExecut
     private List<MavenTaskDto<ClosedStep>> withAdditionalProperties(List<MavenTaskDto<ClosedStep>> tasks) {
         Map<String, String> additionalProperties = getAdditionalProperties();
         for(MavenTaskDto<ClosedStep> task : tasks) {
-            task.getAdditionalProperties().putAll(additionalProperties);
+            task.setAdditionalProperties(additionalProperties);
         }
         return tasks;
     }

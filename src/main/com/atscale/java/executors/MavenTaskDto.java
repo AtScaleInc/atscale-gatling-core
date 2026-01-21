@@ -16,6 +16,8 @@ import com.atscale.java.injectionsteps.*;
 import com.atscale.java.utils.JsonUtil;
 import org.apache.commons.lang3.StringUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 
 @SuppressWarnings("unused")
 public class MavenTaskDto<T> {
@@ -44,7 +46,8 @@ public class MavenTaskDto<T> {
     private List <T> injectionSteps;
     private String ingestionFileName;
     private boolean ingestionFileHasHeader;
-    private Map<String, String> additionalProperties = new HashMap<>();
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    private final Map<String, String> additionalProperties = new HashMap<>();
     private String alternatePropertiesFileName;
 
     public MavenTaskDto() {
@@ -54,6 +57,7 @@ public class MavenTaskDto<T> {
 
     public MavenTaskDto(String taskName) {
         this.taskName = taskName;
+        // additionalProperties initialization moved to field declaration
         String rid = generateRunId();
         setRunId(rid);
         setRunLogFileName(String.format("gatling-%s.log", rid));  //default value
@@ -212,8 +216,14 @@ public class MavenTaskDto<T> {
         return this.ingestionFileHasHeader;
     }
 
-    public void setAdditionalProperties(Map<String, String> additionalProperties) {
-        this.additionalProperties = additionalProperties;
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    public void setAdditionalProperties(Map<String, String> additionalProps) {
+        if (additionalProps == null) {
+            // Treat null as an instruction to clear the existing map
+            this.additionalProperties.clear();
+            return;
+        }
+        this.additionalProperties.putAll(additionalProps);
     }
 
     public Map<String, String> getAdditionalProperties() {

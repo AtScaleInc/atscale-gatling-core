@@ -47,7 +47,7 @@ public class OpenStepSequentialTaskExecutor extends SequentialSimulationExecutor
     private List<MavenTaskDto<OpenStep>> withAdditionalProperties(List<MavenTaskDto<OpenStep>> tasks) {
         Map<String, String> additionalProperties = getAdditionalProperties();
         for (MavenTaskDto<OpenStep> task : tasks) {
-            task.getAdditionalProperties().putAll(additionalProperties);
+            task.setAdditionalProperties(additionalProperties);
         }
         return tasks;
     }

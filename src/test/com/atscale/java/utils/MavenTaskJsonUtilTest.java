@@ -38,7 +38,7 @@ public class MavenTaskJsonUtilTest {
         String json = MavenTaskJsonUtil.openStepTasksToJson(tasks);
         assertNotNull(json);
 
-        List<MavenTaskDto<OpenStep>> parsedTasks = new MavenTaskJsonUtil().openStepTasksFromJson(json);
+        List<MavenTaskDto<OpenStep>> parsedTasks = MavenTaskJsonUtil.openStepTasksFromJson(json);
         assertTrue(areEqual(tasks, parsedTasks));
     }
 
@@ -57,7 +57,7 @@ public class MavenTaskJsonUtilTest {
         String json = MavenTaskJsonUtil.closedStepTasksToJson(tasks);
         assertNotNull(json);
 
-        List<MavenTaskDto<ClosedStep>> parsedTasks = new MavenTaskJsonUtil().closedStepTasksFromJson(json);
+        List<MavenTaskDto<ClosedStep>> parsedTasks = MavenTaskJsonUtil.closedStepTasksFromJson(json);
         assertTrue(areEqual(tasks, parsedTasks));
     }
 
@@ -88,7 +88,7 @@ public class MavenTaskJsonUtilTest {
         String json = MavenTaskJsonUtil.openStepTasksToJson(tasks);
         assertNotNull(json);
 
-        List<MavenTaskDto<OpenStep>> parsedTasks = new MavenTaskJsonUtil().openStepTasksFromJson(json);
+        List<MavenTaskDto<OpenStep>> parsedTasks = MavenTaskJsonUtil.openStepTasksFromJson(json);
         assertTrue(areEqual(tasks, parsedTasks));
     }
 
@@ -119,7 +119,7 @@ public class MavenTaskJsonUtilTest {
         String json = MavenTaskJsonUtil.closedStepTasksToJson(tasks);
         assertNotNull(json);
 
-        List<MavenTaskDto<ClosedStep>> parsedTasks = new MavenTaskJsonUtil().closedStepTasksFromJson(json);
+        List<MavenTaskDto<ClosedStep>> parsedTasks = MavenTaskJsonUtil.closedStepTasksFromJson(json);
         assertTrue(areEqual(tasks, parsedTasks));
     }
 
@@ -165,7 +165,7 @@ public class MavenTaskJsonUtilTest {
         assertTrue(json.contains("property2"));
         assertTrue(json.contains("value2"));
 
-        List<MavenTaskDto<OpenStep>> parsedTasks = new MavenTaskJsonUtil().openStepTasksFromJson(json);
+        List<MavenTaskDto<OpenStep>> parsedTasks = MavenTaskJsonUtil.openStepTasksFromJson(json);
         assertTrue(areEqual(tasks, parsedTasks));
     }
 
@@ -204,7 +204,7 @@ public class MavenTaskJsonUtilTest {
         assertTrue(json.contains("property2"));
         assertTrue(json.contains("value2"));
 
-        List<MavenTaskDto<ClosedStep>> parsedTasks = new MavenTaskJsonUtil().closedStepTasksFromJson(json);
+        List<MavenTaskDto<ClosedStep>> parsedTasks = MavenTaskJsonUtil.closedStepTasksFromJson(json);
         assertTrue(areEqual(tasks, parsedTasks));
     }
 
@@ -234,7 +234,7 @@ public class MavenTaskJsonUtilTest {
         tasks.add(task);
 
         String json = MavenTaskJsonUtil.closedStepTasksToJson(tasks);
-        List<MavenTaskDto<ClosedStep>> parsedTasks = new MavenTaskJsonUtil().closedStepTasksFromJson(json);
+        List<MavenTaskDto<ClosedStep>> parsedTasks = MavenTaskJsonUtil.closedStepTasksFromJson(json);
 
         injectionSteps.remove(0);
         assertFalse(areEqual(tasks, parsedTasks));
@@ -266,9 +266,11 @@ public class MavenTaskJsonUtilTest {
         tasks.add(task);
 
         String json = MavenTaskJsonUtil.closedStepTasksToJson(tasks);
-        List<MavenTaskDto<ClosedStep>> parsedTasks = new MavenTaskJsonUtil().closedStepTasksFromJson(json);
+        List<MavenTaskDto<ClosedStep>> parsedTasks = MavenTaskJsonUtil.closedStepTasksFromJson(json);
 
-        additionalProperties.put("property3", "value3");
+        Map<String, String> additionalProp = new HashMap<>();
+        additionalProp.put("property3", "value3");
+        task.setAdditionalProperties(additionalProp);
         assertFalse(areEqual(tasks, parsedTasks));
     }
 
@@ -298,9 +300,12 @@ public class MavenTaskJsonUtilTest {
         tasks.add(task);
 
         String json = MavenTaskJsonUtil.closedStepTasksToJson(tasks);
-        List<MavenTaskDto<ClosedStep>> parsedTasks = new MavenTaskJsonUtil().closedStepTasksFromJson(json);
+        List<MavenTaskDto<ClosedStep>> parsedTasks = MavenTaskJsonUtil.closedStepTasksFromJson(json);
 
-        additionalProperties.put("property2", "breaksThings");
+        Map<String, String> additionalProp = new HashMap<>();
+        additionalProp.put("property2", "breaksThings");
+        task.setAdditionalProperties(additionalProp);
+
         assertFalse(areEqual(tasks, parsedTasks));
     }
 
