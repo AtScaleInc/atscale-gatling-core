@@ -518,14 +518,18 @@ public class ArchiveXmlaToSnowflakeExecutor {
 
     private static Map<String, String> parseArgs(String[] args) {
         Map<String, String> m = new HashMap<>();
-        for (String a : args) {
-            if (a.startsWith("--") && a.contains("=")) {
-                int i = a.indexOf('=');
-                m.put(a.substring(2, i).toLowerCase(Locale.ROOT), a.substring(i + 1));
-            } else {
-                int i = a.indexOf('=');
-                m.put(a.substring(0, i).toLowerCase(Locale.ROOT), a.substring(i + 1));
+        try {
+            for (String a : args) {
+                if (a.startsWith("--") && a.contains("=")) {
+                    int i = a.indexOf('=');
+                    m.put(a.substring(2, i).toLowerCase(Locale.ROOT), a.substring(i + 1));
+                } else {
+                    int i = a.indexOf('=');
+                    m.put(a.substring(0, i).toLowerCase(Locale.ROOT), a.substring(i + 1));
+                }
             }
+        } catch (Exception e) {
+            LOGGER.error("Failed to parse command-line arguments check the format.  Expected format is: --key=value", e);
         }
         return m;
     }
