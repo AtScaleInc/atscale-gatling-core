@@ -41,6 +41,7 @@ public class OpenStepSequentialTaskExecutor extends SequentialSimulationExecutor
     }
 
     @Override
+    @Override
     protected List<MavenTaskDto<OpenStep>> getSimulationTasks() {
         return withAdditionalProperties(simulationTasks);
     }
