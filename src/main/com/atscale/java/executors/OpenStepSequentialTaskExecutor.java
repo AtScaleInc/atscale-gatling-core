@@ -40,6 +40,7 @@ public class OpenStepSequentialTaskExecutor extends SequentialSimulationExecutor
         LOGGER.info("SequentialTaskExecutor completed.");
     }
 
+    @Override
     protected List<MavenTaskDto<OpenStep>> getSimulationTasks() {
         return withAdditionalProperties(simulationTasks);
     }

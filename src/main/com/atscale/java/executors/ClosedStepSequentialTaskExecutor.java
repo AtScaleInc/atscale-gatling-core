@@ -41,6 +41,7 @@ public class ClosedStepSequentialTaskExecutor extends SequentialSimulationExecut
         LOGGER.info("SequentialTaskExecutor completed.");
     }
 
+    @Override
     protected List<MavenTaskDto<ClosedStep>> getSimulationTasks() {
         return withAdditionalProperties(simulationTasks);
     }

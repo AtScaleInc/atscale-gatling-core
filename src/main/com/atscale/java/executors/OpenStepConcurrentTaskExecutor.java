@@ -43,6 +43,7 @@ public class OpenStepConcurrentTaskExecutor extends ConcurrentSimulationExecutor
         LOGGER.info("ConcurrentTaskExecutor completed.");
     }
 
+    @Override
     protected List<MavenTaskDto<OpenStep>> getSimulationTasks() {
         return withAdditionalProperties(simulationTasks);
     }
