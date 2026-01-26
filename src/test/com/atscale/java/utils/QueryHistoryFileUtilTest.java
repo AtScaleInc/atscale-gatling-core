@@ -16,6 +16,10 @@ class QueryHistoryFileUtilTest {
 
     @BeforeAll
     void setup() throws IOException {
+        // Create the queries directory if it doesn't exist
+        Path queriesDir = Paths.get(System.getProperty("user.dir"), "queries");
+        Files.createDirectories(queriesDir);
+
         models.add(RandomStringUtils.secure().nextAlphanumeric(10));
         models.add(RandomStringUtils.secure().nextAlphabetic(10));
         models.add(RandomStringUtils.secure().nextAlphabetic(5) + " " + RandomStringUtils.secure().nextAlphabetic(5));
