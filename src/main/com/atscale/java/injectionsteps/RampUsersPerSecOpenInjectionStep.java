@@ -1,5 +1,8 @@
 package com.atscale.java.injectionsteps;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.time.Duration;
 
 import static io.gatling.javaapi.core.CoreDsl.rampUsersPerSec;
@@ -35,5 +38,17 @@ public class RampUsersPerSecOpenInjectionStep implements OpenStep {
     @Override
     public io.gatling.javaapi.core.OpenInjectionStep toGatlingStep() {
         return rampUsersPerSec(fromUsers).to(toUsers).during(Duration.ofMinutes(durationMinutes));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        return EqualsBuilder.reflectionEquals(this, o);
+    }
+
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
     }
 }

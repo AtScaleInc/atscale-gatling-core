@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.atscale.opensource</groupId>
   <artifactId>atscale-gatling-core</artifactId>
-  <version>1.13</version>
+  <version>1.14</version>
   <packaging>jar</packaging>
 
   <name>atscale_gatling</name>
@@ -75,7 +75,7 @@
         <version>${maven-jar-plugin.version}</version>
         <configuration>
           <excludes>
-            <exclude>systems.properties</exclude>
+            <exclude>*.properties</exclude>
             <exclude>com/atscale/java/executors/ClosedStepConcurrentSimulationExecutor.class</exclude>
             <exclude>com/atscale/java/executors/ClosedStepSequentialSimulationExecutor.class</exclude>
             <exclude>com/atscale/java/executors/OpenStepConcurrentSimulationExecutor.class</exclude>
@@ -288,7 +288,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.5.0</version>
+        <version>3.6.1</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -296,16 +296,32 @@
               <goal>shade</goal>
             </goals>
             <configuration>
-              <createDependencyReducedPom>true</createDependencyReducedPom>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
               <!-- Add this to swap the POM inside the JAR file itself -->
-              <useDependencyReducedPomInJar>true</useDependencyReducedPomInJar>
-              <promoteTransitiveDependencies>true</promoteTransitiveDependencies>
-              <artifactSet>
-                <includes>
-                  <!-- ONLY bundle your custom patched jar -->
-                  <include>org.galaxio:gatling-jdbc-plugin_2.13</include>
-                </includes>
-              </artifactSet>
+              <useDependencyReducedPomInJar>false</useDependencyReducedPomInJar>
+              <promoteTransitiveDependencies>false</promoteTransitiveDependencies>
+              <verbose>true</verbose>
+              <!-- Attach the shaded artifact with an explicit classifier so you can inspect it separately. -->
+              <shadedArtifactAttached>false</shadedArtifactAttached>
+              <shadedClassifierName>shaded</shadedClassifierName>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+              <transformers>
+                <!-- merge META-INF/services/* files so java.sql.Driver entries are preserved -->
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                <!-- optional: keep or modify manifest if desired -->
+                <!-- <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                     <mainClass>com.atscale.java.executors.ArchiveJdbcToSnowflakeExecutor</mainClass>
+                   </transformer> -->
+              </transformers>
             </configuration>
           </execution>
         </executions>
@@ -359,7 +375,7 @@
       <dependency>
           <groupId>com.fasterxml.jackson.core</groupId>
           <artifactId>jackson-databind</artifactId>
-          <version>2.19.2</version>
+          <version>2.21.0</version>
       </dependency>
       <dependency>
           <groupId>org.apache.commons</groupId>
@@ -513,6 +529,17 @@
       <artifactId>h2</artifactId>
       <version>2.4.240</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-yaml</artifactId>
+      <version>2.21.0</version>
+    </dependency>
+    <!-- For Snowflake JDBC -->
+    <dependency>
+      <groupId>net.snowflake</groupId>
+      <artifactId>snowflake-jdbc</artifactId>
+      <version>3.27.0</version>
     </dependency>
     <!-- Support JDBC for AtScale Installer Version requires Hive JDBC Uber Jar downloaded to /lib.
     It is sourced from https://github.com/timveil/hive-jdbc-uber-jar/releases

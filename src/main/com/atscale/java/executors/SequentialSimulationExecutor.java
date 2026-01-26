@@ -40,14 +40,14 @@ public abstract class SequentialSimulationExecutor<T> extends SimulationExecutor
                     // Add -Dgatling.simulationClass and -Dgatling.runDescription (no extra quotes)
                     String simClass = String.format("-D%s=%s", MavenTaskDto.GATLING_SIMULATION_CLASS, task.getSimulationClass());
                     String runDesc = String.format("-D%s=%s", MavenTaskDto.GATLING_RUN_DESCRIPTION, task.getRunDescription());
-                    String model = String.format("-D%s=%s", MavenTaskDto.ATSCALE_MODEL, task.getModel());
-                    String runId = String.format("-D%s=%s", MavenTaskDto.ATSCALE_RUN_ID, task.getRunId());
+                    String model = String.format("-D%s=%s", MavenTaskDto.ATSCALE_MODEL, task.getModelBase64());
+                    String runId = String.format("-D%s=%s", MavenTaskDto.ATSCALE_RUN_ID, task.getRunIdBase64());
                     String logFileName = String.format("-D%s=%s", MavenTaskDto.ATSCALE_LOG_FILE_NAME, task.getRunLogFileName());
                     String logAppend = String.format("-D%s=%s", MavenTaskDto.GATLING_RUN_LOGAPPEND, task.isRunLogAppend());
-                    String injectionSteps = String.format("-D%s=%s", MavenTaskDto.GATLING_INJECTION_STEPS, task.getInjectionSteps());
-                    String ingestFile = String.format("-D%s=%s", MavenTaskDto.ATSCALE_QUERY_INGESTION_FILE, task.getIngestionFileName());
+                    String injectionSteps = String.format("-D%s=%s", MavenTaskDto.GATLING_INJECTION_STEPS, task.getInjectionStepsAsBase64());
+                    String ingestFile = String.format("-D%s=%s", MavenTaskDto.ATSCALE_QUERY_INGESTION_FILE, task.getIngestionFileNameBase64());
                     String ingestFileHasHeader = String.format("-D%s=%s", MavenTaskDto.ATSCALE_QUERY_INGESTION_FILE_HAS_HEADER, task.getIngestionFileHasHeader());
-                    String additionalProperties = String.format("-D%s=%s", MavenTaskDto.ADDITIONAL_PROPERTIES, task.getAdditionalProperties());
+                    String additionalProperties = String.format("-D%s=%s", MavenTaskDto.ADDITIONAL_PROPERTIES, task.getAdditionalPropertiesBase64());
                     String alternatePropertiesFileName = task.getAlternatePropertiesFileName();
                     if(StringUtils.isNotEmpty(alternatePropertiesFileName)){
                         throw new UnsupportedOperationException("Sequential executors do not support the use of alternate properties files.  Remove the call(s) to setAlternatePropertiesFileName() in the task definition(s).");

@@ -140,6 +140,18 @@ public class AtScaleDynamicXmlaActions {
             return (response, session) -> {
                 String hash;
                 // Custom transformation logic can be added here if needed
+                if(response.status().code() != 200){
+                    LOGGER.warn("Response status code is not 200, skipping hash computation.  Check authorization and request validity.");
+                    return response.copy(response.request(),
+                            response.startTimestamp(),
+                            response.endTimestamp(),
+                            response.status(),
+                            response.headers(),
+                            new StringResponseBody("", StandardCharsets.UTF_8),
+                            response.checksums(),
+                            response.isHttp2()
+                    );
+                }
                 try (var inputStream = response.body().stream()) {
                     final HashingSaxHandler handler = new HashingSaxHandler();
                     SAXParserFactory.newNSInstance().newSAXParser().parse(inputStream, handler);

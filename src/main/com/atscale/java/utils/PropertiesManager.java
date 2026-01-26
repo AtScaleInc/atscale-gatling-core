@@ -5,13 +5,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
 import java.util.List;
 import java.util.Arrays;
+import java.util.ArrayList;
+import java.nio.file.Paths;
 
 @SuppressWarnings("unused")
 public class PropertiesManager {
@@ -22,34 +22,123 @@ public class PropertiesManager {
     private static final PropertiesManager instance = new PropertiesManager();
 
     private PropertiesManager(){
-        try{
-            if(System.getProperty("systems.properties.file") != null){
-                propertiesFileName = System.getProperty("systems.properties.file");
-                LOGGER.info("Loading properties file from system property: {}", propertiesFileName);
-                differentiator = "-altprops";
-            } else {
-                propertiesFileName = "systems.properties";
-                differentiator = "";
+        if(System.getProperty("systems.properties.file") != null){
+            propertiesFileName = System.getProperty("systems.properties.file");
+            LOGGER.info("Loading properties file from system property: {}", propertiesFileName);
+            differentiator = "-altprops";
+        } else {
+            propertiesFileName = "systems.properties";
+            differentiator = "";
+        }
+
+        // First, if propertiesFileName looks like a filesystem path (absolute or containing separators), try it directly
+        Path explicitPath = null;
+        try {
+            Path candidateExplicit = Paths.get(propertiesFileName);
+            if (candidateExplicit.isAbsolute() || propertiesFileName.contains("/") || propertiesFileName.contains("\\")) {
+                explicitPath = candidateExplicit;
             }
-            URL propertyFileURl = getClass().getClassLoader().getResource(propertiesFileName);
-            if(null == propertyFileURl){
-                LOGGER.error("Properties file not found: {}", propertiesFileName);
-                return;
-            }
-            Path path = java.nio.file.Paths.get(propertyFileURl.toURI());
-            if (Files.isRegularFile(path)){
-                LOGGER.info("Loading properties file from path: {}", path);
-                try (InputStream input = getClass().getClassLoader().getResourceAsStream(propertiesFileName)) {
+        } catch (Exception e) {
+            // ignore - treat as non-path name
+        }
+
+        if (explicitPath != null) {
+            if (Files.exists(explicitPath) && Files.isRegularFile(explicitPath)) {
+                LOGGER.info("Loading properties file from explicit path: {}", explicitPath);
+                try (InputStream input = Files.newInputStream(explicitPath)) {
                     properties.load(input);
+                    return;
                 } catch (IOException e){
                     LOGGER.error("Error loading properties file: {}", e.getMessage());
+                    return;
                 }
             } else {
-                LOGGER.error("Properties file not found at path: {}", path);
+                LOGGER.warn("Explicit properties path provided but file not found: {}", explicitPath);
+                // fall through to other lookup methods
             }
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
         }
+
+        // Try loading from classpath (works whether resource is in classes or inside jar)
+        InputStream classpathStream = getClass().getClassLoader().getResourceAsStream(propertiesFileName);
+        if (classpathStream != null) {
+            LOGGER.info("Loading properties file from classpath resource: {}", propertiesFileName);
+            try (InputStream input = classpathStream) {
+                properties.load(input);
+                return;
+            } catch (IOException e) {
+                LOGGER.error("Error loading properties file from classpath: {}", e.getMessage());
+                return;
+            }
+        }
+
+        // Fallback: check common filesystem locations relative to working directory
+        String userDir = System.getProperty("user.dir");
+        List<Path> candidates = new ArrayList<>();
+        if (userDir != null) {
+            candidates.add(Paths.get(userDir, "target", "classes", propertiesFileName));
+            candidates.add(Paths.get(userDir, "src", "main", "resources", propertiesFileName));
+            candidates.add(Paths.get(userDir, propertiesFileName));
+        }
+
+        // Also check current directory relative paths just in case
+        candidates.add(Paths.get("./", propertiesFileName));
+
+        for (Path p : candidates) {
+            try {
+                if (p != null && Files.exists(p) && Files.isRegularFile(p)) {
+                    LOGGER.info("Loading properties file from path: {}", p.toAbsolutePath());
+                    try (InputStream input = Files.newInputStream(p)) {
+                        properties.load(input);
+                        return;
+                    } catch (IOException e) {
+                        LOGGER.error("Error loading properties file: {}", e.getMessage());
+                        return;
+                    }
+                }
+            } catch (Exception ex) {
+                LOGGER.warn("Error checking candidate properties path {}: {}", p, ex.getMessage());
+            }
+        }
+
+        // Additional fallback: walk up parent directories from userDir and look for the properties file
+        // This handles running the JVM from a subdirectory while the project root contains src/main/resources or target/classes
+        if (userDir != null) {
+            try {
+                Path cur = Paths.get(userDir).toAbsolutePath();
+                while (cur != null) {
+                    Path tc = cur.resolve(Paths.get("target", "classes", propertiesFileName));
+                    Path sr = cur.resolve(Paths.get("src", "main", "resources", propertiesFileName));
+                    Path rootProp = cur.resolve(propertiesFileName);
+                    Path[] toCheck = new Path[] { tc, sr, rootProp };
+                    for (Path p : toCheck) {
+                        try {
+                            if (Files.exists(p) && Files.isRegularFile(p)) {
+                                LOGGER.info("Loading properties file from parent path: {}", p.toAbsolutePath());
+                                try (InputStream input = Files.newInputStream(p)) {
+                                    properties.load(input);
+                                    return;
+                                } catch (IOException e) {
+                                    LOGGER.error("Error loading properties file: {}", e.getMessage());
+                                    return;
+                                }
+                            }
+                        } catch (Exception innerEx) {
+                            LOGGER.warn("Error checking parent candidate path {}: {}", p, innerEx.getMessage());
+                        }
+                    }
+                    Path parent = cur.getParent();
+                    if (parent == null || parent.equals(cur)) {
+                        break;
+                    }
+                    cur = parent;
+                }
+            } catch (Exception e) {
+                LOGGER.warn("Error searching parent directories for properties file starting at {}: {}", userDir, e.getMessage());
+            }
+        }
+
+        // If we've reached here the file wasn't found anywhere
+        LOGGER.error("Properties file not found: {} (looked on classpath and common filesystem locations)", propertiesFileName);
     }
 
     public static String getDifferentiator() {
