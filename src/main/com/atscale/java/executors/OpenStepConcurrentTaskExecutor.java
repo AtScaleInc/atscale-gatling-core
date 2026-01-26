@@ -44,7 +44,6 @@ public class OpenStepConcurrentTaskExecutor extends ConcurrentSimulationExecutor
     }
 
     @Override
-    @Override
     protected List<MavenTaskDto<OpenStep>> getSimulationTasks() {
         return withAdditionalProperties(simulationTasks);
     }
