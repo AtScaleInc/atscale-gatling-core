@@ -41,6 +41,7 @@ public class ClosedStepConcurrentTaskExecutor extends ConcurrentSimulationExecut
     }
 
     @Override
+    @Override
     protected List<MavenTaskDto<ClosedStep>> getSimulationTasks() {
         return withAdditionalProperties(simulationTasks);
     }
