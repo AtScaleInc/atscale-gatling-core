@@ -1,5 +1,6 @@
 package com.atscale.java.dao;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.atscale.java.utils.HashUtil;
@@ -51,6 +52,11 @@ public class QueryHistoryDto {
 
     public String getInboundTextAsHash() {
         return StringUtils.isEmpty(inboundTextAsHash)? HashUtil.TO_SHA256(inboundText) : inboundTextAsHash;
+    }
+
+    @JsonIgnore
+    public String getInboundTextAsBase64() {
+        return java.util.Base64.getEncoder().encodeToString(this.inboundText.getBytes());
     }
 
     public void setInboundText(String inboundText) {

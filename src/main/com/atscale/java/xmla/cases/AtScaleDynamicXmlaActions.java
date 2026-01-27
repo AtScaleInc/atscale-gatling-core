@@ -37,7 +37,9 @@ public class AtScaleDynamicXmlaActions {
                 String inboundTextAsHash = query.getInboundTextAsHash();
                 String body = injectXmlaQuery(query.getInboundText(), cubeName, catalog);
                 String atscaleQueryId = query.getAtscaleQueryId();
-                builders.add(new NamedHttpRequestActionBuilder(httpRequest(queryName, body, model), queryName, inboundTextAsHash, body, atscaleQueryId));
+                String inboundText = query.getInboundText();
+                String inboundTextAsBase64 = query.getInboundTextAsBase64();
+                builders.add(new NamedHttpRequestActionBuilder(httpRequest(queryName, body, model), queryName, inboundTextAsHash, inboundTextAsBase64, body, atscaleQueryId, inboundText));
                 LOGGER.debug("Created XMLA payload for query: {} hash: {} and body {}", queryName, query.getInboundTextAsHash(), body);
             }
             return builders;
@@ -224,4 +226,3 @@ public class AtScaleDynamicXmlaActions {
         }
     }
 }
-

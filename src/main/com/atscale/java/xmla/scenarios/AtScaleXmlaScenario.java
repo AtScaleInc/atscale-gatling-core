@@ -69,15 +69,15 @@ public class AtScaleXmlaScenario {
                                         // Since we are streaming the data from atscale we can only stream once before the stream is exhausted.
                                         // therefore, we can get either to raw response or its hash, but not both.
                                         if(redactRawData) {
-                                            SESSION_LOGGER.info("xmlaLog gatlingRunId='{}' status='{}' gatlingSessionId={} model='{}' cube='{}' catalog='{}' queryName='{}' atscaleQueryId='{}' inboundTextAsHash='{}' start={} end={} duration={} responseSize={} responseHash='{}' response='{}'",
-                                                    gatlingRunId, status, session.userId(), model, cube, catalog, namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, start, end, duration, responseSize, response, "REDACTED");
+                                            SESSION_LOGGER.info("xmlaLog gatlingRunId='{}' status='{}' gatlingSessionId={} model='{}' cube='{}' catalog='{}' queryName='{}' atscaleQueryId='{}' inboundTextAsHash='{}' inboundTextAsBase64='{}' start={} end={} duration={} responseSize={} responseHash='{}' response='{}'",
+                                                    gatlingRunId, status, session.userId(), model, cube, catalog, namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, namedBuilder.getInboundQueryTextAsBase64(), start, end, duration, responseSize, response, "REDACTED");
                                         } else {
-                                            SESSION_LOGGER.info("xmlaLog gatlingRunId='{}' status='{}' gatlingSessionId={} model='{}' cube='{}' catalog='{}' queryName='{}' atscaleQueryId='{}' inboundTextAsHash='{}' start={} end={} duration={} responseSize={} responseHash='{}' response='{}'",
-                                                    gatlingRunId, status, session.userId(), model, cube, catalog, namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, start, end, duration, responseSize, "REDACTED", response);
+                                            SESSION_LOGGER.info("xmlaLog gatlingRunId='{}' status='{}' gatlingSessionId={} model='{}' cube='{}' catalog='{}' queryName='{}' atscaleQueryId='{}' inboundTextAsHash='{}' inboundTextAsBase64='{}' start={} end={} duration={} responseSize={} responseHash='{}' response='{}'",
+                                                    gatlingRunId, status, session.userId(), model, cube, catalog, namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, namedBuilder.getInboundQueryTextAsBase64(), start, end, duration, responseSize, "REDACTED", response);
                                         }
                                     } else {
-                                        SESSION_LOGGER.info("xmlaLog gatlingRunId='{}' status='{}' gatlingSessionId={} model='{}' cube='{}' catalog='{}' queryName='{}' atscaleQueryId='{}' inboundTextAsHash='{}' start={} end={} duration={} responseSize={}",
-                                                gatlingRunId, status, session.userId(), model, cube, catalog, namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, start, end, duration, responseSize);
+                                        SESSION_LOGGER.info("xmlaLog gatlingRunId='{}' status='{}' gatlingSessionId={} model='{}' cube='{}' catalog='{}' queryName='{}' atscaleQueryId='{}' inboundTextAsHash='{}' inboundTextAsBase64='{}' start={} end={} duration={} responseSize={}",
+                                                gatlingRunId, status, session.userId(), model, cube, catalog, namedBuilder.queryName, namedBuilder.atscaleQueryId, namedBuilder.inboundTextAsHash, namedBuilder.getInboundQueryTextAsBase64(), start, end, duration, responseSize);
                                     }
                                     return session;
                                 }).pause(Duration.ofMillis(throttleBy))).collect(Collectors.toList());
