@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN">
+<Configuration status="WARN" shutdownHook="disable">
     <Properties>
         <Property name="simulation_logFileName">${sys:gatling_run_logFileName:-init.log}</Property>
         <Property name="simulation_logAppend">${sys:gatling_run_logAppend:-false}</Property>

@@ -620,7 +620,7 @@ public class ArchiveJdbcToSnowflakeExecutor {
         PropertiesManager.setCustomProperties(loader.fetchAdditionalProperties(AdditionalPropertiesLoader.SecretsManagerType.AWS));
     }
 
-    private static Map<String, String> parseArgs(String[] args) {
+    protected static Map<String, String> parseArgs(String[] args) {
         Map<String, String> m = new HashMap<>();
         try {
 
