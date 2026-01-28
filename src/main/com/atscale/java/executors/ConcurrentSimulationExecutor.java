@@ -25,7 +25,6 @@ public abstract class ConcurrentSimulationExecutor<T> extends SimulationExecutor
             } catch (ClassNotFoundException | NoClassDefFoundError e) {
                 // log4j-core not present in this classloader — nothing to do
                 System.err.println("Log4j shutdown hook skipped: log4j-core not on classpath");
-                e.printStackTrace();
             } catch (Throwable t) {
                 // Avoid throwing during shutdown. Print minimal info to stderr so we have a trace
                 // without relying on the logging system (which may be partially torn down).
