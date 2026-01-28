@@ -13,6 +13,10 @@ import java.util.List;
 public class CustomQueryExtractExecutor {
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomQueryExtractExecutor.class);
 
+    static {
+        com.atscale.java.utils.Log4jShutdown.installHook();
+    }
+
     public static void main(String[] args) {
         CustomQueryExtractExecutor executor = new CustomQueryExtractExecutor();
         executor.initAdditionalProperties();
@@ -37,7 +41,6 @@ public class CustomQueryExtractExecutor {
             }
         }
         LOGGER.info("QueryExtractExecutor finished.");
-        org.apache.logging.log4j.LogManager.shutdown();
     }
 
     private void cacheJdbcQueries(String model) {

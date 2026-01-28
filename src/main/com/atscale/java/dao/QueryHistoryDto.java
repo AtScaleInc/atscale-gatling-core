@@ -56,7 +56,8 @@ public class QueryHistoryDto {
 
     @JsonIgnore
     public String getInboundTextAsBase64() {
-        return java.util.Base64.getEncoder().encodeToString(this.inboundText.getBytes());
+        return this.inboundText == null ? null : java.util.Base64.getEncoder()
+                .encodeToString(this.inboundText.getBytes(java.nio.charset.StandardCharsets.UTF_8));
     }
 
     public void setInboundText(String inboundText) {

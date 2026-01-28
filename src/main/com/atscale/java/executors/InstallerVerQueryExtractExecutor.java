@@ -12,6 +12,10 @@ import java.util.List;
 public class InstallerVerQueryExtractExecutor {
     private static final Logger LOGGER = LoggerFactory.getLogger(InstallerVerQueryExtractExecutor.class);
 
+    static {
+        com.atscale.java.utils.Log4jShutdown.installHook();
+    }
+
     public static void main(String[] args) {
         InstallerVerQueryExtractExecutor executor = new InstallerVerQueryExtractExecutor();
         executor.execute();
@@ -35,7 +39,6 @@ public class InstallerVerQueryExtractExecutor {
             }
         }
         LOGGER.info("QueryExtractExecutor finished.");
-        org.apache.logging.log4j.LogManager.shutdown();
     }
 
     private void cacheJdbcQueries(String model) {

@@ -16,6 +16,10 @@ public class ArchiveJdbcToSnowflakeExecutor {
     private static final String STAGE = "GATLING_LOGS_STAGE";
     private static final String RAW_TABLE = "GATLING_RAW_SQL_LOGS";
 
+    static {
+        com.atscale.java.utils.Log4jShutdown.installHook();
+    }
+
     public static void main(String[] args) {
         LOGGER.info("ArchiveJdbcToSnowflakeExecutor started.");
         try {
@@ -43,8 +47,6 @@ public class ArchiveJdbcToSnowflakeExecutor {
         }catch(InterruptedException ie){
             Thread.currentThread().interrupt();
         }
-
-        org.apache.logging.log4j.LogManager.shutdown();
     }
 
     protected void execute(Path dataFile) {

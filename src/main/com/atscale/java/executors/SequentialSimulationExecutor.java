@@ -14,25 +14,6 @@ public abstract class SequentialSimulationExecutor<T> extends SimulationExecutor
     private static final Logger LOGGER = LoggerFactory.getLogger(SequentialSimulationExecutor.class);
 
     protected void execute() {
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            try {
-                Class<?> ctxClass = Class.forName("org.apache.logging.log4j.core.LoggerContext");
-                Object ctx = org.apache.logging.log4j.LogManager.getContext(false);
-                if (ctxClass.isInstance(ctx)) {
-                    ((org.apache.logging.log4j.core.LoggerContext) ctx).stop();
-                } else {
-                    org.apache.logging.log4j.LogManager.shutdown();
-                }
-            } catch (ClassNotFoundException | NoClassDefFoundError e) {
-                // log4j-core not present in this classloader — nothing to do
-                System.err.println("Log4j shutdown hook skipped: log4j-core not on classpath");
-            } catch (Throwable t) {
-                // Avoid throwing during shutdown. Print minimal info to stderr so we have a trace
-                // without relying on the logging system (which may be partially torn down).
-                System.err.println("Suppressed exception in Log4j shutdown hook: " + t.getClass().getName() + ": " + t.getMessage());
-            }
-        }));
-
         try {
             // This assumes that the Maven wrapper script (mvnw) is present in the project root directory
             String projectRoot = getApplicationDirectory();

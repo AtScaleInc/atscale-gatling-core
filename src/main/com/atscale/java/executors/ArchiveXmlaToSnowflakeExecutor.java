@@ -17,6 +17,10 @@ public class ArchiveXmlaToSnowflakeExecutor {
     private static final String STAGE = "XMLA_LOGS_STAGE";
     private static final String RAW_TABLE = "GATLING_RAW_XMLA_LOGS";
 
+    static {
+        com.atscale.java.utils.Log4jShutdown.installHook();
+    }
+
     public static void main(String[] args) {
         LOGGER.info("ArchiveXmlaToSnowflakeExecutor started.");
         try {
@@ -44,7 +48,6 @@ public class ArchiveXmlaToSnowflakeExecutor {
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
         }
-        org.apache.logging.log4j.LogManager.shutdown();
     }
 
     protected void execute(Path dataFile) {
