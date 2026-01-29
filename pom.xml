@@ -284,48 +284,6 @@
           </execution>
         </executions>
       </plugin>
-      <!-- Shade Plugin to create an uber jar containing the custom galaxio jdbc plugin-->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <version>3.6.1</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-            <configuration>
-              <createDependencyReducedPom>false</createDependencyReducedPom>
-              <!-- Add this to swap the POM inside the JAR file itself -->
-              <useDependencyReducedPomInJar>false</useDependencyReducedPomInJar>
-              <promoteTransitiveDependencies>false</promoteTransitiveDependencies>
-              <verbose>true</verbose>
-              <!-- Attach the shaded artifact with an explicit classifier so you can inspect it separately. -->
-              <shadedArtifactAttached>false</shadedArtifactAttached>
-              <shadedClassifierName>shaded</shadedClassifierName>
-              <filters>
-                <filter>
-                  <artifact>*:*</artifact>
-                  <excludes>
-                    <exclude>META-INF/*.SF</exclude>
-                    <exclude>META-INF/*.DSA</exclude>
-                    <exclude>META-INF/*.RSA</exclude>
-                  </excludes>
-                </filter>
-              </filters>
-              <transformers>
-                <!-- merge META-INF/services/* files so java.sql.Driver entries are preserved -->
-                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                <!-- optional: keep or modify manifest if desired -->
-                <!-- <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                     <mainClass>com.atscale.java.executors.ArchiveJdbcToSnowflakeExecutor</mainClass>
-                   </transformer> -->
-              </transformers>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
   <distributionManagement>
