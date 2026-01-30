@@ -100,4 +100,29 @@ public class QueryHistoryDtoTest {
         boolean equal = EqualsBuilder.reflectionEquals(dto, dtoFromJson, true);
         Assertions.assertTrue(equal, "Reflection-based equality should hold after JSON round-trip");
     }
+
+    @Test
+    public void testGetInboundTextAsBase64() {
+        // null inboundText -> expect null
+        QueryHistoryDto dto = new QueryHistoryDto();
+        Assertions.assertNull(dto.getInboundTextAsBase64(), "Expected null base64 when inboundText is null");
+
+        // set inbound text and verify base64 encoding (UTF-8)
+        String sql = "SELECT 1";
+        dto.setInboundText(sql);
+        String expectedBase64 = java.util.Base64.getEncoder()
+                .encodeToString(sql.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        Assertions.assertEquals(expectedBase64, dto.getInboundTextAsBase64(), "Base64 encoding should match expected UTF-8 encoding");
+
+        // JSON should not contain the accessor (it's annotated with @JsonIgnore)
+        String json = dto.toJson();
+        Assertions.assertFalse(json.contains("inboundTextAsBase64"), "JSON should not contain inboundTextAsBase64 field because of @JsonIgnore");
+
+        // round-trip via JSON should preserve inboundText so base64 result remains the same
+        QueryHistoryDto roundTrip = QueryHistoryDto.fromJson(json);
+        Assertions.assertEquals(dto.getInboundText(), roundTrip.getInboundText(), "Round-trip should preserve inboundText");
+        Assertions.assertEquals(expectedBase64, roundTrip.getInboundTextAsBase64(), "Round-trip base64 should match expected value");
+    }
+
+
 }
