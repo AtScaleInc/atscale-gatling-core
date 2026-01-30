@@ -11,9 +11,10 @@ public final class Log4jShutdown {
     private Log4jShutdown() { /* utility */ }
 
     /**
-     * Install the JVM shutdown hook once per classloader. Returns true if installation occurred.
-     * This uses CAS to claim installation, and rolls back the claim if addShutdownHook throws,
-     * so concurrent callers won't both add hooks and failed installs can be retried.
+     * Install the JVM shutdown hook once per classloader.
+     * This uses the HOOK_INSTALLED atomic boolean with CAS to claim installation, and rolls back
+     * the claim if addShutdownHook throws, so concurrent callers won't both add hooks and failed
+     * installs can be retried.
      */
     public static void installHook() {
         if (!HOOK_INSTALLED.compareAndSet(false, true)) {
