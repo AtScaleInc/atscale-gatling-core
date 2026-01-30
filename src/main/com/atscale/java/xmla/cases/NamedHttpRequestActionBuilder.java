@@ -23,6 +23,6 @@ public class NamedHttpRequestActionBuilder {
 
     public String getInboundQueryTextAsBase64() {
         if (inboundTextAsBase64 != null && !inboundTextAsBase64.isEmpty()) return inboundTextAsBase64;
-        return java.util.Base64.getEncoder().encodeToString(inboundQueryText.getBytes());
+        return java.util.Base64.getEncoder().encodeToString(inboundQueryText.getBytes(java.nio.charset.StandardCharsets.UTF_8));
     }
 }
