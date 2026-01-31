@@ -266,7 +266,7 @@ public class MavenTaskDto<T> {
         if(StringUtils.isEmpty(input)) {
             return input;
         }
-        return java.util.Base64.getEncoder().encodeToString(input.getBytes());
+        return java.util.Base64.getEncoder().encodeToString(input.getBytes(java.nio.charset.StandardCharsets.UTF_8));
     }
 
     public static String decode(String base64) {

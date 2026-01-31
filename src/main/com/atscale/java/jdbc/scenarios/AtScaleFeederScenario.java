@@ -74,7 +74,7 @@ public class AtScaleFeederScenario {
                 .exec(session -> {
                 long start = System.currentTimeMillis();
                 String queryName = ((NamedQueryActionBuilder) session.get("builderQuery")).queryName;
-                String querySql = ((NamedQueryActionBuilder) session.get("builderQuery")).inboundText;
+                String querySql = ((NamedQueryActionBuilder) session.get("builderQuery")).inboundQueryText;
                 // Session is immutable — session.set(...) returns a new Session. Return that new session.
                 return session
                         .set("queryStart", start)

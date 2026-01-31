@@ -16,6 +16,10 @@ public class ArchiveJdbcToSnowflakeExecutor {
     private static final String STAGE = "GATLING_LOGS_STAGE";
     private static final String RAW_TABLE = "GATLING_RAW_SQL_LOGS";
 
+    static {
+        com.atscale.java.utils.Log4jShutdown.installHook();
+    }
+
     public static void main(String[] args) {
         LOGGER.info("ArchiveJdbcToSnowflakeExecutor started.");
         try {
@@ -43,8 +47,6 @@ public class ArchiveJdbcToSnowflakeExecutor {
         }catch(InterruptedException ie){
             Thread.currentThread().interrupt();
         }
-
-        org.apache.logging.log4j.LogManager.shutdown();
     }
 
     protected void execute(Path dataFile) {
@@ -271,6 +273,7 @@ public class ArchiveJdbcToSnowflakeExecutor {
               QUERY_NAME VARCHAR(16777216),
               ATSCALE_QUERY_ID VARCHAR(256),
               QUERY_HASH VARCHAR(16777216),
+              QUERY_BASE64 VARCHAR(16777216),
               START_MS NUMBER(38,0),
               END_MS NUMBER(38,0),
               DURATION_MS NUMBER(38,0),
@@ -298,6 +301,7 @@ public class ArchiveJdbcToSnowflakeExecutor {
               QUERY_NAME VARCHAR(100),
               ATSCALE_QUERY_ID VARCHAR(256),
               QUERY_HASH VARCHAR(256),
+              QUERY_BASE64 VARCHAR(16777216),
               ROWNUMBER NUMBER(38,0),
               ROW_MAP_RAW VARCHAR(16777216),
               ROW_HASH VARCHAR(1024),
@@ -325,6 +329,7 @@ public class ArchiveJdbcToSnowflakeExecutor {
               QUERY_NAME VARCHAR(100),
               ATSCALE_QUERY_ID VARCHAR(256),
               QUERY_HASH VARCHAR(256),
+              QUERY_BASE64 VARCHAR(16777216),
               START_MS NUMBER(38,0),
               END_MS NUMBER(38,0),
               DURATION_MS NUMBER(38,0),
@@ -353,6 +358,7 @@ public class ArchiveJdbcToSnowflakeExecutor {
                 h.query_name,
                 h.atscale_query_id,
                 h.query_hash,
+                h.query_base64,
                 h.start_ms AS header_start_ms,
                 h.end_ms AS header_end_ms,
                 h.duration_ms AS header_duration_ms,
@@ -463,7 +469,7 @@ public class ArchiveJdbcToSnowflakeExecutor {
         return String.format("""
             INSERT INTO GATLING_SQL_LOGS (
                 TS, LEVEL, LOGGER, MESSAGE_KIND, GATLING_RUN_ID, STATUS,
-                GATLING_SESSION_ID, MODEL, QUERY_NAME, ATSCALE_QUERY_ID, QUERY_HASH,
+                GATLING_SESSION_ID, MODEL, QUERY_NAME, ATSCALE_QUERY_ID, QUERY_HASH, QUERY_BASE64,
                 START_MS, END_MS, DURATION_MS, ROWS_RETURNED,
                 ROWNUMBER, ROW_MAP_RAW, ROW_HASH,
                 SRC_FILENAME, SRC_ROW_NUMBER, RAW_LINE
@@ -489,6 +495,7 @@ public class ArchiveJdbcToSnowflakeExecutor {
                 regexp_substr(raw_line, 'queryName=''([^'']*)''', 1, 1, 'e', 1)  as query_name,
                 regexp_substr(raw_line, 'atscaleQueryId=''([^'']*)''', 1, 1, 'e', 1)  as atscale_query_id,
                 regexp_substr(raw_line, 'inboundTextAsHash=''([^'']*)''', 1, 1, 'e', 1) as query_hash,
+                regexp_substr(raw_line, 'inboundTextAsBase64=''([^'']*)''', 1, 1, 'e', 1) as query_base64,
 
                 try_to_number(regexp_substr(raw_line, 'start=([0-9]+)',    1, 1, 'e', 1)) as start_ms,
                 try_to_number(regexp_substr(raw_line, 'end=([0-9]+)',      1, 1, 'e', 1)) as end_ms,
@@ -536,6 +543,7 @@ public class ArchiveJdbcToSnowflakeExecutor {
                 query_name,
                 atscale_query_id,
                 query_hash,
+                query_base64,
                 start_ms,
                 end_ms,
                 duration_ms,
@@ -575,6 +583,7 @@ public class ArchiveJdbcToSnowflakeExecutor {
                 query_name,
                 atscale_query_id,
                 query_hash,
+                query_base64,
 
                 /* detail-specific fields */
                 rownumber,
@@ -613,7 +622,7 @@ public class ArchiveJdbcToSnowflakeExecutor {
         PropertiesManager.setCustomProperties(loader.fetchAdditionalProperties(AdditionalPropertiesLoader.SecretsManagerType.AWS));
     }
 
-    private static Map<String, String> parseArgs(String[] args) {
+    protected static Map<String, String> parseArgs(String[] args) {
         Map<String, String> m = new HashMap<>();
         try {
 

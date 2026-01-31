@@ -17,6 +17,10 @@ public class ArchiveXmlaToSnowflakeExecutor {
     private static final String STAGE = "XMLA_LOGS_STAGE";
     private static final String RAW_TABLE = "GATLING_RAW_XMLA_LOGS";
 
+    static {
+        com.atscale.java.utils.Log4jShutdown.installHook();
+    }
+
     public static void main(String[] args) {
         LOGGER.info("ArchiveXmlaToSnowflakeExecutor started.");
         try {
@@ -44,7 +48,6 @@ public class ArchiveXmlaToSnowflakeExecutor {
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
         }
-        org.apache.logging.log4j.LogManager.shutdown();
     }
 
     protected void execute(Path dataFile) {
@@ -237,6 +240,7 @@ public class ArchiveXmlaToSnowflakeExecutor {
               QUERY_NAME VARCHAR(1024),
               ATSCALE_QUERY_ID VARCHAR(256),
               QUERY_HASH VARCHAR(256),
+              QUERY_BASE64 VARCHAR(16777216),
               START_MS NUMBER(38,0),
               END_MS NUMBER(38,0),
               DURATION_MS NUMBER(38,0),
@@ -259,6 +263,7 @@ public class ArchiveXmlaToSnowflakeExecutor {
               QUERY_NAME VARCHAR(1024),
               ATSCALE_QUERY_ID VARCHAR(256),
               QUERY_HASH VARCHAR(256),
+              QUERY_BASE64 VARCHAR(16777216),
               RESPONSE_HASH VARCHAR(256),
               SOAP_HEADER VARIANT,
               SOAP_BODY VARIANT,
@@ -313,6 +318,7 @@ public class ArchiveXmlaToSnowflakeExecutor {
                     QUERY_NAME,
                     ATSCALE_QUERY_ID,
                     QUERY_HASH,
+                    QUERY_BASE64,
                     START_MS,
                     END_MS,
                     DURATION_MS,
@@ -345,6 +351,7 @@ public class ArchiveXmlaToSnowflakeExecutor {
                         regexp_substr(raw_soap, 'atscaleQueryId=\\'([^\\']+)\\'', 1, 1, 'e', 1) AS ATSCALE_QUERY_ID,
                          -- Extract inboundTextAsHash value
                         regexp_substr(raw_soap, 'inboundTextAsHash=\\'([^\\']+)\\'', 1, 1, 'e', 1) AS QUERY_HASH,
+                        regexp_substr(raw_soap, 'inboundTextAsBase64=\\'([^\\']+)\\'', 1, 1, 'e', 1) AS QUERY_BASE64,
                         regexp_substr(raw_soap, 'start=([^\\\\s]+)', 1, 1, 'e', 1) AS START_MS,
                         regexp_substr(raw_soap, 'end=([^\\\\s]+)', 1, 1, 'e', 1) AS END_MS,
                         regexp_substr(raw_soap, 'duration=([^\\\\s]+)', 1, 1, 'e', 1) AS DURATION_MS,
@@ -382,6 +389,7 @@ public class ArchiveXmlaToSnowflakeExecutor {
                     QUERY_NAME,
                     ATSCALE_QUERY_ID,
                     QUERY_HASH,
+                    QUERY_BASE64,
                     START_MS,
                     END_MS,
                     DURATION_MS,
@@ -410,6 +418,7 @@ public class ArchiveXmlaToSnowflakeExecutor {
                     QUERY_NAME,
                     ATSCALE_QUERY_ID,
                     QUERY_HASH,
+                    QUERY_BASE64,
                     RESPONSE_HASH,
                     SOAP_HEADER,
                     SOAP_BODY,
@@ -439,7 +448,7 @@ public class ArchiveXmlaToSnowflakeExecutor {
                     )
                     select
                     RUN_KEY, GATLING_RUN_ID, STATUS, GATLING_SESSION_ID, MODEL,
-                    CUBE, CATALOG, QUERY_NAME, ATSCALE_QUERY_ID, QUERY_HASH, RESPONSE_HASH,
+                    CUBE, CATALOG, QUERY_NAME, ATSCALE_QUERY_ID, QUERY_HASH, QUERY_BASE64, RESPONSE_HASH,
                     IFF(
                         REGEXP_LIKE(TRIM(RAW_SOAP), '^REDACTED$'), 'REDACTED'::VARIANT,
                         XMLGET(PARSE_XML(RAW_SOAP),'soap:Header')
@@ -516,7 +525,7 @@ public class ArchiveXmlaToSnowflakeExecutor {
         PropertiesManager.setCustomProperties(loader.fetchAdditionalProperties(AdditionalPropertiesLoader.SecretsManagerType.AWS));
     }
 
-    private static Map<String, String> parseArgs(String[] args) {
+    protected static Map<String, String> parseArgs(String[] args) {
         Map<String, String> m = new HashMap<>();
         try {
             for (String a : args) {

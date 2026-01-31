@@ -102,8 +102,6 @@ public abstract class SequentialSimulationExecutor<T> extends SimulationExecutor
         String runLogPath = Paths.get(getApplicationDirectory(), "run_logs").toString();
         LOGGER.info("Run Log Path: {}",  runLogPath);
 
-        org.apache.logging.log4j.LogManager.shutdown();
-
         File runLogsDir = new File(runLogPath);
         if (runLogsDir.exists() && runLogsDir.isDirectory()) {
             File[] files = runLogsDir.listFiles();

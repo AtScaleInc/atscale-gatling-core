@@ -12,6 +12,10 @@ import java.util.List;
 public class QueryExtractExecutor {
     private static final Logger LOGGER = LoggerFactory.getLogger(QueryExtractExecutor.class);
 
+    static {
+        com.atscale.java.utils.Log4jShutdown.installHook();
+    }
+
     public static void main(String[] args) {
         QueryExtractExecutor executor = new QueryExtractExecutor();
         executor.execute();
@@ -29,7 +33,6 @@ public class QueryExtractExecutor {
         }
 
         LOGGER.info("QueryExtractExecutor finished.");
-        org.apache.logging.log4j.LogManager.shutdown();
     }
 
     protected void initializeAdditionalProperties() {

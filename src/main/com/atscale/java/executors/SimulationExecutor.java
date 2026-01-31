@@ -10,11 +10,13 @@ import java.util.Map;
 
 /**
  * Base executor for simulations.
- *
  * Provides a factory for {@link SecretsManager} and utilities to load additional properties,
  * resolve the Maven wrapper script, and determine the application directory.
  */
 public abstract class SimulationExecutor {
+    static {
+        com.atscale.java.utils.Log4jShutdown.installHook();
+    }
 
     /**
      * Factory method to create a {@link SecretsManager} instance.
@@ -29,7 +31,6 @@ public abstract class SimulationExecutor {
     /**
      * Default implementation.
      * Loads additional properties as a map of key/value pairs from a secrets store.
-     *
      * The method accepts varargs in {@code params} and expects:
      * <ul>
      *   <li>{@code params[0]} - AWS region</li>

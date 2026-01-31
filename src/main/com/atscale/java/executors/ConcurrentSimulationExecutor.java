@@ -14,7 +14,6 @@ public abstract class ConcurrentSimulationExecutor<T> extends SimulationExecutor
 
     protected void execute() {
         try {
-
         // This assumes that the Maven wrapper script (mvnw) is present in the project root directory
         String projectRoot = getApplicationDirectory();
         String mavenScript = getMavenWrapperScript();
@@ -117,8 +116,6 @@ public abstract class ConcurrentSimulationExecutor<T> extends SimulationExecutor
             // Delete all zero-byte files in the run_logs directory
             String runLogPath = Paths.get(getApplicationDirectory(), "run_logs").toString();
             LOGGER.info("Run Log Path: {}",  runLogPath);
-
-            org.apache.logging.log4j.LogManager.shutdown();
 
             File runLogsDir = new File(runLogPath);
             if (runLogsDir.exists() && runLogsDir.isDirectory()) {
