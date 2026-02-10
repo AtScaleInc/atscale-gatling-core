@@ -163,4 +163,50 @@ public class QueryHistoryDto {
             throw new RuntimeException("Error converting JSON to QueryHistoryDto", e);
         }
     }
+
+    /**
+     * Replace placeholders in this DTO's inboundText.
+     * Replaces occurrences of "$CatalogName" and "$ModelName" with the provided
+     * values wrapped in doubled double-quotes (for example: ""myCatalog"").
+     * If inboundText is null this method is a no-op.
+     *
+     * @param catalog the catalog value to inject (may be null)
+     * @param model the model value to inject (may be null)
+     */
+    public void bindJdbc(String catalog, String model) {
+        if (this.inboundText == null) {
+            return;
+        }
+
+        // Build the replacement string: if null => empty string, otherwise a single quoted value like "value"
+        String catalogReplacement = catalog == null ? "" : "\"" + catalog + "\""; // produces "value"
+        String modelReplacement = model == null ? "" : "\"" + model + "\"";
+
+        // First replace quoted placeholders (i.e. "${CatalogName}" ) so we don't end up with double quotes
+        // after replacing the unquoted placeholder variant.
+        this.inboundText = this.inboundText.replace("\"${CatalogName}\"", catalogReplacement)
+                                           .replace("\"${ModelName}\"", modelReplacement)
+                                           // Then replace any remaining unquoted placeholders
+                                           .replace("${CatalogName}", catalogReplacement)
+                                           .replace("${ModelName}", modelReplacement);
+
+        // Update hash to reflect changed inboundText
+        this.inboundTextAsHash = HashUtil.TO_SHA256(this.inboundText);
+    }
+
+
+    public void bindXmla(String catalog, String model) {
+        if (this.inboundText == null) {
+            return;
+        }
+
+        this.inboundText = this.inboundText
+                .replace("${CatalogName}", catalog)
+                .replace("${ModelName}", model);
+
+        this.inboundTextAsHash = HashUtil.TO_SHA256(this.inboundText);
+
+    }
+
+
 }

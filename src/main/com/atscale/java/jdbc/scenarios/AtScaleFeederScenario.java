@@ -26,13 +26,13 @@ public class AtScaleFeederScenario {
         super();
     }
 
-    public PopulationBuilder buildScenario(String model, String gatlingRunId, String ingestionFilePath, boolean ingestionFileHasHeader, List<OpenInjectionStep> openSteps, List<ClosedInjectionStep> closedSteps) {
+    public PopulationBuilder buildScenario(String catalog, String model, String gatlingRunId, String ingestionFilePath, boolean ingestionFileHasHeader, List<OpenInjectionStep> openSteps, List<ClosedInjectionStep> closedSteps) {
         NamedQueryActionBuilder[] namedBuilders;
         if (StringUtils.isNotEmpty(ingestionFilePath)) {
-            namedBuilders = AtScaleDynamicJdbcActions.createBuildersIngestedQueries(ingestionFilePath, ingestionFileHasHeader);
+            namedBuilders = AtScaleDynamicJdbcActions.createBuildersIngestedQueries(ingestionFilePath, ingestionFileHasHeader, catalog, model);
             LOGGER.info("Created {} JDBC query builders from ingestion file: {}", namedBuilders.length, ingestionFilePath);
         } else {
-            namedBuilders = AtScaleDynamicJdbcActions.createBuildersJdbcQueries(model);
+            namedBuilders = AtScaleDynamicJdbcActions.createBuildersJdbcQueries(catalog, model);
             LOGGER.info("Created {} JDBC query builders from model: {}", namedBuilders.length, model);
         }
 

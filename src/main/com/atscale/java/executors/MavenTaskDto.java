@@ -27,6 +27,7 @@ public class MavenTaskDto<T> {
     public static final String GATLING_RUN_LOGFILENAME = "gatling_run_logFileName";
     public static final String GATLING_RUN_LOGAPPEND = "gatling_run_logAppend";
     public static final String GATLING_INJECTION_STEPS = "atscale.gatling.injection.steps";
+    public static final String ATSCALE_CATALOG = "atscale.catalog";
     public static final String ATSCALE_MODEL = "atscale.model";
     public static final String ATSCALE_RUN_ID = "atscale.run.id";
     public static final String ATSCALE_LOG_FILE_NAME = "gatling_run_logFileName";
@@ -39,6 +40,7 @@ public class MavenTaskDto<T> {
     private String mavenCommand;
     private String simulationClass;
     private String runDescription;
+    private String catalog;
     private String model;
     private String runId;
     private String logFileName;
@@ -91,6 +93,13 @@ public class MavenTaskDto<T> {
     public void setRunDescription(String runDescription) {
         this.runDescription = runDescription;
     }
+
+    public String getCatalog() {return this.catalog;}
+
+    @JsonIgnore
+    public String getCatalogBase64() {return encode(this.catalog);}
+
+    public  void setCatalog(String catalog) {this.catalog = catalog;}
 
     public String getModel() {
         return this.model;
@@ -284,6 +293,7 @@ public class MavenTaskDto<T> {
         copy.setMavenCommand(this.mavenCommand);
         copy.setSimulationClass(this.simulationClass);
         copy.setRunDescription(this.runDescription);
+        copy.setCatalog(this.catalog);
         copy.setModel(this.model);
         copy.setRunId(this.runId);
         copy.setRunLogFileName(this.logFileName);

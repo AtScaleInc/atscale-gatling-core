@@ -86,6 +86,8 @@ public class MavenTaskYamlUtilTest {
         task.setRunId(RandomStringUtils.secure().nextAlphanumeric(12));
         task.setRunLogFileName(String.format("gatling-%s.log", task.getRunId()));
         task.setRunDescription("This is a test run description.");
+        task.setCatalog("catalog");
+        task.setModel("model");
         tasks.add(task);
 
         String yaml = MavenTaskYamlUtil.openStepTasksToYaml(tasks);
@@ -117,6 +119,8 @@ public class MavenTaskYamlUtilTest {
         task.setRunId(RandomStringUtils.secure().nextAlphanumeric(12));
         task.setRunLogFileName(String.format("gatling-%s.log", task.getRunId()));
         task.setRunDescription("This is a test run description.");
+        task.setCatalog("catalog");
+        task.setModel("model");
         tasks.add(task);
 
         String yaml = MavenTaskYamlUtil.closedStepTasksToYaml(tasks);
@@ -153,6 +157,8 @@ public class MavenTaskYamlUtilTest {
         task.setRunId(RandomStringUtils.secure().nextAlphanumeric(12));
         task.setRunLogFileName(String.format("gatling-%s.log", task.getRunId()));
         task.setRunDescription("This is a test run description.");
+        task.setCatalog("catalog");
+        task.setModel("model");
 
         MavenTaskDto<OpenStep> task2 = task.copy("Test Task 2");
         MavenTaskDto<OpenStep> task3 = task.copy("Test Task 3");
@@ -194,6 +200,9 @@ public class MavenTaskYamlUtilTest {
         task.setRunId(RandomStringUtils.secure().nextAlphanumeric(12));
         task.setRunLogFileName(String.format("gatling-%s.log", task.getRunId()));
         task.setRunDescription("This is a test run description.");
+        task.setCatalog("catalog");
+        task.setModel("model");
+
         MavenTaskDto<ClosedStep> task2 = task.copy("Test Task 2");
         MavenTaskDto<ClosedStep> task3 = task.copy("Test Task 3");
 

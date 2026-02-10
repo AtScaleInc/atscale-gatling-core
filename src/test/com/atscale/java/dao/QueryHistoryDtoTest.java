@@ -8,6 +8,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class QueryHistoryDtoTest {
 
     private final QueryHistoryDto dto1 = new QueryHistoryDto();
@@ -70,7 +72,7 @@ public class QueryHistoryDtoTest {
     @Test
     public void setupProvidesThreeDtos() {
         Assertions.assertNotNull(queryHistoryList, "Setup list should not be null");
-        Assertions.assertEquals(3, queryHistoryList.size(), "Setup list should contain three DTOs");
+        assertEquals(3, queryHistoryList.size(), "Setup list should contain three DTOs");
     }
 
     @Test
@@ -92,7 +94,7 @@ public class QueryHistoryDtoTest {
         com.fasterxml.jackson.databind.JsonNode nodeOriginal = mapper.valueToTree(dto);
         com.fasterxml.jackson.databind.JsonNode nodeRoundTrip = mapper.valueToTree(dtoFromJson);
 
-        Assertions.assertEquals(nodeOriginal, nodeRoundTrip, "Round-trip JSON should be structurally equal to original DTO");
+        assertEquals(nodeOriginal, nodeRoundTrip, "Round-trip JSON should be structurally equal to original DTO");
     }
 
     private void testReflectionEqualsRoundTripUsingReflection(QueryHistoryDto dto) {
@@ -112,7 +114,7 @@ public class QueryHistoryDtoTest {
         dto.setInboundText(sql);
         String expectedBase64 = java.util.Base64.getEncoder()
                 .encodeToString(sql.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-        Assertions.assertEquals(expectedBase64, dto.getInboundTextAsBase64(), "Base64 encoding should match expected UTF-8 encoding");
+        assertEquals(expectedBase64, dto.getInboundTextAsBase64(), "Base64 encoding should match expected UTF-8 encoding");
 
         // JSON should not contain the accessor (it's annotated with @JsonIgnore)
         String json = dto.toJson();
@@ -120,8 +122,121 @@ public class QueryHistoryDtoTest {
 
         // round-trip via JSON should preserve inboundText so base64 result remains the same
         QueryHistoryDto roundTrip = QueryHistoryDto.fromJson(json);
-        Assertions.assertEquals(dto.getInboundText(), roundTrip.getInboundText(), "Round-trip should preserve inboundText");
-        Assertions.assertEquals(expectedBase64, roundTrip.getInboundTextAsBase64(), "Round-trip base64 should match expected value");
+        assertEquals(dto.getInboundText(), roundTrip.getInboundText(), "Round-trip should preserve inboundText");
+        assertEquals(expectedBase64, roundTrip.getInboundTextAsBase64(), "Round-trip base64 should match expected value");
+    }
+
+
+    @Test
+    public void testJdbcBindVariables() {
+        QueryHistoryDto dto = new QueryHistoryDto();
+        String sqlWithBindVars = """
+                SELECT
+                  "TPC-DS Benchmark Model"."Sold Calendar Week" AS "sold_calendar_week",
+                  "TPC-DS Benchmark Model"."Sold Day Name Week" AS "sold_d_day_name_week",
+                  "TPC-DS Benchmark Model"."Sold Week Sequence" AS "sold_d_week_seg",
+                  "TPC-DS Benchmark Model"."Web and Catalog Sales Price Growth" AS "sum_web_catalog_sales_price_growth_ok"
+                FROM
+                  ${CatalogName}.${ModelName} "TPC-DS Benchmark Model"
+                WHERE
+                  (
+                    "TPC-DS Benchmark Model"."Sold Calendar Year Week" IN (2000, 2001)
+                  )
+                GROUP BY 1,2,3
+                """;
+        dto.setInboundText(sqlWithBindVars);
+
+        dto.bindJdbc("My Catalog", "TPC-DS Benchmark Model");
+
+        String expectedBoundSql = """
+                SELECT
+                  "TPC-DS Benchmark Model"."Sold Calendar Week" AS "sold_calendar_week",
+                  "TPC-DS Benchmark Model"."Sold Day Name Week" AS "sold_d_day_name_week",
+                  "TPC-DS Benchmark Model"."Sold Week Sequence" AS "sold_d_week_seg",
+                  "TPC-DS Benchmark Model"."Web and Catalog Sales Price Growth" AS "sum_web_catalog_sales_price_growth_ok"
+                FROM
+                  "My Catalog"."TPC-DS Benchmark Model" "TPC-DS Benchmark Model"
+                WHERE
+                  (
+                    "TPC-DS Benchmark Model"."Sold Calendar Year Week" IN (2000, 2001)
+                  )
+                GROUP BY 1,2,3
+                """;
+
+        assertEquals(expectedBoundSql, dto.getInboundText());
+    }
+
+    @Test
+    public void testJdbcIndifferentToQuotedBindVariables() {
+        QueryHistoryDto dto = new QueryHistoryDto();
+        String sqlWithBindVars = """
+                SELECT
+                  "TPC-DS Benchmark Model"."Sold Calendar Week" AS "sold_calendar_week",
+                  "TPC-DS Benchmark Model"."Sold Day Name Week" AS "sold_d_day_name_week",
+                  "TPC-DS Benchmark Model"."Sold Week Sequence" AS "sold_d_week_seg",
+                  "TPC-DS Benchmark Model"."Web and Catalog Sales Price Growth" AS "sum_web_catalog_sales_price_growth_ok"
+                FROM
+                  "${CatalogName}"."${ModelName}" "TPC-DS Benchmark Model"
+                WHERE
+                  (
+                    "TPC-DS Benchmark Model"."Sold Calendar Year Week" IN (2000, 2001)
+                  )
+                GROUP BY 1,2,3
+                """;
+        dto.setInboundText(sqlWithBindVars);
+
+        dto.bindJdbc("My Catalog", "TPC-DS Benchmark Model");
+
+        String expectedBoundSql = """
+                SELECT
+                  "TPC-DS Benchmark Model"."Sold Calendar Week" AS "sold_calendar_week",
+                  "TPC-DS Benchmark Model"."Sold Day Name Week" AS "sold_d_day_name_week",
+                  "TPC-DS Benchmark Model"."Sold Week Sequence" AS "sold_d_week_seg",
+                  "TPC-DS Benchmark Model"."Web and Catalog Sales Price Growth" AS "sum_web_catalog_sales_price_growth_ok"
+                FROM
+                  "My Catalog"."TPC-DS Benchmark Model" "TPC-DS Benchmark Model"
+                WHERE
+                  (
+                    "TPC-DS Benchmark Model"."Sold Calendar Year Week" IN (2000, 2001)
+                  )
+                GROUP BY 1,2,3
+                """;
+
+        assertEquals(expectedBoundSql, dto.getInboundText());
+
+    }
+
+    @Test
+    public void testXmlaBindVariable(){
+        QueryHistoryDto dto = new QueryHistoryDto();
+        String mdxWithBindVars = """
+            SELECT
+            FROM [${ModelName}]
+            WHERE ([Measures].[Average Catalog Unit Net Profit]) CELL PROPERTIES VALUE, FORMAT_STRING, LANGUAGE, BACK_COLOR, FORE_COLOR, FONT_FLAGS
+        """;
+        dto.setInboundText(mdxWithBindVars);
+
+        dto.bindXmla("My Catalog", "TPC-DS Benchmark Model");
+
+        String expectedBoundMdx = """
+            SELECT
+            FROM [TPC-DS Benchmark Model]
+            WHERE ([Measures].[Average Catalog Unit Net Profit]) CELL PROPERTIES VALUE, FORMAT_STRING, LANGUAGE, BACK_COLOR, FORE_COLOR, FONT_FLAGS
+        """;
+
+        assertEquals(expectedBoundMdx, dto.getInboundText());
+
+        dto.setInboundText(mdxWithBindVars);
+        dto.bindXmla("My Catalog", "TPC-DS_Benchmark_Model");
+
+        expectedBoundMdx = """
+            SELECT
+            FROM [TPC-DS_Benchmark_Model]
+            WHERE ([Measures].[Average Catalog Unit Net Profit]) CELL PROPERTIES VALUE, FORMAT_STRING, LANGUAGE, BACK_COLOR, FORE_COLOR, FONT_FLAGS
+        """;
+
+
+        assertEquals(expectedBoundMdx, dto.getInboundText());
     }
 
 

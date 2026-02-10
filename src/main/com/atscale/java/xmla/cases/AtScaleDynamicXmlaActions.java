@@ -53,6 +53,10 @@ public class AtScaleDynamicXmlaActions {
             throw new IllegalArgumentException(String.format("No queries found in the history file: %s", csvLoader.getFilePath()));
         }
 
+        for (QueryHistoryDto query : history) {
+            query.bindXmla(catalog, model);
+        }
+
         List<NamedHttpRequestActionBuilder> builders = createXmlaPayloads(history, cubeName, catalog, model);
         return builders.toArray(new NamedHttpRequestActionBuilder[0]);
     }
@@ -65,6 +69,10 @@ public class AtScaleDynamicXmlaActions {
                 throw new IllegalArgumentException(String.format("No queries found in the history file: %s", filePath));
             }
 
+            for (QueryHistoryDto query : history) {
+                query.bindXmla(catalog, model);
+            }
+
             List<NamedHttpRequestActionBuilder> builders = createXmlaPayloads(history, cubeName, catalog, model);
             return builders.toArray(new NamedHttpRequestActionBuilder[0]);
         } catch(FileNotFoundException e) {
@@ -74,7 +82,8 @@ public class AtScaleDynamicXmlaActions {
         }
     }
 
-    private HttpRequestActionBuilder httpRequest(String queryName, String body, String model) {
+    // Make this protected so tests can override it to avoid initializing Gatling DSL in unit tests
+    protected HttpRequestActionBuilder httpRequest(String queryName, String body, String model) {
         try {
             if (PropertiesManager.getRedactRawData(model)) {
                 return http(queryName)

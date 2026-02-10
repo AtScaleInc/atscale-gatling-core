@@ -21,6 +21,7 @@ import java.util.Map;
  */
 abstract class AtScaleSimulation extends Simulation {
     private static final Logger LOGGER = LoggerFactory.getLogger(AtScaleSimulation.class);
+    String catalog;
     String model;
     String steps;
     String runId;
@@ -32,6 +33,7 @@ abstract class AtScaleSimulation extends Simulation {
 
 
     AtScaleSimulation() {
+        catalog = System.getProperties().getProperty(MavenTaskDto.ATSCALE_CATALOG);
         model = System.getProperties().getProperty(MavenTaskDto.ATSCALE_MODEL);
         steps = System.getProperties().getProperty(MavenTaskDto.GATLING_INJECTION_STEPS);
         runId = System.getProperties().getProperty(MavenTaskDto.ATSCALE_RUN_ID);
@@ -41,6 +43,7 @@ abstract class AtScaleSimulation extends Simulation {
         ingestionFileHasHeader = System.getProperties().getProperty(MavenTaskDto.ATSCALE_QUERY_INGESTION_FILE_HAS_HEADER);
         additionalProperties = System.getProperties().getProperty(MavenTaskDto.ADDITIONAL_PROPERTIES);
 
+        catalog = MavenTaskDto.decode(catalog);
         model = MavenTaskDto.decode(model);
         steps = MavenTaskDto.decode(steps);
         runId = MavenTaskDto.decode(runId);
@@ -50,6 +53,7 @@ abstract class AtScaleSimulation extends Simulation {
         PropertiesManager.setCustomProperties(additionalPropertiesMap);
 
         LOGGER.info("Simulation class {} Gatling run ID: {}", this.getClass().getName(), runId);
+        LOGGER.info("Using catalog: {}", catalog);
         LOGGER.info("Using model: {}", model);
         LOGGER.info("Using injection steps: {}", steps);
         LOGGER.info("Using run id: {}", runId);

@@ -40,6 +40,7 @@ public abstract class SequentialSimulationExecutor<T> extends SimulationExecutor
                     // Add -Dgatling.simulationClass and -Dgatling.runDescription (no extra quotes)
                     String simClass = String.format("-D%s=%s", MavenTaskDto.GATLING_SIMULATION_CLASS, task.getSimulationClass());
                     String runDesc = String.format("-D%s=%s", MavenTaskDto.GATLING_RUN_DESCRIPTION, task.getRunDescription());
+                    String catalog = String.format("-D%s=%s", MavenTaskDto.ATSCALE_CATALOG, task.getCatalogBase64());
                     String model = String.format("-D%s=%s", MavenTaskDto.ATSCALE_MODEL, task.getModelBase64());
                     String runId = String.format("-D%s=%s", MavenTaskDto.ATSCALE_RUN_ID, task.getRunIdBase64());
                     String logFileName = String.format("-D%s=%s", MavenTaskDto.ATSCALE_LOG_FILE_NAME, task.getRunLogFileName());
@@ -55,6 +56,7 @@ public abstract class SequentialSimulationExecutor<T> extends SimulationExecutor
 
                     LOGGER.debug("SimEx Using simulation class: {}", simClass);
                     LOGGER.debug("SimEx Using run description: {}", runDesc);
+                    LOGGER.debug("Simex Using catalog: {}", catalog);
                     LOGGER.debug("SimEx Using model: {}", model);
                     LOGGER.debug("SimEx Using run id: {}", runId);
                     LOGGER.debug("SimEx Using log file name: {}", logFileName);
@@ -66,6 +68,7 @@ public abstract class SequentialSimulationExecutor<T> extends SimulationExecutor
 
                     command.add(simClass);
                     command.add(runDesc);
+                    command.add(catalog);
                     command.add(model);
                     command.add(runId);
                     command.add(logFileName);

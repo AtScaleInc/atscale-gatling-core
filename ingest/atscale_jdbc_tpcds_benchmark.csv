@@ -1,0 +1,502 @@
+sampler_name,sql_text
+TPC-DS_query 2,"--tpc-ds_query 2
+                SELECT
+                  ""TPC-DS Benchmark Model"".""Sold Calendar Week"" AS ""sold_calendar_week"",
+                  ""TPC-DS Benchmark Model"".""Sold Day Name Week"" AS ""sold_d_day_name_week"",
+                  ""TPC-DS Benchmark Model"".""Sold Week Sequence"" AS ""sold_d_week_seg"",
+                  ""TPC-DS Benchmark Model"".""Web and Catalog Sales Price Growth"" AS ""sum_web_catalog_sales_price_growth_ok""
+                FROM
+                 "${CatalogName}"."${ModelName}" ""TPC-DS Benchmark Model""
+                WHERE
+                  (
+                    ""TPC-DS Benchmark Model"".""Sold Calendar Year Week"" IN (2000, 2001)
+                  )
+                GROUP BY 1,2,3"
+
+TPC-DS_query 7,"--TPC-DS_query 7
+                SELECT
+                    ""tpc_ds_benchmark_model"".""Product Item ID""         AS ""d_product_item_id"",
+                    ""tpc_ds_benchmark_model"".""Average Store Sales Quantity""    AS ""avg_m_ss_quantity_avg_ok"",
+                    ""tpc_ds_benchmark_model"".""Average Store Sales List Price""  AS ""avg_m_ss_list_price_avg_ok"",
+                    ""tpc_ds_benchmark_model"".""Average Store Sales Coupon Amount""  AS ""avg_m_ss_coupon_amt_avg_ok"",
+                    ""tpc_ds_benchmark_model"".""Average Store Sales Sales Price"" AS ""avg_m_ss_sales_price_avg_ok""
+                FROM
+                    ${CatalogName}.${ModelName} ""TPC-DS Benchmark Model""
+                WHERE
+                    (
+                        ""tpc_ds_benchmark_model"".""Channel Email"" = 'N'
+                    OR  ""tpc_ds_benchmark_model"".""Channel Event"" = 'N')
+                AND ""tpc_ds_benchmark_model"".""Sold Calendar Year"" = 2001
+                AND ""tpc_ds_benchmark_model"".""Education Status"" = '4 yr Degree'
+                AND ""tpc_ds_benchmark_model"".""Gender"" = 'M'
+                AND ""tpc_ds_benchmark_model"".""Marital Status"" = 'M'
+                GROUP BY 1
+                ORDER BY 1
+                LIMIT 100"
+
+TPC-DS_query 13,"-- TPC-DS_query 13
+                    SELECT
+                     ""TPC-DS Benchmark Model"".""Average Store Sales Quantity"" AS ""sum_m_ss_quantity_avg_ok"",
+                     ""TPC-DS Benchmark Model"".""Average Ext Sales Price""      AS ""sum_m_ss_ext_sales_price_avg_ok"",
+                     ""TPC-DS Benchmark Model"".""Average Ext Wholesale Cost""   AS ""sum_m_ss_ext_wholesale_cost_avg_ok"",
+                     ""TPC-DS Benchmark Model"".""Store Ext Wholesale Cost""     AS ""sum_m_ss_ext_wholesale_cost_sum_ok""
+                 FROM
+                      ${CatalogName}.${ModelName} ""TPC-DS Benchmark Model""
+                 WHERE
+                     ""TPC-DS Benchmark Model"".""Sold Calendar Year Week"" = 2001
+                 AND ( (
+                             ""TPC-DS Benchmark Model"".""Education Status"" = '4 yr Degree'
+                         AND ""TPC-DS Benchmark Model"".""Marital Status"" = 'S'
+                         AND ""TPC-DS Benchmark Model"".""Household Dependents Count"" = 3
+                         AND ""TPC-DS Benchmark Model"".""Sales Price Tier"" = '100-150')
+                     OR  (
+                             ""TPC-DS Benchmark Model"".""Education Status"" = 'Advanced Degree'
+                         AND ""TPC-DS Benchmark Model"".""Marital Status"" = 'D'
+                         AND ""TPC-DS Benchmark Model"".""Household Dependents Count"" = 1
+                         AND ""TPC-DS Benchmark Model"".""Sales Price Tier"" = ' 50-100')
+                     OR  (
+                             ""TPC-DS Benchmark Model"".""Education Status"" = '2 yr Degree'
+                         AND ""TPC-DS Benchmark Model"".""Marital Status"" = 'M'
+                         AND ""TPC-DS Benchmark Model"".""Household Dependents Count"" = 1
+                         AND ""TPC-DS Benchmark Model"".""Sales Price Tier"" = '150-200') )
+                 AND ( (
+                             ""TPC-DS Benchmark Model"".""Customer Country"" = 'United States'
+                         AND ""TPC-DS Benchmark Model"".""Customer State"" IN ('MS',
+                                                                            'NC',
+                                                                            'TX')
+                         AND ""TPC-DS Benchmark Model"".""Net Profit Tier"" IN ('100-150',
+                                                                             '150-200') )
+                     OR  (
+                             ""TPC-DS Benchmark Model"".""Customer Country"" = 'United States'
+                         AND ""TPC-DS Benchmark Model"".""Customer State"" IN ('TN',
+                                                                            'WA',
+                                                                            'NE')
+                         AND ""TPC-DS Benchmark Model"".""Net Profit Tier"" IN ('150-200',
+                                                                             '200-250',
+                                                                             '250-300') )
+                     OR  (
+                             ""TPC-DS Benchmark Model"".""Customer Country"" = 'United States'
+                         AND ""TPC-DS Benchmark Model"".""Customer State"" IN ('MA',
+                                                                            'OR',
+                                                                            'UT')
+                         AND ""TPC-DS Benchmark Model"".""Net Profit Tier"" IN ( ' 50-100',
+                                                                             '100-150',
+                                                                             '150-200',
+                                                                             '200-250' ) ) )"
+
+
+TPC-DS_query 15, "-- TPC-DS_query 15
+                    SELECT
+                    ""TPC-DS Benchmark Model"".""Customer Zip Code"" AS ""d_customer_zip_code"",
+                    ""TPC-DS Benchmark Model"".""Catalog Sales Price"" AS ""sum_m_cs_sales_price_sum_ok""
+                  FROM
+                    ${CatalogName}.${ModelName} ""TPC-DS Benchmark Model""
+                  WHERE
+                        (""TPC-DS Benchmark Model"".""Customer Zip Code"" IN (
+                          '80348',
+                          '81792',
+                          '83405',
+                          '85392',
+                          '85460',
+                          '85669',
+                          '86197',
+                          '86475',
+                          '88274')
+                      OR
+                        ""TPC-DS Benchmark Model"".""Customer State"" IN ('CA', 'GA', 'WA')
+                      OR
+                          ""TPC-DS Benchmark Model"".""Catalog Sales Price Tier"" = 'More than 500')
+                      AND
+                        ""TPC-DS Benchmark Model"".""Sold Calendar Year"" = 2001
+                      AND
+                        ""TPC-DS Benchmark Model"".""Sold Quarter of Year"" = 1
+                  GROUP BY 1
+                  HAVING ""Catalog Sales Price"" IS NOT NULL
+                  ORDER BY 1
+                  LIMIT 100"
+
+TPC-DS_query 26,"-- TPC-DS_query 26
+                 SELECT
+                     ""TPC-DS Benchmark Model"".""Product Item ID"" AS ""d_product_item_id"",
+                     ""TPC-DS Benchmark Model"".""Catalog Sales Average Quantity Sold""  AS ""avg_m_catalog_sales_quantity_sold_avg_ok"",
+                     ""TPC-DS Benchmark Model"".""Catalog Sales Average List Price"" AS ""avg_m_catalog_sales_list_price_avg_ok"",
+                     ""TPC-DS Benchmark Model"".""Catalog Sales Average Coupon Amount"" AS ""sum_m_catalog_sales_coupon_amount_avg_ok"",
+                     ""TPC-DS Benchmark Model"".""Catalog Sales Average Sales Price"" AS ""avg_m_catalog_sales_sales_price_avg_ok""
+                 FROM
+                     ${CatalogName}.${ModelName} ""TPC-DS Benchmark Model""
+                 WHERE
+                     ""TPC-DS Benchmark Model"".""Product Item ID"" IS NOT NULL
+                 AND ""TPC-DS Benchmark Model"".""Sold Calendar Year"" = 2000
+                 AND ""TPC-DS Benchmark Model"".""Education Status"" = 'College'
+                 AND ""TPC-DS Benchmark Model"".""Gender"" = 'M'
+                 AND ""TPC-DS Benchmark Model"".""Marital Status"" = 'M'
+                 AND ""TPC-DS Benchmark Model"".""Channel Email"" = 'N'
+                 AND ""TPC-DS Benchmark Model"".""Channel Event"" = 'N'
+                 GROUP BY 1
+                 ORDER BY 1
+                 LIMIT 100"
+
+TPC-DS_query 31," -- TPC-DS_query 31
+                 SELECT
+                     ""tpc_ds_benchmark_model"".""Sold Calendar Quarter""     AS ""sold_calendar_quarter"",
+                     ""tpc_ds_benchmark_model"".""Sold Customer County""          AS ""sold_d_ca_county"",
+                     SUM(""tpc_ds_benchmark_model"".""Store Sales Increase"") AS ""sum_store_sales_increase_ok"",
+                     SUM(""tpc_ds_benchmark_model"".""Web Sales Increase"")   AS ""sum_web_sales_increase_ok""
+                 FROM
+                      ${CatalogName}.${ModelName} ""TPC-DS Benchmark Model""
+                 WHERE
+                     ""tpc_ds_benchmark_model"".""Sold Calendar Year"" = 2001
+                 GROUP BY 1,2"
+
+TPC-DS_query 33," -- TPC-DS_query 33
+                 SELECT
+                     ""TPC-DS Benchmark Model"".""Product Manufacturer ID"" AS ""d_product_manufacturer_id"",
+                     ""TPC-DS Benchmark Model"".""Total Ext Sales Price""   AS ""sum_total__ext_sales_price_ok""
+                 FROM
+                     ${CatalogName}.${ModelName} ""TPC-DS Benchmark Model""
+                 WHERE
+                     ""TPC-DS Benchmark Model"".""Product Category"" = 'Electronics'
+                 AND ""TPC-DS Benchmark Model"".""Sold Calendar Year Week"" = 1999
+                 AND ""TPC-DS Benchmark Model"".""Sold Customer GMT Offset"" = -5.00
+                 AND ""TPC-DS Benchmark Model"".""Sold Month of Year"" = 7
+                 GROUP BY 1
+                 ORDER BY 2 DESC
+                 LIMIT 100"
+
+TPC-DS_query 42,"-- TPC-DS_query 42
+                 SELECT
+                   ""TPC-DS Benchmark Model"".""Sold Calendar Year Week"" AS ""sold_calendar_year_week"",
+                   ""TPC-DS Benchmark Model"".""Product Category"" AS ""i_category"",
+                   ""TPC-DS Benchmark Model"".""Store Ext Sales Price"" AS ""sum_m_ss_ext_sales_price_sum_ok""
+                 FROM
+                   ${CatalogName}.${ModelName} ""TPC-DS Benchmark Model""
+                 WHERE
+                   (
+                     (
+                       ""TPC-DS Benchmark Model"".""Sold Calendar Year Week"" = 1998
+                     )
+                     AND (
+                       ""TPC-DS Benchmark Model"".""Sold Month of Year"" = 12
+                     )
+                     AND (
+                       ""TPC-DS Benchmark Model"".""Product Manager ID"" = 1
+                     )
+                   )
+                 GROUP BY 1,2
+                 ORDER BY 3 DESC"
+
+TPC-DS_query 48,"-- TPC-DS_query 48
+                 SELECT
+                     SUM(""TPC-DS Benchmark Model"".""Store Quantity Sold"") AS ""sum_m_ss_quantity_sum_ok""
+                 FROM
+                     ${CatalogName}.${ModelName} ""TPC-DS Benchmark Model""
+                 WHERE
+                     ""TPC-DS Benchmark Model"".""Sold Calendar Year Week"" = 1999
+                 AND ((
+                             ""TPC-DS Benchmark Model"".""Marital Status"" = 'S'
+                         AND ""TPC-DS Benchmark Model"".""Education Status"" = 'Primary'
+                         AND ""TPC-DS Benchmark Model"".""Sales Price Tier"" = '100-150' )
+                     OR  (
+                             ""TPC-DS Benchmark Model"".""Marital Status"" = 'U'
+                         AND ""TPC-DS Benchmark Model"".""Education Status"" = 'Advanced Degree'
+                         AND ""TPC-DS Benchmark Model"".""Sales Price Tier"" = ' 50-100' )
+                     OR  (
+                             ""TPC-DS Benchmark Model"".""Marital Status"" = 'W'
+                         AND ""TPC-DS Benchmark Model"".""Education Status"" = '4 yr Degree'
+                         AND ""TPC-DS Benchmark Model"".""Sales Price Tier"" = '150-200' ))
+                 AND ((
+                             ""TPC-DS Benchmark Model"".""Sold Customer Country"" = 'United States'
+                         AND ""TPC-DS Benchmark Model"".""Sold Customer State"" IN ('IL',
+                                                                                  'AR',
+                                                                                  'UT')
+                         AND ""TPC-DS Benchmark Model"".""Net Profit Tier"" IN ('  0- 50',
+                                                                              ' 50-100',
+                                                                              '100-150',
+                                                                              '150-200',
+                                                                              '200-250',
+                                                                              '250-300',
+                                                                              '300-2000') )
+                     OR  (
+                             ""TPC-DS Benchmark Model"".""Sold Customer Country"" = 'United States'
+                         AND ""TPC-DS Benchmark Model"".""Sold Customer State"" IN ('WV',
+                                                                                  'GA',
+                                                                                  'NC')
+                         AND ""TPC-DS Benchmark Model"".""Net Profit Tier"" IN ('150-200',
+                                                                              '200-250',
+                                                                              '250-300',
+                                                                              '300-2000',
+                                                                              '2000-3000') )
+                     OR  (
+                             ""TPC-DS Benchmark Model"".""Sold Customer Country"" = 'United States'
+                         AND ""TPC-DS Benchmark Model"".""Sold Customer State"" IN ('PA',
+                                                                                  'LA',
+                                                                                  'MO')
+                         AND ""TPC-DS Benchmark Model"".""Net Profit Tier"" IN ( ' 50-100',
+                                                                              '100-150',
+                                                                              '150-200',
+                                                                              '200-250',
+                                                                              '250-300',
+                                                                              '300-2000',
+                                                                              '2000-3000',
+                                                                              '3000-25000') ) )"
+
+TPC-DS_query 50," -- TPC-DS_query 50
+                 SELECT
+                   ""TPC-DS Benchmark Model"".""Store Name"" AS ""d_store_name"",
+                   ""TPC-DS Benchmark Model"".""Store Company ID"" AS ""d_store_company_id"",
+                   ""TPC-DS Benchmark Model"".""Store Street Number"" AS ""d_store_street_number"",
+                   ""TPC-DS Benchmark Model"".""Store Street Name"" AS ""d_store_street_name"",
+                   ""TPC-DS Benchmark Model"".""Store Street Type"" AS ""d_store_street_type"",
+                   ""TPC-DS Benchmark Model"".""Store Suite Number"" AS ""d_store_suite_number"",
+                   ""TPC-DS Benchmark Model"".""Store City"" AS ""d_store_city"",
+                   ""TPC-DS Benchmark Model"".""Store County"" AS ""d_store_county"",
+                   ""TPC-DS Benchmark Model"".""Store State"" AS ""d_store_state"",
+                   ""TPC-DS Benchmark Model"".""Store Zip Code"" AS ""d_store_zip_code"",
+                   ""TPC-DS Benchmark Model"".""Returns Time Tier"" AS ""d_returns_time_tier"",
+                   ""TPC-DS Benchmark Model"".""Store Returns Count"" AS ""sum_m_returns_count_sum_ok""
+                 FROM
+                  ${CatalogName}.${ModelName} ""TPC-DS Benchmark Model""
+                 WHERE
+                   (
+                     (
+                       ""TPC-DS Benchmark Model"".""Return Calendar Year Week"" = 1998
+                     )
+                     AND (
+                       ""TPC-DS Benchmark Model"".""Return Month of Year"" = 9
+                     )
+                   )
+                 GROUP BY 1,2,3,4,5,6,7,8,9,10,11
+                 ORDER BY 1,2,3,4,5,6,7,8,9,10,11
+                 LIMIT 100"
+
+TPC-DS_query 52,"-- TPC-DS_query 52
+                 SELECT
+                   ""TPC-DS Benchmark Model"".""Sold Calendar Year Week"" AS ""sold_calendar_year_week"",
+                   ""TPC-DS Benchmark Model"".""Product Brand ID"" AS ""d_product_brand_id"",
+                   ""TPC-DS Benchmark Model"".""Product Brand Name"" AS ""d_product_brand_name"",
+                   ""TPC-DS Benchmark Model"".""Store Ext Sales Price"" AS ""sum_m_ss_ext_sales_price_sum_ok""
+                 FROM
+                   ${CatalogName}.${ModelName} ""TPC-DS Benchmark Model""
+                 WHERE
+                   (
+                     (
+                       ""TPC-DS Benchmark Model"".""Sold Calendar Year Week"" = 2002
+                     )
+                     AND (
+                       ""TPC-DS Benchmark Model"".""Sold Month of Year"" = 12
+                     )
+                     AND (
+                       ""TPC-DS Benchmark Model"".""Product Manager ID"" = 1
+                     )
+                   )
+                 GROUP BY 1,2,3
+                 ORDER BY 1,4 DESC,2
+                 LIMIT 100"
+
+TPC-DS_query 53,"-- TPC-DS_query 53
+                 SELECT
+                   ""TPC-DS Benchmark Model"".""Product Manufacturer ID"" AS ""d_product_manufacturer_id"",
+                   ""TPC-DS Benchmark Model"".""Sold Calendar Quarter"" AS ""sold_calendar_quarter"",
+                   ""TPC-DS Benchmark Model"".""Store Ext Sales Price"" AS ""sum_m_store_sales_price_ok"",
+                   ""TPC-DS Benchmark Model"".""Avg Quarterly Store Sales for 1998-1999"" AS ""sum_avg_quarterly_store_sales_for_1998_1999_ok"",
+                   ""TPC-DS Benchmark Model"".""Avg Quarter Sales Ratio"" AS ""sum_avg_quarter_sales_ratio_ok""
+                 FROM
+                   ${CatalogName}.${ModelName} ""TPC-DS Benchmark Model""
+                 WHERE
+                     ""TPC-DS Benchmark Model"".""Sold Calendar Quarter"" IN ('1998Q2', '1998Q3', '1998Q4', '1999Q1', '1999Q2') AND
+                     ((
+                         ""TPC-DS Benchmark Model"".""Product Category"" IN ('Books',
+                                                                   'Children',
+                                                                   'Electronics')
+                     AND ""TPC-DS Benchmark Model"".""Product Brand Name"" IN ( 'exportiunivamalg #9',
+                                                                             'scholaramalgamalg #14',
+                                                                             'scholaramalgamalg #7',
+                                                                             'scholaramalgamalg #9' )
+                     AND ""TPC-DS Benchmark Model"".""Product Class Name"" IN ('personal',
+                                                                             'portable',
+                                                                             'reference',
+                                                                             'self-help') )
+                 OR  (
+                         ""TPC-DS Benchmark Model"".""Product Category"" IN ('Women',
+                                                                   'Music',
+                                                                   'Men')
+                     AND ""TPC-DS Benchmark Model"".""Product Brand Name"" IN ( 'amalgimporto #1',
+                                                                             'edu packscholar #1',
+                                                                             'exportiimporto #1',
+                                                                             'importoamalg #1' )
+                     AND ""TPC-DS Benchmark Model"".""Product Class Name"" IN ('accessories',
+                                                                             'classical',
+                                                                             'fragrances',
+                                                                             'pants') ) )
+                 GROUP BY 1,2
+                 HAVING ""Avg Quarter Sales Ratio"" > .1
+                 ORDER BY 1,2,3
+                 LIMIT 100"
+
+TPC-DS_query 55," -- TPC-DS_query 55
+                 SELECT
+                   ""TPC-DS Benchmark Model"".""Product Brand ID"" AS ""d_product_brand_id"",
+                   ""TPC-DS Benchmark Model"".""Product Brand Name"" AS ""d_product_brand_name"",
+                   ""TPC-DS Benchmark Model"".""Store Ext Sales Price"" AS ""sum_m_ss_ext_sales_price_sum_ok""
+                 FROM
+                  ${CatalogName}.${ModelName} ""TPC-DS Benchmark Model""
+                 WHERE
+                   (
+                     (
+                       ""TPC-DS Benchmark Model"".""Sold Calendar Year Week"" = 1998
+                     )
+                     AND (
+                       ""TPC-DS Benchmark Model"".""Sold Month of Year"" = 12
+                     )
+                     AND (
+                       ""TPC-DS Benchmark Model"".""Product Manager ID"" = 90
+                     )
+                   )
+                 GROUP BY 1,2
+                 ORDER BY 3  DESC
+                 LIMIT 100"
+
+TPC-DS_query 56," -- TPC-DS_query 56
+                 SELECT
+                     ""TPC-DS Benchmark Model"".""Product Item ID""       AS ""d_product_item_id"",
+                     ""TPC-DS Benchmark Model"".""Total Ext Sales Price"" AS ""sum_total__ext_sales_price_ok""
+                 FROM
+                    ${CatalogName}.${ModelName} ""TPC-DS Benchmark Model""
+                 WHERE
+                     ""TPC-DS Benchmark Model"".""Sold Calendar Year Week"" = 2002
+                 AND ""TPC-DS Benchmark Model"".""Sold Month of Year"" = 5
+                 AND ""TPC-DS Benchmark Model"".""Sold Customer GMT Offset"" = -5.
+                 AND ""TPC-DS Benchmark Model"".""Product Color"" IN ('floral','ivory','royal')
+                 GROUP BY 1
+                 ORDER BY 2
+                 LIMIT 100"
+
+TPC-DS_query 60,"-- TPC-DS_query 60
+                                  SELECT
+                                      ""tpc_ds_benchmark_model"".""Product Item ID"" AS ""d_product_item_id"",
+                                      ""tpc_ds_benchmark_model"".""Total Ext Sales Price"" AS ""sum_total__ext_sales_price_ok""
+                                  FROM
+                                       ${CatalogName}.${ModelName} ""TPC-DS Benchmark Model""
+                                  WHERE
+                                      ""tpc_ds_benchmark_model"".""Product Category"" = 'Jewelry'
+                                  AND ""tpc_ds_benchmark_model"".""Sold Calendar Year Week"" = 1999
+                                  AND ""tpc_ds_benchmark_model"".""Sold Month of Year"" = 9
+                                  AND ""tpc_ds_benchmark_model"".""Customer GMT Offset"" = -6
+                                  GROUP BY 1
+                                  ORDER BY 1,2
+                                  LIMIT 100"
+
+TPC-DS_query 61," -- TPC-DS_query 61
+                 SELECT
+                     ""TPC-DS Benchmark Model"".""Store Ext Sales Price by Promotion"" AS ""sum_m_ss_ext_sales_price_promotion_ok"",
+                     ""TPC-DS Benchmark Model"".""Store Ext Sales Price"" AS ""sum_m_ss_ext_sales_price_sum_ok""
+                 FROM
+                    ${CatalogName}.${ModelName} ""TPC-DS Benchmark Model""
+                 WHERE
+                     (
+                         ""TPC-DS Benchmark Model"".""Channel Direct Mail"" = 'Y'
+                     OR  ""TPC-DS Benchmark Model"".""Channel Email"" = 'Y'
+                     OR  ""TPC-DS Benchmark Model"".""Channel TV"" = 'Y')
+                 AND ""TPC-DS Benchmark Model"".""Product Category"" = 'Home'
+                 AND ""TPC-DS Benchmark Model"".""Sold Calendar Year Week"" = 1998
+                 AND ""TPC-DS Benchmark Model"".""Sold Month of Year"" = 12
+                 AND ""TPC-DS Benchmark Model"".""Customer GMT Offset"" = -6.
+                 AND ""TPC-DS Benchmark Model"".""Store GMT Offset"" = -6.
+                 LIMIT 100"
+
+TPC-DS_query 71,"-- TPC-DS_query 71
+                 SELECT
+                     ""TPC-DS Benchmark Model"".""Product Brand ID""       AS ""d_product_brand_id"",
+                     ""TPC-DS Benchmark Model"".""Product Brand Name""     AS ""d_product_brand_name"",
+                     ""TPC-DS Benchmark Model"".""Sold Hour""              AS ""sold_d_hour"",
+                     ""TPC-DS Benchmark Model"".""Sold Minute""            AS ""sold_d_minute"",
+                     ""TPC-DS Benchmark Model"".""Total Ext Sales Price""  AS ""sum_total__ext_sales_price_ok""
+                 FROM
+                   ${CatalogName}.${ModelName} ""TPC-DS Benchmark Model""
+                 WHERE
+                     ""TPC-DS Benchmark Model"".""Sold Calendar Year Week"" = 1998
+                 AND ""TPC-DS Benchmark Model"".""Sold Meal Time"" IN ('breakfast',
+                                                                     'dinner')
+                 AND ""TPC-DS Benchmark Model"".""Sold Month of Year"" = 12
+                 AND ""TPC-DS Benchmark Model"".""Product Manager ID"" = 1
+                 GROUP BY 1,2,3,4
+                 ORDER BY 5 DESC,1
+                 LIMIT 100"
+
+TPC-DS_query 88,"-- TPC-DS_query 88
+                 SELECT
+                     ""TPC-DS Benchmark Model"".""Sold Morning Time Tier"" AS ""sold_d_morning__time_tier"",
+                     ""TPC-DS Benchmark Model"".""Store Sales Row Counter"" AS ""sum_m_ss_row_counter_sum_ok""
+                 FROM
+                    ${CatalogName}.${ModelName} ""TPC-DS Benchmark Model""
+                 WHERE
+                     ( ( (
+                                 ""TPC-DS Benchmark Model"".""Household Dependents Count"" = 2
+                             AND ""TPC-DS Benchmark Model"".""Vehicle Count"" <= 4 )
+                         OR  (
+                                 ""TPC-DS Benchmark Model"".""Household Dependents Count"" = 0
+                             AND ""TPC-DS Benchmark Model"".""Vehicle Count"" <= 2 )
+                         OR  (
+                                 ""TPC-DS Benchmark Model"".""Household Dependents Count"" = -1
+                             AND ""TPC-DS Benchmark Model"".""Vehicle Count"" <= 1 ) )
+                     AND ""TPC-DS Benchmark Model"".""Store Name"" = 'ese' )
+                     AND ""TPC-DS Benchmark Model"".""Sold Morning Time Tier"" <> 'Other'
+                 GROUP BY 1"
+
+TPC-DS_query 96,"-- TPC-DS_query 96
+                 SELECT
+                     ""tpc_ds_benchmark_model"".""Store Sales Row Counter"" AS ""sum_m_ss_row_counter_sum_ok""
+                 FROM
+                     ${CatalogName}.${ModelName} ""TPC-DS Benchmark Model""
+                 WHERE
+                     ""tpc_ds_benchmark_model"".""Sold Hour"" = 8
+                 AND ""tpc_ds_benchmark_model"".""Sold Minute"" >= 30
+                 AND ""tpc_ds_benchmark_model"".""Household Dependents Count"" = 5
+                 AND ""tpc_ds_benchmark_model"".""Store Name"" = 'ese'
+                 ORDER BY 1
+                 LIMIT 100"
+
+TPC-DS_query 98,"-- TPC-DS_query 98
+                 SELECT
+                     ""TPC-DS Benchmark Model"".""Product Item ID""       AS ""d_product_item_id"",
+                     ""TPC-DS Benchmark Model"".""Product Dimension""     AS ""product_dimension"",
+                     ""TPC-DS Benchmark Model"".""Product Category""      AS ""i_category"",
+                     ""TPC-DS Benchmark Model"".""Product Class Name""    AS ""d_product_class_name"",
+                     ""TPC-DS Benchmark Model"".""Product Current Price"" AS ""d_product_current_price"",
+                     SUM( (
+                             CASE
+                                 WHEN ""t0"".""x_measure__0"" = 0
+                                 THEN NULL
+                                 ELSE ""TPC-DS Benchmark Model"".""Store Ext Sales Price""*100 / ""t0"".""x_measure__0""
+                             END ) )                                     AS ""sum_calculation_6026871858440298504_ok"",
+                     SUM( ""TPC-DS Benchmark Model"".""Store Ext Sales Price"" ) AS ""sum_m_ss_ext_sales_price_sum_ok""
+                 FROM
+                    ${CatalogName}.${ModelName} ""TPC-DS Benchmark Model""
+                 JOIN
+                     (
+                         SELECT
+                             ""TPC-DS Benchmark Model"".""Product Class Name""            AS ""d_product_class_name"",
+                             SUM( ""TPC-DS Benchmark Model"".""Store Ext Sales Price"" ) AS ""x_measure__0""
+                         FROM
+                            ${CatalogName}.${ModelName} ""TPC-DS Benchmark Model""
+                         WHERE
+                             ""TPC-DS Benchmark Model"".""Product Category"" IN ('Electronics',
+                                                                       'Shoes',
+                                                                       'Women')
+                         AND ""TPC-DS Benchmark Model"".""Sold Time Dimension"" BETWEEN '2002-05-27' AND '2002-06-26'
+                         GROUP BY
+                             1 ) ""t0""
+                 ON
+                     (
+                         ""TPC-DS Benchmark Model"".""Product Class Name"" = ""t0"".""d_product_class_name"" )
+                 WHERE
+                     ""TPC-DS Benchmark Model"".""Product Category"" IN ('Electronics',
+                                                               'Shoes',
+                                                               'Women')
+                 AND ""TPC-DS Benchmark Model"".""Sold Time Dimension"" BETWEEN '2002-05-27' AND '2002-06-26'
+                 AND ""TPC-DS Benchmark Model"".""Product Dimension"" IS NOT NULL
+                 AND ""TPC-DS Benchmark Model"".""Product Class Name"" IS NOT NULL
+                 GROUP BY 1,2,3,4,5
+                 ORDER BY 3,4,1,2,7
+                 LIMIT 100"
+

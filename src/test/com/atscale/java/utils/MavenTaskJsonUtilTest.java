@@ -52,6 +52,8 @@ public class MavenTaskJsonUtilTest {
         task.setMavenCommand("mvn test");
         task.setSimulationClass("com.example.TestSimulation");
         task.setInjectionSteps(injectionSteps);
+        task.setCatalog("catalog");
+        task.setModel("model");
         tasks.add(task);
 
         String json = MavenTaskJsonUtil.closedStepTasksToJson(tasks);
@@ -83,6 +85,8 @@ public class MavenTaskJsonUtilTest {
         task.setRunId(RandomStringUtils.secure().nextAlphanumeric(12));
         task.setRunLogFileName(String.format("gatling-%s.log", task.getRunId()));
         task.setRunDescription("This is a test run description.");
+        task.setCatalog("catalog");
+        task.setModel("model");
         tasks.add(task);
 
         String json = MavenTaskJsonUtil.openStepTasksToJson(tasks);
@@ -114,6 +118,8 @@ public class MavenTaskJsonUtilTest {
         task.setRunId(RandomStringUtils.secure().nextAlphanumeric(12));
         task.setRunLogFileName(String.format("gatling-%s.log", task.getRunId()));
         task.setRunDescription("This is a test run description.");
+        task.setCatalog("catalog");
+        task.setModel("model");
         tasks.add(task);
 
         String json = MavenTaskJsonUtil.closedStepTasksToJson(tasks);
@@ -150,6 +156,8 @@ public class MavenTaskJsonUtilTest {
         task.setRunId(RandomStringUtils.secure().nextAlphanumeric(12));
         task.setRunLogFileName(String.format("gatling-%s.log", task.getRunId()));
         task.setRunDescription("This is a test run description.");
+        task.setCatalog("catalog");
+        task.setModel("model");
         tasks.add(task);
 
         String json = MavenTaskJsonUtil.openStepTasksToJson(tasks);
@@ -192,6 +200,8 @@ public class MavenTaskJsonUtilTest {
         task.setRunId(RandomStringUtils.secure().nextAlphanumeric(12));
         task.setRunLogFileName(String.format("gatling-%s.log", task.getRunId()));
         task.setRunDescription("This is a test run description.");
+        task.setCatalog("catalog");
+        task.setModel("model");
         tasks.add(task);
 
         String json = MavenTaskJsonUtil.closedStepTasksToJson(tasks);
@@ -231,6 +241,8 @@ public class MavenTaskJsonUtilTest {
         task.setRunId(RandomStringUtils.secure().nextAlphanumeric(12));
         task.setRunLogFileName(String.format("gatling-%s.log", task.getRunId()));
         task.setRunDescription("This is a test run description.");
+        task.setCatalog("catalog");
+        task.setModel("model");
         tasks.add(task);
 
         String json = MavenTaskJsonUtil.closedStepTasksToJson(tasks);
@@ -263,6 +275,8 @@ public class MavenTaskJsonUtilTest {
         task.setRunId(RandomStringUtils.secure().nextAlphanumeric(12));
         task.setRunLogFileName(String.format("gatling-%s.log", task.getRunId()));
         task.setRunDescription("This is a test run description.");
+        task.setCatalog("catalog");
+        task.setModel("model");
         tasks.add(task);
 
         String json = MavenTaskJsonUtil.closedStepTasksToJson(tasks);
@@ -287,6 +301,8 @@ public class MavenTaskJsonUtilTest {
         List<MavenTaskDto<ClosedStep>> tasks = new ArrayList<>();
         MavenTaskDto<ClosedStep> task = new MavenTaskDto<>("Test Task");
         task.setMavenCommand("mvn test");
+        task.setCatalog("catalog");
+        task.setModel("model");
         task.setSimulationClass("com.example.TestSimulation");
         task.setInjectionSteps(injectionSteps);
         task.setIngestionFileName("test_ingestion.csv", true);
@@ -325,6 +341,8 @@ public class MavenTaskJsonUtilTest {
 
         List<MavenTaskDto<OpenStep>> tasks = new ArrayList<>();
         MavenTaskDto<OpenStep> task = new MavenTaskDto<>("Test Task");
+        task.setCatalog("catalog");
+        task.setModel("model");
         task.setMavenCommand("mvn test");
         task.setSimulationClass("com.example.TestSimulation");
         task.setInjectionSteps(injectionSteps);
@@ -368,6 +386,8 @@ public class MavenTaskJsonUtilTest {
         MavenTaskDto<ClosedStep> task = new MavenTaskDto<>("Test Task");
         task.setMavenCommand("mvn test");
         task.setSimulationClass("com.example.TestSimulation");
+        task.setCatalog("catalog");
+        task.setModel("model");
         task.setInjectionSteps(injectionSteps);
         task.setIngestionFileName("test_ingestion.csv", true);
         task.setAlternatePropertiesFileName("systems.properties");
@@ -403,6 +423,8 @@ public class MavenTaskJsonUtilTest {
         MavenTaskDto<OpenStep> task = new MavenTaskDto<>("Test Task");
         task.setMavenCommand("mvn test");
         task.setSimulationClass("com.example.TestSimulation");
+        task.setCatalog("catalog");
+        task.setModel("model");
         task.setInjectionSteps(injectionSteps);
         task.setIngestionFileName("test_ingestion.csv", true);
         task.setAlternatePropertiesFileName("systems.properties");
@@ -451,6 +473,8 @@ public class MavenTaskJsonUtilTest {
         task.setRunDescription("This is a test run description.");
         MavenTaskDto<ClosedStep> task2 = task.copy("Test Task 2");
         MavenTaskDto<ClosedStep> task3 = task.copy("Test Task 3");
+        task.setCatalog("catalog");
+        task.setModel("model");
 
         tasks.add(task);
         tasks.add(task2);

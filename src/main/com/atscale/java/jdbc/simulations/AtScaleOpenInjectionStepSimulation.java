@@ -39,7 +39,7 @@ public class AtScaleOpenInjectionStepSimulation extends AtScaleSimulation{
         }
 
         AtScaleDynamicQueryBuilderScenario scn = new AtScaleDynamicQueryBuilderScenario();
-        ScenarioBuilder sb = scn.buildScenario(model, runId, ingestionFile, Boolean.parseBoolean(ingestionFileHasHeader));
+        ScenarioBuilder sb = scn.buildScenario(catalog, model, runId, ingestionFile, Boolean.parseBoolean(ingestionFileHasHeader));
 
         setUp(sb.injectOpen(injectionSteps)).protocols(JdbcProtocol.forDatabase(model));
     }
