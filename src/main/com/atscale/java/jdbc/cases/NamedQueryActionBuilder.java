@@ -20,7 +20,13 @@ public class NamedQueryActionBuilder {
     }
 
     public String getInboundQueryTextAsBase64() {
-        if (inboundTextAsBase64 != null && !inboundTextAsBase64.isEmpty()) return inboundTextAsBase64;
-        return java.util.Base64.getEncoder().encodeToString(inboundQueryText.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        if (inboundTextAsBase64 != null && !inboundTextAsBase64.isEmpty()) {
+            return inboundTextAsBase64;
+        }
+        if (inboundQueryText == null || inboundQueryText.isEmpty()) {
+            return null;
+        }
+        return java.util.Base64.getEncoder()
+                .encodeToString(inboundQueryText.getBytes(java.nio.charset.StandardCharsets.UTF_8));
     }
 }
