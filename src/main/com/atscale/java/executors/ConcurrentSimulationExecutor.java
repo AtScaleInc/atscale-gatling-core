@@ -53,7 +53,7 @@ public abstract class ConcurrentSimulationExecutor<T> extends SimulationExecutor
 
                     LOGGER.debug("SimEx Using simulation class: {}", simClass);
                     LOGGER.debug("SimEx Using run description: {}", runDesc);
-                    LOGGER.debug("Simex Using catalog: {}", catalog);
+                    LOGGER.debug("SimEx Using catalog: {}", catalog);
                     LOGGER.debug("SimEx Using model: {}", model);
                     LOGGER.debug("SimEx Using run id: {}", runId);
                     LOGGER.debug("SimEx Using log file name: {}", logFileName);
