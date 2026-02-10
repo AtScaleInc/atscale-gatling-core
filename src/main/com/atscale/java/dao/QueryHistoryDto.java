@@ -166,7 +166,7 @@ public class QueryHistoryDto {
 
     /**
      * Replace placeholders in this DTO's inboundText.
-     * Replaces occurrences of "$CatalogName" and "$ModelName" with the provided
+     * Replaces occurrences of "${CatalogName}" and "${ModelName}" with the provided
      * values wrapped in doubled double-quotes (for example: ""myCatalog"").
      * If inboundText is null this method is a no-op.
      *
