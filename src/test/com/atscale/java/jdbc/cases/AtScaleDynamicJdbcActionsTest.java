@@ -90,7 +90,7 @@ class AtScaleDynamicJdbcActionsTest {
     }
 
     @Test
-    void testCreateBuildersQuoteeJdbcQueries() throws Exception {
+    void testCreateBuildersQuotedJdbcQueries() throws Exception {
         Path jdbcFile = Paths.get(QueryHistoryFileUtil.getJdbcFilePath(MODEL));
         List<QueryHistoryDto> dtos = new ArrayList<>();
 
