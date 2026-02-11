@@ -51,7 +51,7 @@ public class AtScaleOpenInjectionStepSimulationFeeder extends AtScaleSimulation{
 
 
         AtScaleFeederScenario scn = new AtScaleFeederScenario();
-        PopulationBuilder popBuilder = scn.buildScenario(model, runId, ingestionFile, Boolean.parseBoolean(ingestionFileHasHeader), injectionSteps, null);
+        PopulationBuilder popBuilder = scn.buildScenario(catalog, model, runId, ingestionFile, Boolean.parseBoolean(ingestionFileHasHeader), injectionSteps, null);
 
         setUp(popBuilder).protocols(JdbcProtocol.forDatabase(model));
     }

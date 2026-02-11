@@ -9,11 +9,16 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 public class AtScaleDynamicJdbcActions {
     private AtScaleDynamicJdbcActions() {
         // Prevent instantiation
     }
+
+    // Tests may set this to provide a stub QueryActionBuilder that doesn't initialize the Gatling DSL.
+    // If null, production code will use the real jdbc(...) builder.
+    public static volatile Function<QueryHistoryDto, QueryActionBuilder> ACTION_BUILDER_FACTORY = null;
 
     private static List<NamedQueryActionBuilder> createBuildersJdbc(List<QueryHistoryDto> history) {
         List<NamedQueryActionBuilder> builders = new ArrayList<>();
@@ -24,23 +29,34 @@ public class AtScaleDynamicJdbcActions {
             String atscaleQueryId = query.getAtscaleQueryId();
             String inboundText = query.getInboundText();
             String inboundTextAsBase64 = query.getInboundTextAsBase64();
-            QueryActionBuilder builder = jdbc(queryName)
-                .query(query.getInboundText())
-                .check(
-                    allResults().saveAs("queryResultSet")
-                );
+
+            QueryActionBuilder builder;
+            if (ACTION_BUILDER_FACTORY != null) {
+                builder = ACTION_BUILDER_FACTORY.apply(query);
+            } else {
+                builder = jdbc(queryName)
+                    .query(query.getInboundText())
+                    .check(
+                        allResults().saveAs("queryResultSet")
+                    );
+            }
+
             builders.add(new NamedQueryActionBuilder(builder, queryName, inboundTextAsHash, inboundTextAsBase64, atscaleQueryId, inboundText));
         }
         return builders;
 
     }
 
-    public static NamedQueryActionBuilder[] createBuildersJdbcQueries(String model) {
+    public static NamedQueryActionBuilder[] createBuildersJdbcQueries(String catalog, String model) {
         String filePath = QueryHistoryFileUtil.getJdbcFilePath(model);
         try {
             List<QueryHistoryDto> history = QueryHistoryFileUtil.readQueryHistoryFromFile(filePath);
             if (history.isEmpty()) {
                 throw new IllegalArgumentException(String.format("No queries found in the history file: %s", filePath));
+            } else {
+                for(QueryHistoryDto query : history) {
+                    query.bindJdbc(catalog, model);
+                }
             }
             List<NamedQueryActionBuilder> builders = createBuildersJdbc(history);
             return builders.toArray(new NamedQueryActionBuilder[0]);
@@ -52,12 +68,15 @@ public class AtScaleDynamicJdbcActions {
         }
     }
 
-    public static NamedQueryActionBuilder[] createBuildersIngestedQueries(String ingestionFileName, boolean hasHeader) {
+    public static NamedQueryActionBuilder[] createBuildersIngestedQueries(String ingestionFileName, boolean hasHeader, String catalog, String model) {
         CsvLoaderUtil csvLoader = new CsvLoaderUtil(ingestionFileName, hasHeader);
 
         List<QueryHistoryDto> history = csvLoader.loadQueriesFromCsv();
         if (history.isEmpty()) {
             throw new IllegalArgumentException(String.format("No queries found in the history file: %s",csvLoader.getFilePath().toString() ));
+        }
+        for(QueryHistoryDto query : history) {
+            query.bindJdbc(catalog, model);
         }
         List<NamedQueryActionBuilder> builders = createBuildersJdbc(history);
 
