@@ -1,0 +1,1 @@
+local-repo/veil/hdp/hive/hive-jdbc-uber/2.6.3.0-235

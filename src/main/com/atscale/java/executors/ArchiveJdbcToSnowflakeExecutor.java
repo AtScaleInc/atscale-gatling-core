@@ -236,6 +236,11 @@ public class ArchiveJdbcToSnowflakeExecutor {
     private static void createIfNotExistsObjects(Connection conn) throws SQLException {
         LOGGER.info("Ensuring all required Snowflake objects exist...");
 
+        String db     = PropertiesManager.getCustomProperty("snowflake.archive.database");
+        String schema = PropertiesManager.getCustomProperty("snowflake.archive.schema");
+        exec(conn, "USE DATABASE " + db + ";");
+        exec(conn, "USE SCHEMA " + schema + ";");
+
         exec(conn, """
             CREATE STAGE IF NOT EXISTS GATLING_LOGS_STAGE
               FILE_FORMAT = (TYPE = CSV FIELD_DELIMITER = '\\t');

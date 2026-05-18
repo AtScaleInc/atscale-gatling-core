@@ -15,7 +15,9 @@ import com.atscale.java.utils.InjectionStepJsonUtil;
 import com.atscale.java.injectionsteps.*;
 import com.atscale.java.utils.JsonUtil;
 import org.apache.commons.lang3.StringUtils;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
@@ -48,6 +50,7 @@ public class MavenTaskDto<T> {
     private List <T> injectionSteps;
     private String ingestionFileName;
     private boolean ingestionFileHasHeader;
+    private boolean enhanceRunDescription;
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private final Map<String, String> additionalProperties = new HashMap<>();
     private String alternatePropertiesFileName;
@@ -57,7 +60,8 @@ public class MavenTaskDto<T> {
         this("Default Task Name");
     }
 
-    public MavenTaskDto(String taskName) {
+    @JsonCreator
+    public MavenTaskDto(@JsonProperty("taskName") String taskName) {
         this.taskName = taskName;
         // additionalProperties initialization moved to field declaration
         String rid = generateRunId();
@@ -87,11 +91,37 @@ public class MavenTaskDto<T> {
     }
 
     public String getRunDescription() {
-        return this.runDescription;
+        if(enhanceRunDescription && !StringUtils.isEmpty(runDescription) && !StringUtils.isEmpty(runId)) {
+            if(this.runDescription.contains(" ||| ")) {
+                return this.runDescription; // Avoid enhancing multiple times if already enhanced
+            }
+            return "RunId: " + this.runId + " ||| " + this.runDescription;
+        }
+       return this.runDescription;
+    }
+
+    public static Map<String, String> parseRunDescription(String description) {
+        if(description.contains(" ||| ")) {
+            String[] parts = description.split("\\s*\\|\\|\\|\\s*", 2);
+            Map<String, String> parsed = new HashMap<>();
+            parsed.put("runId", parts[0].replaceFirst("RunId:\\s*", ""));  // Remove "RunId: " prefix if present
+            parsed.put("description", parts[1]);
+            return parsed;
+        } else {
+            Map<String, String> parsed = new HashMap<>();
+            parsed.put("runId", null);
+            parsed.put("description", description);
+            return parsed;
+        }
     }
 
     public void setRunDescription(String runDescription) {
         this.runDescription = runDescription;
+    }
+
+    public void setRunDescription(String runDescription, boolean withRunId) {
+        this.runDescription = runDescription;
+        this.enhanceRunDescription = withRunId;
     }
 
     public String getCatalog() {return this.catalog;}
@@ -144,7 +174,6 @@ public class MavenTaskDto<T> {
         }
         return encode(injectionStepsAsJson);
     }
-
 
     private String generateRunId() {
         // Generate a timestamp-based run ID combined with a random alphanumeric string
@@ -210,6 +239,14 @@ public class MavenTaskDto<T> {
 
         this.ingestionFileName = ingestionFileName;
         this.ingestionFileHasHeader = hasHeader;
+    }
+
+    public void setIngestionFileName(String ingestionFileName) {
+        this.ingestionFileName = ingestionFileName;
+    }
+
+    public void setIngestionFileHasHeader(boolean ingestionFileHasHeader) {
+        this.ingestionFileHasHeader = ingestionFileHasHeader;
     }
 
     public String getIngestionFileName() {
@@ -292,14 +329,16 @@ public class MavenTaskDto<T> {
         MavenTaskDto<T> copy = new MavenTaskDto<>(newTaskName);
         copy.setMavenCommand(this.mavenCommand);
         copy.setSimulationClass(this.simulationClass);
-        copy.setRunDescription(this.runDescription);
+        copy.setRunDescription(this.runDescription, this.enhanceRunDescription);
         copy.setCatalog(this.catalog);
         copy.setModel(this.model);
         copy.setRunId(this.runId);
         copy.setRunLogFileName(this.logFileName);
         copy.setRunLogAppend(this.runLogAppend);
         copy.setInjectionSteps(this.injectionSteps);
-        copy.setIngestionFileName(this.ingestionFileName, this.ingestionFileHasHeader);
+        if (this.ingestionFileName != null) {
+            copy.setIngestionFileName(this.ingestionFileName, this.ingestionFileHasHeader);
+        }
         copy.setAdditionalProperties(this.additionalProperties);
         copy.setAlternatePropertiesFileName(this.alternatePropertiesFileName);
         return copy;

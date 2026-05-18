@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>org.galaxio</groupId>
+  <artifactId>gatling-jdbc-plugin_2.13</artifactId>
+  <versioning>
+    <release>0.14.1-atscale</release>
+    <versions>
+      <version>0.14.1-atscale</version>
+    </versions>
+    <lastUpdated>20260212175655</lastUpdated>
+  </versioning>
+</metadata>

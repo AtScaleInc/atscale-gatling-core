@@ -1,0 +1,4 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Thu Feb 12 09:56:55 PST 2026
+gatling-jdbc-plugin_2.13-0.14.1-atscale.jar>=
+gatling-jdbc-plugin_2.13-0.14.1-atscale.pom>=

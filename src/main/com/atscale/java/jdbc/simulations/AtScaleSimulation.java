@@ -30,6 +30,7 @@ abstract class AtScaleSimulation extends Simulation {
     String ingestionFile;
     String ingestionFileHasHeader;
     String additionalProperties;
+    String runDescription;
 
 
     AtScaleSimulation() {
@@ -37,6 +38,7 @@ abstract class AtScaleSimulation extends Simulation {
         model = System.getProperties().getProperty(MavenTaskDto.ATSCALE_MODEL);
         steps = System.getProperties().getProperty(MavenTaskDto.GATLING_INJECTION_STEPS);
         runId = System.getProperties().getProperty(MavenTaskDto.ATSCALE_RUN_ID);
+        runDescription = System.getProperties().getProperty(MavenTaskDto.GATLING_RUN_DESCRIPTION);
         runLogFileName = System.getProperties().getProperty(MavenTaskDto.ATSCALE_LOG_FILE_NAME);
         loggingAsAppend = System.getProperties().getProperty(MavenTaskDto.ATSCALE_LOG_APPEND);
         ingestionFile = System.getProperties().getProperty(MavenTaskDto.ATSCALE_QUERY_INGESTION_FILE);
@@ -57,6 +59,7 @@ abstract class AtScaleSimulation extends Simulation {
         LOGGER.info("Using model: {}", model);
         LOGGER.info("Using injection steps: {}", steps);
         LOGGER.info("Using run id: {}", runId);
+        LOGGER.info("Using run description: {}", runDescription);
         LOGGER.info("Using log file name: {}", runLogFileName);
         LOGGER.info("Logging as append: {}", loggingAsAppend);
         LOGGER.info("Using ingestion file: {}", ingestionFile);
