@@ -3,8 +3,9 @@ package com.atscale.java.utils;
 import com.atscale.java.executors.MavenTaskDto;
 import com.atscale.java.injectionsteps.ClosedStep;
 import com.atscale.java.injectionsteps.OpenStep;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.dataformat.yaml.YAMLMapper;
+import tools.jackson.databind.SerializationFeature;
 import org.apache.commons.lang3.StringUtils;
 
 import java.nio.file.Path;
@@ -13,8 +14,7 @@ import java.util.List;
 public class MavenTaskYamlUtil extends MavenTaskUtil {
 
     public static String openStepTasksToYaml(List<MavenTaskDto<OpenStep>> tasks) {
-        YAMLMapper mapper = new YAMLMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        YAMLMapper mapper = YAMLMapper.builder().enable(SerializationFeature.INDENT_OUTPUT).build();
         try {
             return mapper.writeValueAsString(tasks);
         } catch (Exception e) {
@@ -23,8 +23,7 @@ public class MavenTaskYamlUtil extends MavenTaskUtil {
     }
 
     public static String closedStepTasksToYaml(List<MavenTaskDto<ClosedStep>> tasks) {
-        YAMLMapper mapper = new YAMLMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        YAMLMapper mapper = YAMLMapper.builder().enable(SerializationFeature.INDENT_OUTPUT).build();
         try {
             return mapper.writeValueAsString(tasks);
         } catch (Exception e) {
@@ -38,14 +37,8 @@ public class MavenTaskYamlUtil extends MavenTaskUtil {
         }
 
         try {
-            YAMLMapper mapper = new YAMLMapper();
-            return mapper.readValue(
-                yaml,
-                mapper.getTypeFactory().constructCollectionType(
-                    List.class,
-                    mapper.getTypeFactory().constructParametricType(MavenTaskDto.class, OpenStep.class)
-                )
-            );
+            YAMLMapper mapper = YAMLMapper.builder().build();
+            return mapper.readValue(yaml, new TypeReference<List<MavenTaskDto<OpenStep>>>() {});
         } catch (Exception e) {
             throw new RuntimeException("Error parsing OpenStep tasks YAML: " + e.getMessage(), e);
         }
@@ -57,14 +50,8 @@ public class MavenTaskYamlUtil extends MavenTaskUtil {
         }
 
         try {
-            YAMLMapper mapper = new YAMLMapper();
-            return mapper.readValue(
-                yaml,
-                mapper.getTypeFactory().constructCollectionType(
-                    List.class,
-                    mapper.getTypeFactory().constructParametricType(MavenTaskDto.class, ClosedStep.class)
-                )
-            );
+            YAMLMapper mapper = YAMLMapper.builder().build();
+            return mapper.readValue(yaml, new TypeReference<List<MavenTaskDto<ClosedStep>>>() {});
         } catch (Exception e) {
             throw new RuntimeException("Error parsing ClosedStep tasks YAML: " + e.getMessage(), e);
         }
