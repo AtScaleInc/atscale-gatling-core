@@ -51,22 +51,28 @@ public class MavenTaskDto<T> {
     private String ingestionFileName;
     private boolean ingestionFileHasHeader;
     private boolean enhanceRunDescription;
+    private boolean lateBindRunId;
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private final Map<String, String> additionalProperties = new HashMap<>();
     private String alternatePropertiesFileName;
 
     public MavenTaskDto() {
-        // Delegate to the single-arg constructor so all initialization logic is reused
-        this("Default Task Name");
+        this("Default Task Name", false);
+    }
+
+    public MavenTaskDto(String taskName) {
+        this(taskName, false);
     }
 
     @JsonCreator
-    public MavenTaskDto(@JsonProperty("taskName") String taskName) {
+    public MavenTaskDto(@JsonProperty("taskName") String taskName, @JsonProperty("lateBindRunId") boolean lateBindRunId) {
         this.taskName = taskName;
-        // additionalProperties initialization moved to field declaration
-        String rid = generateRunId();
-        setRunId(rid);
-        setRunLogFileName(String.format("gatling-%s.log", rid));  //default value
+        this.lateBindRunId = lateBindRunId;
+        if (!lateBindRunId) {
+            String rid = generateRunId();
+            setRunId(rid);
+            setRunLogFileName(getLogFileNameForRunId(rid));
+        }
         setLoggingAsAppend(false);
     }
 
@@ -124,6 +130,14 @@ public class MavenTaskDto<T> {
         this.enhanceRunDescription = withRunId;
     }
 
+    public boolean isEnhanceRunDescription() {
+        return enhanceRunDescription;
+    }
+
+    public void setEnhanceRunDescription(boolean enhanceRunDescription) {
+        this.enhanceRunDescription = enhanceRunDescription;
+    }
+
     public String getCatalog() {return this.catalog;}
 
     @JsonIgnore
@@ -175,7 +189,11 @@ public class MavenTaskDto<T> {
         return encode(injectionStepsAsJson);
     }
 
-    private String generateRunId() {
+    public static String getLogFileNameForRunId(String runId) {
+        return String.format("gatling-%s.log", runId);
+    }
+
+    public static String generateRunId() {
         // Generate a timestamp-based run ID combined with a random alphanumeric string
         // This value is picked up in the logback.xml file where it is used to create a unique log file name
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -194,6 +212,18 @@ public class MavenTaskDto<T> {
     @JsonIgnore
     public String getRunIdBase64() {
         return encode(this.runId);
+    }
+
+    public boolean isLateBindRunId() {
+        return lateBindRunId;
+    }
+
+    public void bindRunId() {
+        String rid = generateRunId();
+        setRunId(rid);
+        if (StringUtils.isEmpty(logFileName)) {
+            setRunLogFileName(getLogFileNameForRunId(rid));
+        }
     }
 
     public void setRunLogFileName(String fileName) {

@@ -7,15 +7,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Properties;
 import java.util.List;
 import java.util.Arrays;
 import java.nio.file.Paths;
+import java.util.function.Function;
 
 @SuppressWarnings("unused")
 public class PropertiesManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesManager.class);
     private final Properties properties = new Properties();
+
+    // Package-private to allow test overrides without unsafe System class mocking
+    static Function<String, String> envReader = System::getenv;
     private final String propertiesFileName;
     private final String differentiator;
     private static final PropertiesManager instance = new PropertiesManager();
@@ -239,27 +244,15 @@ public class PropertiesManager {
     }
 
     public static String getAtScalePostgresURL() {
-        String property = instance.properties.getProperty("atscale.postgres.jdbc.url");
-        if (property == null || property.isEmpty()) {
-            throw new RuntimeException("atscale.postgres.jdbc.url is not set in properties file: " + instance.propertiesFileName);
-        }
-        return property;
+        return getProperty("atscale.postgres.jdbc.url");
     }
 
     public static String getAtScalePostgresUser() {
-        String property = instance.properties.getProperty("atscale.postgres.jdbc.username");
-        if (property == null || property.isEmpty()) {
-            throw new RuntimeException("atscale.postgres.jdbc.username is not set in properties file: " + instance.propertiesFileName);
-        }
-        return property;
+        return getProperty("atscale.postgres.jdbc.username");
     }
 
     public static String getAtScalePostgresPassword() {
-        String property = instance.properties.getProperty("atscale.postgres.jdbc.password");
-        if (property == null || property.isEmpty()) {
-            throw new RuntimeException("atscale.postgres.jdbc.password is not set in properties file: " + instance.propertiesFileName);
-        }
-        return property;
+        return getProperty("atscale.postgres.jdbc.password");
     }
 
     public static String getAtScaleJdbcConnection(String model) {
@@ -280,6 +273,14 @@ public class PropertiesManager {
     public static int getAtScaleJdbcMaxPoolSize(String model) {
         String key = String.format("atscale.%s.jdbc.maxPoolSize", clean(model));
         return Integer.parseInt(getProperty(key, "10"));
+    }
+
+    public static long getAtScaleJdbcConnectionTimeoutMs() {
+        return Long.parseLong(getProperty("atscale.jdbc.connectionTimeout.ms", "30000"));
+    }
+
+    public static int getAtScaleJdbcSocketTimeoutSeconds() {
+        return Integer.parseInt(getProperty("atscale.jdbc.socketTimeout.seconds", "60"));
     }
 
     public static boolean getRedactRawData(String model) {
@@ -331,10 +332,22 @@ public class PropertiesManager {
         return getProperty(key);
     }
 
+    public static boolean hasAtScaleXmlaAuthUserName(String model) {
+        String key = String.format("atscale.%s.xmla.auth.username", clean(model));
+        return hasProperty(key);
+    }
+
     public static String getAtScaleXmlaAuthPassword(String model) {
         String key = String.format("atscale.%s.xmla.auth.password", clean(model));
         return getProperty(key);
     }
+
+    public static boolean hasAtScaleXmlaAuthPassword(String model) {
+        String key = String.format("atscale.%s.xmla.auth.password", clean(model));
+        return hasProperty(key);
+    }
+
+
 
     public static void setCustomProperties(java.util.Map<String, String> customProperties) {
         for (String key : customProperties.keySet()) {
@@ -343,7 +356,14 @@ public class PropertiesManager {
         }
     }
 
+    // Package-private: for test cleanup only
+    static void removeProperties(Collection<String> keys) {
+        keys.forEach(instance.properties::remove);
+    }
+
     public static boolean hasProperty(String key) {
+        String envVal = envReader.apply(toEnvKey(key));
+        if (StringUtils.isNotEmpty(envVal)) return true;
         String property = instance.properties.getProperty(key);
         return StringUtils.isNotEmpty(property);
     }
@@ -353,6 +373,11 @@ public class PropertiesManager {
     }
 
     private static String getProperty(String key) {
+        String envVal = envReader.apply(toEnvKey(key));
+        if (envVal != null && !envVal.isEmpty()) {
+            LOGGER.info("Using environment variable override for property: {}", key);
+            return envVal;
+        }
         String property = instance.properties.getProperty(key);
         if (property == null || property.isEmpty()) {
             throw new RuntimeException("Property " + key + " is not set in properties file: " + instance.propertiesFileName);
@@ -362,10 +387,19 @@ public class PropertiesManager {
 
     @SuppressWarnings("all")
     private static String getProperty(String key, String defaultValue) {
-        if(! instance.properties.containsKey(key)) {
+        String envVal = envReader.apply(toEnvKey(key));
+        if (envVal != null && !envVal.isEmpty()) {
+            LOGGER.info("Using environment variable override for property: {}", key);
+            return envVal;
+        }
+        if (!instance.properties.containsKey(key)) {
             LOGGER.warn("Using default value for property {}: {}", key, defaultValue);
         }
         return instance.properties.getProperty(key, defaultValue);
+    }
+
+    private static String toEnvKey(String key) {
+        return key.replace(".", "_").replace("-", "_").toUpperCase();
     }
 
     private static String clean(String input) {

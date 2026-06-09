@@ -105,4 +105,65 @@ public class MavenTaskDtoTest {
         assertNull(MavenTaskDto.encode(null));
         assertEquals("", MavenTaskDto.encode(""));
     }
+
+    @Test
+    public void testLateBindConstructorDoesNotGenerateRunId() {
+        MavenTaskDto<Object> dto = new MavenTaskDto<>("task", true);
+        assertNull(dto.getRunId());
+        assertNull(dto.getRunLogFileName());
+    }
+
+    @Test
+    public void testLateBindConstructorSetsFlagTrue() {
+        MavenTaskDto<Object> dto = new MavenTaskDto<>("task", true);
+        assertTrue(dto.isLateBindRunId());
+    }
+
+    @Test
+    public void testNormalConstructorSetsFlagFalse() {
+        MavenTaskDto<Object> dto = new MavenTaskDto<>("task");
+        assertFalse(dto.isLateBindRunId());
+    }
+
+    @Test
+    public void testNormalConstructorGeneratesRunId() {
+        MavenTaskDto<Object> dto = new MavenTaskDto<>("task");
+        assertNotNull(dto.getRunId());
+        assertFalse(dto.getRunId().isEmpty());
+    }
+
+    @Test
+    public void testBindRunIdGeneratesNonNullRunId() {
+        MavenTaskDto<Object> dto = new MavenTaskDto<>("task", true);
+        dto.bindRunId();
+        assertNotNull(dto.getRunId());
+        assertFalse(dto.getRunId().isEmpty());
+    }
+
+    @Test
+    public void testBindRunIdSetsLogFileName() {
+        MavenTaskDto<Object> dto = new MavenTaskDto<>("task", true);
+        dto.bindRunId();
+        assertNotNull(dto.getRunLogFileName());
+        assertTrue(dto.getRunLogFileName().startsWith("gatling-"));
+        assertTrue(dto.getRunLogFileName().endsWith(".log"));
+        assertTrue(dto.getRunLogFileName().contains(dto.getRunId()));
+    }
+
+    @Test
+    public void testBindRunIdPreservesExplicitLogFileName() {
+        MavenTaskDto<Object> dto = new MavenTaskDto<>("task", true);
+        dto.setRunLogFileName("internet_sales_xmla.log");
+        dto.bindRunId();
+        assertEquals("internet_sales_xmla.log", dto.getRunLogFileName());
+    }
+
+    @Test
+    public void testBindRunIdGeneratesUniqueIds() {
+        MavenTaskDto<Object> dto1 = new MavenTaskDto<>("task1", true);
+        MavenTaskDto<Object> dto2 = new MavenTaskDto<>("task2", true);
+        dto1.bindRunId();
+        dto2.bindRunId();
+        assertNotEquals(dto1.getRunId(), dto2.getRunId());
+    }
 }

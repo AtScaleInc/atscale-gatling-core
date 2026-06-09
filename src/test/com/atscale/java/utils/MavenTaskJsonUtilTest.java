@@ -491,6 +491,36 @@ public class MavenTaskJsonUtilTest {
     }
 
 
+    @Test
+    public void testLateBindJsonRoundTripPreservesNoRunId() {
+        MavenTaskDto<OpenStep> dto = new MavenTaskDto<>("task", true);
+        dto.setMavenCommand("mvn test");
+        dto.setSimulationClass("com.example.TestSimulation");
+
+        String json = MavenTaskJsonUtil.openStepTasksToJson(List.of(dto));
+
+        List<MavenTaskDto<OpenStep>> loaded = MavenTaskJsonUtil.openStepTasksFromJson(json);
+        assertEquals(1, loaded.size());
+        assertTrue(loaded.get(0).isLateBindRunId());
+        assertNull(loaded.get(0).getRunId());
+        assertNull(loaded.get(0).getRunLogFileName());
+    }
+
+    @Test
+    public void testLateBindLoadAndBindProducesUniqueRunIds() {
+        MavenTaskDto<OpenStep> dto = new MavenTaskDto<>("task", true);
+        dto.setMavenCommand("mvn test");
+
+        String json = MavenTaskJsonUtil.openStepTasksToJson(List.of(dto));
+
+        MavenTaskDto<OpenStep> run1 = MavenTaskJsonUtil.openStepTasksFromJson(json).get(0);
+        MavenTaskDto<OpenStep> run2 = MavenTaskJsonUtil.openStepTasksFromJson(json).get(0);
+        run1.bindRunId();
+        run2.bindRunId();
+
+        assertNotEquals(run1.getRunId(), run2.getRunId());
+    }
+
     private boolean areEqual(List<? extends MavenTaskDto<?>> expected,
                              List<? extends MavenTaskDto<?>> actual) {
         if (expected.size() != actual.size()) {

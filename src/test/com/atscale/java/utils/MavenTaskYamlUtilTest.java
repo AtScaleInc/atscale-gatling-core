@@ -220,6 +220,36 @@ public class MavenTaskYamlUtilTest {
         MavenTaskYamlUtil.deleteTaskFile(fileName);
     }
 
+    @Test
+    public void testLateBindYamlRoundTripPreservesNoRunId() {
+        MavenTaskDto<OpenStep> dto = new MavenTaskDto<>("task", true);
+        dto.setMavenCommand("mvn test");
+        dto.setSimulationClass("com.example.TestSimulation");
+
+        String yaml = MavenTaskYamlUtil.openStepTasksToYaml(List.of(dto));
+
+        List<MavenTaskDto<OpenStep>> loaded = MavenTaskYamlUtil.openStepTasksFromYaml(yaml);
+        assertEquals(1, loaded.size());
+        assertTrue(loaded.get(0).isLateBindRunId());
+        assertNull(loaded.get(0).getRunId());
+        assertNull(loaded.get(0).getRunLogFileName());
+    }
+
+    @Test
+    public void testLateBindLoadAndBindProducesUniqueRunIds() {
+        MavenTaskDto<OpenStep> dto = new MavenTaskDto<>("task", true);
+        dto.setMavenCommand("mvn test");
+
+        String yaml = MavenTaskYamlUtil.openStepTasksToYaml(List.of(dto));
+
+        MavenTaskDto<OpenStep> run1 = MavenTaskYamlUtil.openStepTasksFromYaml(yaml).get(0);
+        MavenTaskDto<OpenStep> run2 = MavenTaskYamlUtil.openStepTasksFromYaml(yaml).get(0);
+        run1.bindRunId();
+        run2.bindRunId();
+
+        assertNotEquals(run1.getRunId(), run2.getRunId());
+    }
+
     private boolean areEqual(List<? extends MavenTaskDto<?>> expected,
                              List<? extends MavenTaskDto<?>> actual) {
         if (expected.size() != actual.size()) {
