@@ -39,6 +39,10 @@ public class JdbcProtocol {
         hikariConfig.setMaximumPoolSize(maxPool);
         hikariConfig.setConnectionInitSql(initSql);
         hikariConfig.setConnectionTestQuery("SELECT 1");
+        hikariConfig.setConnectionTimeout(PropertiesManager.getAtScaleJdbcConnectionTimeoutMs());
+        int socketTimeout = PropertiesManager.getAtScaleJdbcSocketTimeoutSeconds();
+        hikariConfig.addDataSourceProperty("socketTimeout", String.valueOf(socketTimeout));
+        hikariConfig.addDataSourceProperty("loginTimeout", String.valueOf(socketTimeout));
 
         return DB().hikariConfig(hikariConfig);
     }

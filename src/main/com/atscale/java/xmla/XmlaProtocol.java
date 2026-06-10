@@ -23,12 +23,30 @@ public class XmlaProtocol {
         Integer maxConnections = PropertiesManager.getAtScaleXmlaMaxConnectionsPerHost();
 
         if (PropertiesManager.isContainerVersion(model)) {
-            LOGGER.info("Configured for container version.  Auth token is part of the URL.");
             LOGGER.info("Configured for max connections per host: {}", maxConnections);
-            return http.baseUrl(url)
+            boolean hasXmlaUser = PropertiesManager.hasAtScaleXmlaAuthUserName(model);
+            boolean hasXmlaPassword = PropertiesManager.hasAtScaleXmlaAuthPassword(model);
+
+            if (hasXmlaUser && hasXmlaPassword) {
+                LOGGER.info("Configured for container version with basic auth credentials.");
+                String username = PropertiesManager.getAtScaleXmlaAuthUserName(model);
+                String password = PropertiesManager.getAtScaleXmlaAuthPassword(model);
+                return http.baseUrl(url)
                     .contentTypeHeader("text/xml; charset=UTF-8")
                     .acceptHeader("text/xml")
+                    .authorizationHeader(getBasicAuthCredentials(username, password))
                     .maxConnectionsPerHost(maxConnections);
+            } else {
+                if (hasXmlaUser || hasXmlaPassword) {
+                    LOGGER.warn("Configured for container version: only one of xmla.auth.username / xmla.auth.password is set — basic auth requires both. Falling back to token-in-URL.");
+                } else {
+                    LOGGER.info("Configured for container version. Auth token is part of the URL.");
+                }
+                return http.baseUrl(url)
+                        .contentTypeHeader("text/xml; charset=UTF-8")
+                        .acceptHeader("text/xml")
+                        .maxConnectionsPerHost(maxConnections);
+            }
         } else {
             LOGGER.info("Configured for installer version.  Will obtain bearer auth token.");
             LOGGER.info("Configured for max connections per host: {}", maxConnections);
@@ -44,6 +62,11 @@ public class XmlaProtocol {
                     .authorizationHeader(bearerToken)
                     .maxConnectionsPerHost(maxConnections);
         }
+    }
+
+    public static String getBasicAuthCredentials(String username, String password) {
+        String auth = username + ":" + password;
+        return "Basic " + Base64.getEncoder().encodeToString(auth.getBytes(StandardCharsets.UTF_8));
     }
 
     public static String getBearerToken(String urlString, String username, String password) {

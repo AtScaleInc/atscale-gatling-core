@@ -34,6 +34,10 @@ public abstract class SequentialSimulationExecutor<T> extends SimulationExecutor
 
 
                 try {
+                    if (task.isLateBindRunId()) {
+                        task.bindRunId();
+                    }
+
                     List<String> command = new java.util.ArrayList<>();
                     command.add(mavenScript);
 

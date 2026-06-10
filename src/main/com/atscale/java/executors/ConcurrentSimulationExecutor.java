@@ -35,6 +35,10 @@ public abstract class ConcurrentSimulationExecutor<T> extends SimulationExecutor
                 LOGGER.info("Run Description: {}", task.getRunDescription());
 
                 try {
+                    if (task.isLateBindRunId()) {
+                        task.bindRunId();
+                    }
+
                     List<String> command = new java.util.ArrayList<>();
                     command.add(mavenScript);
 

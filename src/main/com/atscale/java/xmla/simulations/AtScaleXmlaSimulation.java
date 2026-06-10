@@ -5,6 +5,7 @@ import com.atscale.java.utils.JsonUtil;
 import com.atscale.java.utils.PropertiesManager;
 import com.atscale.java.xmla.scenarios.AtScaleXmlaScenario;
 import io.gatling.javaapi.core.ScenarioBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.gatling.javaapi.core.Simulation;
