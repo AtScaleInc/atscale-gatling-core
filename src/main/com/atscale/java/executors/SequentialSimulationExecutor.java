@@ -54,9 +54,6 @@ public abstract class SequentialSimulationExecutor<T> extends SimulationExecutor
                     String ingestFileHasHeader = String.format("-D%s=%s", MavenTaskDto.ATSCALE_QUERY_INGESTION_FILE_HAS_HEADER, task.getIngestionFileHasHeader());
                     String additionalProperties = String.format("-D%s=%s", MavenTaskDto.ADDITIONAL_PROPERTIES, task.getAdditionalPropertiesBase64());
                     String alternatePropertiesFileName = task.getAlternatePropertiesFileName();
-                    if(StringUtils.isNotEmpty(alternatePropertiesFileName)){
-                        throw new UnsupportedOperationException("Sequential executors do not support the use of alternate properties files.  Remove the call(s) to setAlternatePropertiesFileName() in the task definition(s).");
-                    }
 
                     LOGGER.debug("SimEx Using simulation class: {}", simClass);
                     LOGGER.debug("SimEx Using run description: {}", runDesc);
@@ -69,6 +66,7 @@ public abstract class SequentialSimulationExecutor<T> extends SimulationExecutor
                     LOGGER.debug("SimEx Using ingestion file: {}", ingestFile);
                     LOGGER.debug("SimEx Ingestion file has header: {}", ingestFileHasHeader);
                     LOGGER.debug("SimEx Using additional properties: {}", additionalProperties);
+                    LOGGER.debug("SimEx Using alternate properties file name: {}", alternatePropertiesFileName);
 
                     command.add(simClass);
                     command.add(runDesc);
@@ -81,6 +79,9 @@ public abstract class SequentialSimulationExecutor<T> extends SimulationExecutor
                     command.add(ingestFile);
                     command.add(ingestFileHasHeader);
                     command.add(additionalProperties);
+                    if (StringUtils.isNotEmpty(alternatePropertiesFileName)) {
+                        command.add(String.format("-D%s=%s", "systems.properties.file", alternatePropertiesFileName));
+                    }
 
                     // Add the Maven goal (e.g., gatling:test)
                     command.add(task.getMavenCommand());

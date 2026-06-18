@@ -25,8 +25,11 @@ public abstract class ConcurrentSimulationExecutor<T> extends SimulationExecutor
         List<Thread> taskThreads = new java.util.ArrayList<>();
         List<MavenTaskDto<T>> tasks = getSimulationTasks();
 
+        int taskIndex = 0;
         for (MavenTaskDto<T> task : tasks) {
+                final int startDelaySeconds = taskIndex++ * 3;
                 Thread taskThread = new Thread(() -> {
+                try { Thread.sleep(startDelaySeconds * 1000L); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); }
                 String osName = System.getProperty("os.name").toLowerCase();
                 LOGGER.info("OS is {}", osName);
                 LOGGER.info("Running task: {}", task.getTaskName());
