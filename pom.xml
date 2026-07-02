@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.atscale.opensource</groupId>
   <artifactId>atscale-gatling-core</artifactId>
-  <version>1.19</version>
+  <version>1.20</version>
   <packaging>jar</packaging>
 
   <name>atscale_gatling</name>
@@ -101,6 +101,8 @@
           <jvmArgs>
             <jvmArg>-Xms2G</jvmArg>
             <jvmArg>-Xmx8G</jvmArg>
+            <jvmArg>--add-opens=java.base/java.lang=ALL-UNNAMED</jvmArg>
+            <jvmArg>--add-opens=java.base/java.nio=ALL-UNNAMED</jvmArg>
             <!--suppress UnresolvedMavenProperty -->
             <jvmArg>-Dgatling.runDescription=${gatling.runDescription}</jvmArg>
             <!--suppress UnresolvedMavenProperty -->

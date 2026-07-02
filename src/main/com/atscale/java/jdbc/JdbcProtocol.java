@@ -2,6 +2,7 @@ package com.atscale.java.jdbc;
 
 import com.atscale.java.utils.PropertiesManager;
 import com.zaxxer.hikari.HikariConfig;
+import org.apache.commons.lang3.StringUtils;
 import org.galaxio.gatling.javaapi.protocol.JdbcProtocolBuilder;
 import static org.galaxio.gatling.javaapi.JdbcDsl.DB;
 
@@ -28,16 +29,18 @@ public class JdbcProtocol {
         String useAggregates = PropertiesManager.getJdbcUseAggregates();
         String useLocalCache = PropertiesManager.getJdbcUseLocalCache();
         String createAggregates = PropertiesManager.getJdbcGenerateAggregates();
-        String initSql = String.format("set use_local_cache = %s; set create_aggregates = %s; set use_aggregates = %s", useLocalCache, createAggregates, useAggregates);
-
-        LOGGER.debug("Initializing each connection with {}", initSql);
 
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl(url);
         hikariConfig.setUsername(userName);
         hikariConfig.setPassword(password);
         hikariConfig.setMaximumPoolSize(maxPool);
-        hikariConfig.setConnectionInitSql(initSql);
+        if(StringUtils.isNotEmpty(url) && url.contains("! jdbc:snowflake")) {
+            // for AtScale Set Connection init SQL to specified cache and aggregate settings
+            String initSql = String.format("set use_local_cache = %s; set create_aggregates = %s; set use_aggregates = %s", useLocalCache, createAggregates, useAggregates);
+            LOGGER.debug("Initializing each connection with {}", initSql);
+            hikariConfig.setConnectionInitSql(initSql);
+        }
         hikariConfig.setConnectionTestQuery("SELECT 1");
         hikariConfig.setConnectionTimeout(PropertiesManager.getAtScaleJdbcConnectionTimeoutMs());
         int socketTimeout = PropertiesManager.getAtScaleJdbcSocketTimeoutSeconds();
